@@ -1,0 +1,346 @@
+// Vue 3 Composition API + Pinia + Vite Project Rules
+// DATN_GearUp - E-commerce Admin Dashboard
+
+// ============================================================================
+// PROJECT STRUCTURE & ORGANIZATION
+// ============================================================================
+
+const projectStructure = `
+DATN_GearUp/
+├── src/
+│   ├── components/          # Reusable Vue components
+│   │   ├── ui/             # Base UI components (buttons, inputs, etc.)
+│   │   └── examples/       # Example components
+│   ├── composables/        # Custom composables (useAuth, useApi, etc.)
+│   ├── views/              # Page components
+│   ├── layouts/            # Layout components
+│   ├── router/             # Vue Router configuration
+│   ├── stores/             # Pinia stores
+│   ├── services/           # API services
+│   ├── utils/              # Utility functions
+│   ├── assets/             # Static assets
+│   ├── App.vue            # Root component
+│   └── main.js            # App entry point
+├── public/                 # Public assets
+├── index.html             # HTML template
+└── vite.config.js         # Vite configuration
+`;
+
+// ============================================================================
+// VUE 3 COMPOSITION API BEST PRACTICES
+// ============================================================================
+
+const vue3CompositionApiRules = [
+  "ALWAYS use setup() function for component logic",
+  "Use ref() for primitive reactive values (string, number, boolean)",
+  "Use reactive() for object/array reactive state",
+  "Implement computed() for derived state",
+  "Use watch() and watchEffect() for side effects",
+  "Implement proper lifecycle hooks (onMounted, onUnmounted, etc.)",
+  "Use provide/inject for dependency injection",
+  "Always define props with proper validation",
+  "Use defineEmits() for event handling",
+  "Implement proper TypeScript types for all props and emits",
+  "Use <script setup> syntax when possible for cleaner code",
+  "Extract reusable logic into composables",
+  "Use toRefs() when destructuring reactive objects",
+  "Implement proper error boundaries and error handling"
+];
+
+// ============================================================================
+// COMPONENT ORGANIZATION RULES
+// ============================================================================
+
+const componentOrganizationRules = [
+  "Component files should be PascalCase (e.g., UserProfile.vue)",
+  "Use kebab-case for component names in template",
+  "Group related components in subdirectories",
+  "Create index.js files for component exports",
+  "Separate UI components from business logic components",
+  "Use descriptive component names that indicate their purpose",
+  "Keep components focused on a single responsibility",
+  "Extract complex logic into composables",
+  "Use proper prop validation with TypeScript",
+  "Implement proper error handling in components"
+];
+
+// ============================================================================
+// COMPOSABLES RULES
+// ============================================================================
+
+const composablesRules = [
+  "Composables should be prefixed with 'use' (e.g., useAuth, useApi)",
+  "Return reactive state and functions from composables",
+  "Handle loading and error states in composables",
+  "Implement proper cleanup in composables",
+  "Use TypeScript for composable return types",
+  "Keep composables focused on a single concern",
+  "Implement proper error handling in composables",
+  "Use provide/inject for global composables",
+  "Test composables independently",
+  "Document composable parameters and return values"
+];
+
+// ============================================================================
+// PINIA STORE RULES
+// ============================================================================
+
+const piniaStoreRules = [
+  "Use Pinia for state management instead of Vuex",
+  "Create separate stores for different domains (auth, products, orders)",
+  "Use defineStore() with proper TypeScript types",
+  "Implement getters for computed state",
+  "Use actions for async operations",
+  "Keep stores focused on a single domain",
+  "Use proper naming conventions for stores",
+  "Implement proper error handling in stores",
+  "Use storeToRefs() when destructuring stores",
+  "Avoid storing UI state in stores"
+];
+
+// ============================================================================
+// API & SERVICES RULES
+// ============================================================================
+
+const apiServicesRules = [
+  "Create separate service files for different API endpoints",
+  "Use axios for HTTP requests with proper configuration",
+  "Implement proper error handling for API calls",
+  "Use TypeScript interfaces for API responses",
+  "Implement request/response interceptors",
+  "Handle loading states properly",
+  "Use proper HTTP status code handling",
+  "Implement retry logic for failed requests",
+  "Use environment variables for API URLs",
+  "Implement proper authentication handling"
+];
+
+// ============================================================================
+// ROUTING RULES
+// ============================================================================
+
+const routingRules = [
+  "Use Vue Router 4 with Composition API",
+  "Implement proper route guards for authentication",
+  "Use lazy loading for route components",
+  "Implement proper error handling for routes",
+  "Use TypeScript for route definitions",
+  "Implement proper route metadata",
+  "Use nested routes when appropriate",
+  "Implement proper route transitions",
+  "Handle route parameters properly",
+  "Use proper route naming conventions"
+];
+
+// ============================================================================
+// STYLING & UI RULES
+// ============================================================================
+
+const stylingRules = [
+  "Use CSS modules or scoped styles",
+  "Implement responsive design principles",
+  "Use CSS custom properties for theming",
+  "Implement proper accessibility features",
+  "Use semantic HTML elements",
+  "Implement proper focus management",
+  "Use proper color contrast ratios",
+  "Implement proper keyboard navigation",
+  "Use consistent spacing and typography",
+  "Implement proper loading states"
+];
+
+// ============================================================================
+// CODE QUALITY RULES
+// ============================================================================
+
+const codeQualityRules = [
+  "Use ESLint and Prettier for code formatting",
+  "Implement proper TypeScript types",
+  "Use proper naming conventions (camelCase, PascalCase, kebab-case)",
+  "Write meaningful comments and documentation",
+  "Implement proper error handling",
+  "Use proper async/await patterns",
+  "Avoid deep nesting in components",
+  "Implement proper testing strategies",
+  "Use proper import/export patterns",
+  "Implement proper logging and debugging"
+];
+
+// ============================================================================
+// PERFORMANCE RULES
+// ============================================================================
+
+const performanceRules = [
+  "Use v-memo for expensive computations",
+  "Implement proper lazy loading",
+  "Use proper key attributes in v-for loops",
+  "Implement proper caching strategies",
+  "Use proper tree-shaking",
+  "Implement proper code splitting",
+  "Use proper image optimization",
+  "Implement proper bundle analysis",
+  "Use proper memory management",
+  "Implement proper debouncing/throttling"
+];
+
+// ============================================================================
+// SECURITY RULES
+// ============================================================================
+
+const securityRules = [
+  "Validate all user inputs",
+  "Implement proper authentication",
+  "Use HTTPS for all API calls",
+  "Implement proper CSRF protection",
+  "Sanitize user-generated content",
+  "Use proper session management",
+  "Implement proper authorization checks",
+  "Use environment variables for sensitive data",
+  "Implement proper error messages",
+  "Use proper Content Security Policy"
+];
+
+// ============================================================================
+// TESTING RULES
+// ============================================================================
+
+const testingRules = [
+  "Write unit tests for composables",
+  "Write component tests for complex components",
+  "Write integration tests for critical user flows",
+  "Use proper mocking strategies",
+  "Implement proper test coverage",
+  "Use proper test naming conventions",
+  "Implement proper test data management",
+  "Use proper assertion libraries",
+  "Implement proper test isolation",
+  "Use proper test reporting"
+];
+
+// ============================================================================
+// DEPLOYMENT RULES
+// ============================================================================
+
+const deploymentRules = [
+  "Use proper environment variables",
+  "Implement proper build optimization",
+  "Use proper CDN configuration",
+  "Implement proper caching strategies",
+  "Use proper monitoring and logging",
+  "Implement proper error tracking",
+  "Use proper backup strategies",
+  "Implement proper rollback procedures",
+  "Use proper SSL certificates",
+  "Implement proper CI/CD pipelines"
+];
+
+// ============================================================================
+// SPECIFIC PROJECT RULES FOR GEARUP
+// ============================================================================
+
+const gearUpSpecificRules = [
+  "Use proper e-commerce terminology",
+  "Implement proper product management",
+  "Implement proper order management",
+  "Implement proper customer management",
+  "Implement proper inventory management",
+  "Use proper currency formatting",
+  "Implement proper date/time handling",
+  "Use proper number formatting",
+  "Implement proper search functionality",
+  "Use proper pagination for large datasets"
+];
+
+// ============================================================================
+// FILE NAMING CONVENTIONS
+// ============================================================================
+
+const fileNamingConventions = {
+  "components": "PascalCase.vue",
+  "composables": "camelCase.js",
+  "stores": "camelCase.js",
+  "services": "camelCase.js",
+  "views": "PascalCase.vue",
+  "layouts": "PascalCase.vue",
+  "utils": "camelCase.js",
+  "types": "camelCase.ts",
+  "constants": "UPPER_SNAKE_CASE.js"
+};
+
+// ============================================================================
+// IMPORT/EXPORT RULES
+// ============================================================================
+
+const importExportRules = [
+  "Use named exports for composables",
+  "Use default exports for components",
+  "Use proper import aliases",
+  "Group imports by type (Vue, third-party, local)",
+  "Use proper import ordering",
+  "Use proper export naming",
+  "Use proper module resolution",
+  "Use proper tree-shaking",
+  "Use proper circular dependency prevention",
+  "Use proper re-exports"
+];
+
+// ============================================================================
+// ERROR HANDLING RULES
+// ============================================================================
+
+const errorHandlingRules = [
+  "Implement proper try-catch blocks",
+  "Use proper error boundaries",
+  "Implement proper error logging",
+  "Use proper error messages",
+  "Implement proper fallback UI",
+  "Use proper error recovery strategies",
+  "Implement proper validation",
+  "Use proper error reporting",
+  "Implement proper debugging tools",
+  "Use proper error tracking"
+];
+
+// ============================================================================
+// DOCUMENTATION RULES
+// ============================================================================
+
+const documentationRules = [
+  "Write JSDoc comments for functions",
+  "Document component props and emits",
+  "Write README files for complex components",
+  "Document API endpoints",
+  "Write proper commit messages",
+  "Document environment variables",
+  "Write proper changelog",
+  "Document deployment procedures",
+  "Write proper inline comments",
+  "Document complex business logic"
+];
+
+// ============================================================================
+// FINAL INSTRUCTIONS
+// ============================================================================
+
+const finalInstructions = `
+CRITICAL RULES TO FOLLOW:
+
+1. ALWAYS use Vue 3 Composition API with <script setup> when possible
+2. ALWAYS implement proper TypeScript types for all props, emits, and composables
+3. ALWAYS use Pinia for state management
+4. ALWAYS implement proper error handling and loading states
+5. ALWAYS use proper naming conventions (PascalCase for components, camelCase for functions)
+6. ALWAYS extract reusable logic into composables
+7. ALWAYS implement proper validation for user inputs
+8. ALWAYS use proper accessibility features
+9. ALWAYS implement responsive design
+10. ALWAYS write meaningful commit messages
+11. ALWAYS test critical user flows
+12. ALWAYS optimize for performance
+13. ALWAYS follow security best practices
+14. ALWAYS document complex logic
+15. ALWAYS use proper ESLint and Prettier configuration
+
+REMEMBER: This is an e-commerce admin dashboard - prioritize user experience, performance, and security.
+`;
+

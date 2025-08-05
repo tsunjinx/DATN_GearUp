@@ -1,0 +1,20 @@
+<!-- GearUp Logo SVG -->
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Green wave pattern -->
+  <g transform="translate(10, 10)">
+    <!-- Wave lines -->
+    <path d="M5 35 Q15 25 25 35 T45 35" stroke="#4ade80" stroke-width="2" fill="none"/>
+    <path d="M5 30 Q15 20 25 30 T45 30" stroke="#4ade80" stroke-width="2" fill="none"/>
+    <path d="M5 25 Q15 15 25 25 T45 25" stroke="#4ade80" stroke-width="2" fill="none"/>
+    <path d="M5 20 Q15 10 25 20 T45 20" stroke="#4ade80" stroke-width="2" fill="none"/>
+    <path d="M5 15 Q15 5 25 15 T45 15" stroke="#4ade80" stroke-width="2" fill="none"/>
+  </g>
+  
+  <!-- Vertical separator line -->
+  <line x1="70" y1="10" x2="70" y2="50" stroke="#1f2937" stroke-width="2"/>
+  
+  <!-- GEARUP Text -->
+  <text x="85" y="35" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#1f2937">
+    GEARUP
+  </text>
+</svg>

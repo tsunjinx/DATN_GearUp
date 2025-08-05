@@ -1,0 +1,39 @@
+# Commit Message Template cho GearUp Project
+
+# Format: <type>(<scope>): <subject>
+# 
+# <type>: 
+#   feat     - Tính năng mới
+#   fix      - Sửa bug
+#   docs     - Thay đổi documentation
+#   style    - Thay đổi formatting, không ảnh hưởng logic
+#   refactor - Refactor code, không thêm feature hoặc fix bug
+#   test     - Thêm hoặc sửa tests
+#   chore    - Maintenance tasks
+#
+# <scope>:
+#   products   - Liên quan đến sản phẩm
+#   customers  - Liên quan đến khách hàng
+#   orders     - Liên quan đến hóa đơn
+#   auth       - Liên quan đến authentication
+#   ui         - Liên quan đến UI components
+#   api        - Liên quan đến API services
+#   store      - Liên quan đến Pinia stores
+#
+# Examples:
+# feat(products): thêm chức năng tìm kiếm sản phẩm
+# fix(orders): sửa lỗi hiển thị trạng thái đơn hàng
+# refactor(ui): tối ưu component Modal
+# docs: cập nhật README với hướng dẫn setup
+
+# Subject line (tối đa 50 ký tự)
+# |<----  Trying to stay under 50 characters  ---->|
+
+
+# Body (optional, tối đa 72 ký tự mỗi dòng)
+# |<----   Trying to stay under 72 characters   ---->|
+
+
+# Footer (optional)
+# Closes #123
+# Breaking change: describe the breaking change
