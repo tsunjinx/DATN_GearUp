@@ -36,9 +36,10 @@
       >
         <div class="discount-header">
           <h3>{{ discount.name }}</h3>
-          <span class="status-badge" :class="getDiscountStatus(discount)">
-            {{ getStatusText(getDiscountStatus(discount)) }}
-          </span>
+          <StatusBadge 
+            :status="getDiscountStatus(discount)" 
+            :size="isMobile ? 'small' : 'normal'"
+          />
         </div>
         
         <div class="discount-info">
@@ -152,13 +153,29 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import StatusBadge from '@/components/ui/StatusBadge.vue'
 
 const searchTerm = ref('')
 const selectedStatus = ref('')
 const showAddModal = ref(false)
 const showEditModal = ref(false)
 const editingDiscount = ref(null)
+const isMobile = ref(false)
+
+// Check if device is mobile
+const checkMobile = () => {
+  isMobile.value = window.innerWidth <= 768
+}
+
+onMounted(() => {
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile)
+})
 
 const discountForm = ref({
   name: '',
@@ -507,28 +524,6 @@ const closeModal = () => {
   flex-wrap: wrap;
 }
 
-.status-badge {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.status-badge.active {
-  background: #d4edda;
-  color: #155724;
-}
-
-.status-badge.inactive {
-  background: #fff3cd;
-  color: #856404;
-}
-
-.status-badge.expired {
-  background: #f8d7da;
-  color: #721c24;
-}
-
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -612,5 +607,477 @@ const closeModal = () => {
   gap: 10px;
   justify-content: flex-end;
   margin-top: 30px;
+}
+
+/* Responsive Design */
+/* Large Screen Optimizations */
+@media (min-width: 1600px) {
+  .discounts-page {
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .page-header {
+    margin-bottom: 2.5rem;
+  }
+  
+  .filters {
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .search-input {
+    padding: 1rem;
+    font-size: 1rem;
+  }
+  
+  .discounts-grid {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+  }
+  
+  .discount-card {
+    padding: 2rem;
+  }
+  
+  .discount-header h3 {
+    font-size: 1.5rem;
+  }
+  
+  .discount-value .value {
+    font-size: 2.5rem;
+  }
+  
+  .discount-value .type {
+    font-size: 1rem;
+  }
+  
+  .discount-details p {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .discount-actions {
+    gap: 1rem;
+  }
+  
+  .btn {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9375rem;
+  }
+}
+
+@media (min-width: 1920px) {
+  .discounts-page {
+    max-width: 2000px;
+    padding: 2.5rem;
+  }
+  
+  .filters {
+    padding: 2.5rem;
+  }
+  
+  .discounts-grid {
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2.5rem;
+  }
+  
+  .discount-card {
+    padding: 2.5rem;
+  }
+  
+  .discount-header h3 {
+    font-size: 1.75rem;
+  }
+  
+  .discount-value .value {
+    font-size: 3rem;
+  }
+  
+  .discount-value .type {
+    font-size: 1.125rem;
+  }
+  
+  .btn {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 1400px) {
+  .discounts-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .discount-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 1400px) {
+  .discounts-page {
+    max-width: 100%;
+  }
+  
+  .discounts-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 18px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .discounts-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  
+  .discount-card {
+    padding: 18px;
+  }
+  
+  .discount-value .value {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .page-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+  
+  .page-header h2 {
+    text-align: center;
+  }
+  
+  .filters {
+    padding: 15px;
+  }
+  
+  .filter-controls {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .filter-select {
+    width: 100%;
+  }
+  
+  .discounts-grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+  }
+  
+  .discount-card {
+    padding: 16px;
+  }
+  
+  .discount-value .value {
+    font-size: 1.8rem;
+  }
+  
+  .discount-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .discount-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 900px) {
+  .discounts-grid {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  
+  .discount-card {
+    padding: 14px;
+  }
+  
+  .discount-header h3 {
+    font-size: 1.1rem;
+  }
+  
+  .discount-description {
+    font-size: 13px;
+  }
+  
+  .discount-conditions {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .discounts-page {
+    padding: 0 10px;
+  }
+  
+  .page-header {
+    margin-bottom: 20px;
+  }
+  
+  .page-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  .filters {
+    padding: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .search-input {
+    margin-bottom: 10px;
+  }
+  
+  .discounts-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .discount-card {
+    padding: 15px;
+  }
+  
+  .discount-header h3 {
+    font-size: 1.2rem;
+  }
+  
+  .discount-value .value {
+    font-size: 1.6rem;
+  }
+  
+  .discount-value .type {
+    font-size: 12px;
+  }
+  
+  .discount-details p {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+  
+  .btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  
+  .modal {
+    width: 95%;
+    margin: 10px;
+  }
+  
+  .modal-header {
+    padding: 15px;
+  }
+  
+  .modal-header h3 {
+    font-size: 1.2rem;
+  }
+  
+  .modal-body {
+    padding: 15px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .form-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .discounts-page {
+    padding: 0 5px;
+  }
+  
+  .page-header h2 {
+    font-size: 1.3rem;
+  }
+  
+  .discount-card {
+    padding: 12px;
+  }
+  
+  .discount-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .discount-header h3 {
+    font-size: 1.1rem;
+  }
+  
+  .discount-value .value {
+    font-size: 1.4rem;
+  }
+  
+  .discount-details p {
+    font-size: 12px;
+  }
+  
+  .btn {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+  
+  .btn-sm {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+  
+  .search-input,
+  .filter-select {
+    padding: 8px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .discounts-page {
+    padding: 0;
+  }
+  
+  .page-header {
+    margin-bottom: 15px;
+  }
+  
+  .page-header h2 {
+    font-size: 1.2rem;
+  }
+  
+  .filters {
+    padding: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .discounts-grid {
+    gap: 12px;
+  }
+  
+  .discount-card {
+    padding: 10px;
+  }
+  
+  .discount-header h3 {
+    font-size: 1rem;
+  }
+  
+  .discount-value .value {
+    font-size: 1.3rem;
+  }
+  
+  .discount-value .type {
+    font-size: 11px;
+  }
+  
+  .discount-details p {
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+  
+  .btn {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+  
+  .btn-sm {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+  
+  .modal {
+    width: 98%;
+    margin: 5px;
+  }
+  
+  .modal-header {
+    padding: 12px;
+  }
+  
+  .modal-header h3 {
+    font-size: 1.1rem;
+  }
+  
+  .modal-body {
+    padding: 12px;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 8px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}
+
+/* Touch devices optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .discount-card {
+    cursor: pointer;
+  }
+  
+  .discount-card:active {
+    transform: scale(0.98);
+  }
+  
+  .search-input,
+  .filter-select {
+    min-height: 44px;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    min-height: 44px;
+  }
+}
+
+/* Landscape orientation on small devices */
+@media (max-width: 768px) and (orientation: landscape) {
+  .modal {
+    max-height: 95vh;
+  }
+  
+  .modal-body {
+    max-height: calc(95vh - 120px);
+    overflow-y: auto;
+  }
+  
+  .discounts-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Grid improvements for very small screens */
+@media (max-width: 360px) {
+  .discount-actions {
+    gap: 6px;
+  }
+  
+  .discount-actions .btn {
+    font-size: 10px;
+    padding: 4px 6px;
+  }
 }
 </style>

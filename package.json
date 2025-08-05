@@ -16,6 +16,7 @@
     "prepare": "git config core.hooksPath .githooks || true"
   },
   "dependencies": {
+    "animejs": "^4.1.2",
     "axios": "^1.11.0",
     "pinia": "^3.0.3",
     "vue": "^3.5.17",

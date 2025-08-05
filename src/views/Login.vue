@@ -1,46 +1,90 @@
 <template>
   <div class="login-page">
     <div class="login-container">
-      <div class="login-card">
-        <div class="logo-section">
-          <GearUpLogo variant="large"/>
+      <!-- Left Side - Branding -->
+      <div class="login-branding">
+        <div class="branding-content">
+            <GearUpLogo variant="large" />
+            <p class="brand-subtitle" style="font-weight: bold;">Hệ thống quản lý cửa hàng giày thể thao</p>
+          <div class="features-list">
+          </div>
         </div>
-
-        <h2>Đăng nhập hệ thống</h2>
-
-        <form @submit.prevent="handleLogin" class="login-form">
-          <div class="form-group">
-            <label for="username">Tên đăng nhập</label>
-            <input id="username" type="text" v-model="form.username" class="form-control"
-              placeholder="Nhập tên đăng nhập" required />
+      </div>
+      
+      <!-- Right Side - Login Form -->
+      <div class="login-form-section">
+        <div class="form-container">
+          <div class="form-header">
+            <h2>Đăng nhập hệ thống</h2>
           </div>
 
-          <div class="form-group">
-            <label for="password">Mật khẩu</label>
-            <input id="password" type="password" v-model="form.password" class="form-control"
-              placeholder="Nhập mật khẩu" required />
+          <form @submit.prevent="handleLogin" class="login-form">
+            <div class="form-group">
+              <label for="username">Tên đăng nhập</label>
+              <div class="input-wrapper">
+                <i class="input-icon">👤</i>
+                <input 
+                  id="username" 
+                  type="text" 
+                  v-model="form.username" 
+                  class="form-control"
+                  placeholder="Nhập tên đăng nhập" 
+                  required 
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="password">Mật khẩu</label>
+              <div class="input-wrapper">
+                <i class="input-icon">🔒</i>
+                <input 
+                  id="password" 
+                  type="password" 
+                  v-model="form.password" 
+                  class="form-control"
+                  placeholder="Nhập mật khẩu" 
+                  required 
+                />
+              </div>
+            </div>
+
+            <div class="form-options">
+              <label class="checkbox-container">
+                <input type="checkbox" v-model="form.remember" />
+                <span class="checkmark"></span>
+                <span class="checkbox-text">Ghi nhớ đăng nhập</span>
+              </label>
+              
+              <a href="#" class="forgot-password">Quên mật khẩu?</a>
+            </div>
+
+            <div v-if="error" class="error-message">
+              <i class="error-icon">⚠️</i>
+              {{ error }}
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-login" :disabled="loading">
+              <span v-if="loading" class="loading-spinner"></span>
+              <i v-else class="login-icon">🚀</i>
+              {{ loading ? 'Đang đăng nhập...' : 'Đăng nhập' }}
+            </button>
+          </form>
+
+          <div class="demo-credentials">
+            <div class="demo-header">
+              <i class="demo-icon">🔑</i>
+              <span>Thông tin đăng nhập demo</span>
+            </div>
+            <div class="demo-info">
+              <p><strong>Tên đăng nhập:</strong> admin</p>
+              <p><strong>Mật khẩu:</strong> admin</p>
+            </div>
           </div>
 
-          <div class="form-group">
-            <label class="checkbox-container">
-              <input type="checkbox" v-model="form.remember" />
-              <span class="checkmark"></span>
-              Ghi nhớ đăng nhập
-            </label>
+          <div class="login-footer">
+            <p>&copy; 2025 GearUp. All rights reserved.</p>
           </div>
-
-          <div v-if="error" class="error-message">
-            {{ error }}
-          </div>
-
-          <button type="submit" class="btn btn-primary btn-block" :disabled="loading">
-            <span v-if="loading" class="loading-spinner"></span>
-            {{ loading ? 'Đang đăng nhập...' : 'Đăng nhập' }}
-          </button>
-        </form>
-
-        <div class="login-footer">
-          <p>&copy; 2024 GearUp.</p>
         </div>
       </div>
     </div>
@@ -81,63 +125,162 @@ const handleLogin = async () => {
 <style scoped>
 .login-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 2rem;
 }
 
 .login-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  max-width: 1200px;
+  width: 100%;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  min-height: 600px;
+}
+
+/* Left Side - Branding */
+.login-branding {
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+  color: white;
+  padding: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-branding::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  transform: rotate(45deg);
+}
+
+.branding-content {
+  text-align: center;
+  z-index: 1;
+}
+
+.brand-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 1rem 0 0.5rem 0;
+}
+
+.brand-subtitle {
+  font-size: 1.125rem;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+}
+
+.features-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+.feature-icon {
+  font-size: 1.25rem;
+}
+
+/* Right Side - Form */
+.login-form-section {
+  padding: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-container {
   width: 100%;
   max-width: 400px;
 }
 
-.login-card {
-  background: white;
-  border-radius: 16px;
-  padding: 40px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+.form-header {
   text-align: center;
+  margin-bottom: 2rem;
 }
 
-.logo-section {
-  margin-bottom: 30px;
+.form-header h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 0.5rem;
 }
 
-h2 {
-  color: #2c3e50;
-  margin-bottom: 30px;
-  font-weight: 600;
+.form-header p {
+  color: var(--gray-600);
+  font-size: 0.95rem;
 }
 
 .login-form {
-  text-align: left;
+  margin-bottom: 2rem;
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 8px;
-  color: #555;
+  margin-bottom: 0.5rem;
+  color: var(--gray-700);
   font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: var(--gray-400);
+  z-index: 1;
 }
 
 .form-control {
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid #e1e5e9;
-  border-radius: 8px;
-  font-size: 16px;
-  transition: border-color 0.3s;
+  padding-left: 3rem;
+  height: 3rem;
+  border: 1.5px solid var(--border);
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
 }
 
 .form-control:focus {
-  outline: none;
-  border-color: #667eea;
+  border-color: var(--primary-400);
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.1);
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
 }
 
 .checkbox-container {
@@ -147,84 +290,257 @@ h2 {
   user-select: none;
 }
 
-.checkbox-container input {
-  margin-right: 8px;
+.checkbox-container input[type="checkbox"] {
+  margin-right: 0.5rem;
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--primary-500);
 }
 
-.btn-block {
+.checkbox-text {
+  font-size: 0.875rem;
+  color: var(--gray-600);
+}
+
+.forgot-password {
+  color: var(--primary-600);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.forgot-password:hover {
+  color: var(--primary-700);
+}
+
+.btn-login {
   width: 100%;
-  padding: 14px;
-  font-size: 16px;
+  height: 3rem;
+  font-size: 1rem;
   font-weight: 600;
-  margin-top: 10px;
+  gap: 0.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
 }
 
-.btn-primary {
-  background: #667eea;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.3s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+.btn-login:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(74, 222, 128, 0.3);
 }
 
-.btn-primary:hover:not(:disabled) {
-  background: #5a6fd8;
-}
-
-.btn-primary:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.loading-spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid transparent;
-  border-top: 2px solid white;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.login-footer {
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid #e1e5e9;
-}
-
-.login-footer p {
-  color: #888;
-  font-size: 14px;
-  margin: 0;
+.login-icon {
+  font-size: 1.125rem;
 }
 
 .error-message {
-  background-color: #f8d7da;
-  color: #721c24;
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 15px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.error-icon {
+  font-size: 1rem;
+}
+
+.demo-credentials {
+  background: var(--gray-50);
+  border: 1px solid var(--border-light);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.demo-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  color: var(--gray-700);
+  font-size: 0.875rem;
+}
+
+.demo-icon {
+  font-size: 1rem;
+}
+
+.demo-info {
+  font-size: 0.8125rem;
+  color: var(--gray-600);
+}
+
+.demo-info p {
+  margin: 0.25rem 0;
+}
+
+.demo-info strong {
+  color: var(--gray-700);
+}
+
+.login-footer {
   text-align: center;
-  font-size: 14px;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-light);
+}
+
+.login-footer p {
+  color: var(--gray-500);
+  font-size: 0.8125rem;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .login-container {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+  }
+  
+  .login-branding {
+    display: none;
+  }
+  
+  .login-form-section {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .login-page {
+    padding: 1rem;
+    align-items: flex-start;
+    padding-top: 2rem;
+  }
+  
+  .login-container {
+    min-height: auto;
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  .login-form-section {
+    padding: 1.5rem;
+  }
+  
+  .form-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+  
+  .form-control {
+    height: 2.75rem;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+  
+  .form-options {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .demo-credentials {
+    padding: 0.75rem;
+  }
+  
+  .demo-info {
+    font-size: 0.75rem;
+  }
 }
 
 @media (max-width: 480px) {
-  .login-card {
-    padding: 30px 20px;
+  .login-page {
+    padding: 0.5rem;
+  }
+  
+  .login-form-section {
+    padding: 1rem;
+  }
+  
+  .form-header h2 {
+    font-size: 1.25rem;
+  }
+  
+  .form-header p {
+    font-size: 0.875rem;
+  }
+  
+  .btn-login {
+    height: 2.75rem;
+    font-size: 0.9rem;
+  }
+  
+  .demo-credentials {
+    padding: 0.5rem;
+  }
+  
+  .demo-header {
+    font-size: 0.75rem;
+  }
+  
+  .demo-info {
+    font-size: 0.7rem;
+  }
+  
+  .login-footer p {
+    font-size: 0.75rem;
+  }
+}
+
+/* Landscape phone orientation */
+@media (max-width: 768px) and (orientation: landscape) {
+  .login-page {
+    padding-top: 1rem;
+  }
+  
+  .login-container {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  
+  .form-header {
+    margin-bottom: 1rem;
+  }
+  
+  .demo-credentials {
+    margin-bottom: 1rem;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .login-branding::before {
+    background-size: 100% 100%;
+  }
+}
+
+/* Touch device improvements */
+@media (hover: none) and (pointer: coarse) {
+  .btn-login:hover:not(:disabled) {
+    transform: none;
+    box-shadow: 0 4px 14px rgba(74, 222, 128, 0.3);
+  }
+  
+  .btn-login:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+  
+  .forgot-password:hover {
+    color: var(--primary-600);
+  }
+  
+  .forgot-password:active {
+    color: var(--primary-800);
   }
 }
 </style>

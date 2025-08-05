@@ -1,48 +1,6 @@
 <template>
   <div class="dashboard">
-    <!-- Welcome Section -->
-    <div class="welcome-section">
-      <div class="welcome-content">
-        <GearUpLogo variant="large" />
-        <h1>Chào mừng đến với GearUp Admin</h1>
-        <p>Hệ thống quản lý cửa hàng giày thể thao</p>
-      </div>
-    </div>
-
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon">👟</div>
-        <div class="stat-info">
-          <h3>{{ totalProducts }}</h3>
-          <p>Tổng sản phẩm</p>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-icon">👥</div>
-        <div class="stat-info">
-          <h3>{{ totalCustomers }}</h3>
-          <p>Khách hàng</p>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-icon">🧾</div>
-        <div class="stat-info">
-          <h3>{{ totalOrders }}</h3>
-          <p>Hóa đơn</p>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-icon">💰</div>
-        <div class="stat-info">
-          <h3>{{ formatCurrency(totalRevenue) }}</h3>
-          <p>Doanh thu</p>
-        </div>
-      </div>
-    </div>
-
+    <!-- Charts Section - Moved to top -->
     <div class="charts-section">
       <div class="chart-card">
         <div class="chart-header">
@@ -101,6 +59,41 @@
       </div>
     </div>
 
+    <!-- Statistics Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">👟</div>
+        <div class="stat-info">
+          <h3>{{ totalProducts }}</h3>
+          <p>Tổng sản phẩm</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-info">
+          <h3>{{ totalCustomers }}</h3>
+          <p>Khách hàng</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">🧾</div>
+        <div class="stat-info">
+          <h3>{{ totalOrders }}</h3>
+          <p>Hóa đơn</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-info">
+          <h3>{{ formatCurrency(totalRevenue) }}</h3>
+          <p>Doanh thu</p>
+        </div>
+      </div>
+    </div>
+
     <div class="recent-orders">
       <h3>Đơn hàng gần đây</h3>
       <div class="table-responsive">
@@ -135,7 +128,6 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import GearUpLogo from '../components/ui/GearUpLogo.vue'
 import { useProductStore } from '../stores/productStore.js'
 import { useCustomerStore } from '../stores/customerStore.js'
 import { useOrderStore } from '../stores/orderStore.js'
@@ -255,33 +247,6 @@ onMounted(() => {
 <style scoped>
 .dashboard {
   max-width: 1200px;
-}
-
-.welcome-section {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 40px;
-  border-radius: 12px;
-  margin-bottom: 30px;
-  text-align: center;
-}
-
-.welcome-content h1 {
-  font-size: 28px;
-  margin: 15px 0 10px 0;
-  font-weight: 600;
-}
-
-.welcome-content p {
-  font-size: 16px;
-  opacity: 0.9;
-  margin: 0;
-}
-
-.dashboard-logo {
-  width: 180px;
-  height: auto;
-  filter: brightness(0) invert(1);
 }
 
 .stats-grid {
@@ -552,5 +517,425 @@ onMounted(() => {
 .status-badge.cancelled {
   background: #f8d7da;
   color: #721c24;
+}
+
+/* Responsive Design */
+/* Large Screen Optimizations */
+@media (min-width: 1600px) {
+  .dashboard {
+    max-width: 1800px;
+    margin: 0 auto;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+  }
+  
+  .stat-card {
+    padding: 2rem;
+  }
+  
+  .stat-icon {
+    font-size: 3rem;
+    margin-right: 1.5rem;
+  }
+  
+  .stat-info h3 {
+    font-size: 2.25rem;
+  }
+  
+  .charts-section {
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 2.5rem;
+  }
+  
+  .chart-card {
+    padding: 2rem;
+  }
+  
+  .recent-orders {
+    padding: 2rem;
+  }
+  
+  .table th,
+  .table td {
+    padding: 1rem;
+    font-size: 0.9375rem;
+  }
+}
+
+@media (min-width: 1920px) {
+  .dashboard {
+    max-width: 2000px;
+  }
+  
+  .stats-grid {
+    gap: 2.5rem;
+    margin-bottom: 3rem;
+  }
+  
+  .stat-card {
+    padding: 2.5rem;
+  }
+  
+  .stat-icon {
+    font-size: 3.5rem;
+  }
+  
+  .stat-info h3 {
+    font-size: 2.5rem;
+  }
+  
+  .charts-section {
+    gap: 3rem;
+  }
+  
+  .chart-card {
+    padding: 2.5rem;
+  }
+  
+  .recent-orders {
+    padding: 2.5rem;
+  }
+}
+
+@media (min-width: 1400px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+  
+  .charts-section {
+    grid-template-columns: 1.3fr 0.7fr;
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 1400px) {
+  .dashboard {
+    max-width: 100%;
+  }
+  
+  .charts-section {
+    gap: 16px;
+  }
+  
+  .stats-grid {
+    gap: 16px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .charts-section {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .chart-content {
+    height: 200px;
+  }
+  
+  .chart-bars {
+    height: 150px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+
+@media (max-width: 1024px) {
+  .dashboard {
+    padding: 0;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  
+  .stat-card {
+    padding: 20px;
+  }
+  
+  .stat-icon {
+    font-size: 32px;
+    margin-right: 16px;
+  }
+  
+  .stat-info h3 {
+    font-size: 24px;
+  }
+  
+  .chart-card {
+    padding: 20px;
+  }
+  
+  .top-product-item {
+    gap: 10px;
+  }
+  
+  .product-percentage {
+    width: 60px;
+  }
+  
+  .table th,
+  .table td {
+    padding: 10px 8px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 900px) {
+  .charts-section {
+    margin-bottom: 24px;
+  }
+  
+  .chart-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .chart-filter {
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .stat-card {
+    padding: 16px;
+    flex-direction: row;
+    text-align: left;
+  }
+  
+  .stat-icon {
+    margin: 0 16px 0 0;
+    font-size: 36px;
+  }
+  
+  .charts-section {
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .chart-card {
+    padding: 16px;
+  }
+  
+  .chart-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  
+  .chart-header h3 {
+    font-size: 16px;
+  }
+  
+  .chart-filter {
+    font-size: 12px;
+    padding: 4px 8px;
+    width: 100%;
+    max-width: 150px;
+  }
+  
+  .chart-content {
+    height: 180px;
+  }
+  
+  .chart-bars {
+    height: 130px;
+  }
+  
+  .chart-bar {
+    width: 18px;
+  }
+  
+  .top-products {
+    gap: 12px;
+  }
+  
+  .top-product-item {
+    gap: 8px;
+  }
+  
+  .product-rank {
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+  }
+  
+  .product-image-container {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .product-image {
+    font-size: 20px;
+  }
+  
+  .product-name {
+    font-size: 13px;
+  }
+  
+  .product-meta {
+    font-size: 11px;
+    gap: 8px;
+  }
+  
+  .product-percentage {
+    width: 50px;
+  }
+  
+  .percentage-bar {
+    height: 4px;
+  }
+  
+  .product-percentage span {
+    font-size: 10px;
+  }
+  
+  .recent-orders {
+    padding: 16px;
+  }
+  
+  .recent-orders h3 {
+    font-size: 16px;
+  }
+  
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .table {
+    min-width: 600px;
+  }
+  
+  .table th,
+  .table td {
+    padding: 8px;
+    font-size: 12px;
+  }
+  
+  .table th {
+    font-size: 11px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  
+  .status-badge {
+    padding: 2px 8px;
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 640px) {
+  .stat-card {
+    padding: 12px;
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .stat-icon {
+    margin: 0 0 8px 0;
+    font-size: 32px;
+  }
+  
+  .stat-info h3 {
+    font-size: 20px;
+  }
+  
+  .stat-info p {
+    font-size: 12px;
+  }
+  
+  .chart-header h3 {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    gap: 8px;
+  }
+  
+  .stat-card {
+    padding: 12px;
+  }
+  
+  .stat-info h3 {
+    font-size: 18px;
+  }
+  
+  .stat-info p {
+    font-size: 11px;
+  }
+  
+  .charts-section {
+    gap: 12px;
+  }
+  
+  .chart-card {
+    padding: 12px;
+  }
+  
+  .chart-content {
+    height: 150px;
+  }
+  
+  .chart-bars {
+    height: 100px;
+  }
+  
+  .chart-bar {
+    width: 12px;
+  }
+  
+  .chart-label {
+    font-size: 10px;
+  }
+  
+  .recent-orders {
+    padding: 12px;
+  }
+  
+  .table {
+    min-width: 500px;
+  }
+  
+  .table th,
+  .table td {
+    padding: 6px;
+    font-size: 11px;
+  }
+}
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+  .chart-bar:hover .bar-tooltip {
+    opacity: 0;
+  }
+  
+  .chart-bar:active .bar-tooltip {
+    opacity: 1;
+  }
+  
+  .stat-card {
+    transition: transform 0.2s ease;
+  }
+  
+  .stat-card:active {
+    transform: scale(0.98);
+  }
 }
 </style>

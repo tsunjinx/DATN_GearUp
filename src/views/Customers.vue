@@ -42,9 +42,10 @@
             <td>{{ customer.address }}</td>
             <td>{{ formatDate(customer.createdAt) }}</td>
             <td>
-              <span class="status-badge" :class="customer.status">
-                {{ getStatusText(customer.status) }}
-              </span>
+              <StatusBadge 
+                :status="customer.status" 
+                :size="isMobile ? 'small' : 'normal'"
+              />
             </td>
             <td>
               <div class="action-buttons">
@@ -110,12 +111,28 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import StatusBadge from '@/components/ui/StatusBadge.vue'
 
 const searchTerm = ref('')
 const showAddModal = ref(false)
 const showEditModal = ref(false)
 const editingCustomer = ref(null)
+const isMobile = ref(false)
+
+// Check if device is mobile
+const checkMobile = () => {
+  isMobile.value = window.innerWidth <= 768
+}
+
+onMounted(() => {
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile)
+})
 
 const customerForm = ref({
   fullName: '',
@@ -326,28 +343,6 @@ const closeModal = () => {
   background: #f8f9fa;
 }
 
-.status-badge {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.status-badge.active {
-  background: #d4edda;
-  color: #155724;
-}
-
-.status-badge.inactive {
-  background: #fff3cd;
-  color: #856404;
-}
-
-.status-badge.blocked {
-  background: #f8d7da;
-  color: #721c24;
-}
-
 .action-buttons {
   display: flex;
   gap: 8px;
@@ -424,5 +419,406 @@ const closeModal = () => {
   gap: 10px;
   justify-content: flex-end;
   margin-top: 30px;
+}
+
+/* Responsive Design */
+/* Large Screen Optimizations */
+@media (min-width: 1600px) {
+  .customers-page {
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .page-header {
+    margin-bottom: 2.5rem;
+  }
+  
+  .filters {
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .filter-controls {
+    gap: 1.5rem;
+  }
+  
+  .search-input,
+  .filter-select {
+    padding: 1rem;
+    font-size: 1rem;
+  }
+  
+  .table th,
+  .table td {
+    padding: 1rem;
+    font-size: 0.9375rem;
+  }
+  
+  .customer-info {
+    min-width: 200px;
+  }
+  
+  .customer-contact {
+    min-width: 180px;
+  }
+  
+  .actions {
+    gap: 1rem;
+    min-width: 120px;
+  }
+  
+  .btn {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9375rem;
+  }
+}
+
+@media (min-width: 1920px) {
+  .customers-page {
+    max-width: 2000px;
+    padding: 2.5rem;
+  }
+  
+  .filters {
+    padding: 2.5rem;
+  }
+  
+  .table th,
+  .table td {
+    padding: 1.25rem;
+    font-size: 1rem;
+  }
+  
+  .customer-info {
+    min-width: 250px;
+  }
+  
+  .customer-contact {
+    min-width: 200px;
+  }
+  
+  .btn {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 1400px) {
+  .filter-controls {
+    display: flex;
+    gap: 1rem;
+    max-width: none;
+  }
+  
+  .table-container {
+    overflow-x: visible;
+  }
+  
+  .table {
+    min-width: auto;
+  }
+}
+
+@media (max-width: 1400px) {
+  .customers-page {
+    max-width: 100%;
+  }
+  
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 1200px) {
+  .table th,
+  .table td {
+    padding: 12px 10px;
+    font-size: 14px;
+  }
+  
+  .table {
+    min-width: 800px;
+  }
+  
+  .action-buttons {
+    min-width: 100px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .page-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+  
+  .page-header h2 {
+    text-align: center;
+  }
+  
+  .filters {
+    padding: 15px;
+  }
+  
+  .search-input {
+    max-width: 100%;
+  }
+  
+  .table th,
+  .table td {
+    padding: 10px 8px;
+    font-size: 13px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 5px;
+    min-width: 80px;
+  }
+  
+  .btn-sm {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 900px) {
+  .table {
+    min-width: 700px;
+  }
+  
+  .table th,
+  .table td {
+    padding: 8px 6px;
+    font-size: 12px;
+  }
+  
+  .customer-name {
+    min-width: 120px;
+  }
+  
+  .customer-contact {
+    min-width: 100px;
+  }
+}
+
+@media (max-width: 768px) {
+  .customers-page {
+    padding: 0 10px;
+  }
+  
+  .page-header {
+    margin-bottom: 20px;
+  }
+  
+  .page-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  .filters {
+    padding: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .table {
+    min-width: 800px;
+  }
+  
+  .table th,
+  .table td {
+    padding: 8px 6px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  
+  .table th:nth-child(5),
+  .table td:nth-child(5) {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 3px;
+    min-width: 80px;
+  }
+  
+  .btn-sm {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+  
+  .modal {
+    width: 95%;
+    margin: 10px;
+  }
+  
+  .modal-header {
+    padding: 15px;
+  }
+  
+  .modal-header h3 {
+    font-size: 1.2rem;
+  }
+  
+  .modal-body {
+    padding: 15px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .form-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .customers-page {
+    padding: 0 5px;
+  }
+  
+  .page-header h2 {
+    font-size: 1.3rem;
+  }
+  
+  .table {
+    min-width: 900px;
+  }
+  
+  .table th,
+  .table td {
+    padding: 6px 4px;
+    font-size: 11px;
+  }
+  
+  .btn {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+  
+  .btn-sm {
+    padding: 4px 6px;
+    font-size: 10px;
+  }
+  
+  .search-input {
+    padding: 8px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .customers-page {
+    padding: 0;
+  }
+  
+  .page-header {
+    margin-bottom: 15px;
+  }
+  
+  .page-header h2 {
+    font-size: 1.2rem;
+  }
+  
+  .filters {
+    padding: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .table {
+    min-width: 1000px;
+  }
+  
+  .table th,
+  .table td {
+    padding: 5px 3px;
+    font-size: 10px;
+  }
+  
+  .btn {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+  
+  .btn-sm {
+    padding: 3px 5px;
+    font-size: 9px;
+  }
+  
+  .modal {
+    width: 98%;
+    margin: 5px;
+  }
+  
+  .modal-header {
+    padding: 12px;
+  }
+  
+  .modal-header h3 {
+    font-size: 1.1rem;
+  }
+  
+  .modal-body {
+    padding: 12px;
+  }
+  
+  .form-group input,
+  .form-group select {
+    padding: 8px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}
+
+/* Touch devices optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .table tbody tr {
+    cursor: pointer;
+  }
+  
+  .table tbody tr:active {
+    background: #e9ecef;
+  }
+  
+  .search-input {
+    min-height: 44px;
+  }
+  
+  .form-group input,
+  .form-group select {
+    min-height: 44px;
+  }
+}
+
+/* Landscape orientation on small devices */
+@media (max-width: 768px) and (orientation: landscape) {
+  .modal {
+    max-height: 95vh;
+  }
+  
+  .modal-body {
+    max-height: calc(95vh - 120px);
+    overflow-y: auto;
+  }
 }
 </style>

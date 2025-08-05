@@ -6,7 +6,6 @@
       :class="logoClass"
       :style="logoStyle"
     />
-    <span v-if="showText" class="logo-text">{{ text }}</span>
   </div>
 </template>
 
@@ -19,14 +18,6 @@ const props = defineProps({
     type: String,
     default: 'default', // 'default', 'white', 'small', 'large'
     validator: (value) => ['default', 'white', 'small', 'large'].includes(value)
-  },
-  showText: {
-    type: Boolean,
-    default: false
-  },
-  text: {
-    type: String,
-    default: 'Admin'
   },
   width: {
     type: [String, Number],
@@ -49,6 +40,16 @@ const logoStyle = computed(() => {
   const style = {}
   if (props.width) {
     style.width = typeof props.width === 'number' ? `${props.width}px` : props.width
+  } else {
+    // Make logo slightly larger by default
+    const sizeMultiplier = 1.2
+    if (props.variant === 'small') {
+      style.width = `${100 * sizeMultiplier}px`
+    } else if (props.variant === 'default') {
+      style.width = `${180 * sizeMultiplier}px`
+    } else if (props.variant === 'large') {
+      style.width = `${240 * sizeMultiplier}px`
+    }
   }
   if (props.height) {
     style.height = typeof props.height === 'number' ? `${props.height}px` : props.height
@@ -80,35 +81,18 @@ const logoStyle = computed(() => {
 }
 
 .logo-default {
-  width: 140px;
+  width: 180px;
 }
 
 .logo-small {
-  width: 80px;
+  width: 100px;
 }
 
 .logo-large {
-  width: 200px;
+  width: 240px;
 }
 
 .logo-white {
   filter: brightness(0) invert(1);
-}
-
-.logo-text {
-  font-weight: 600;
-  color: inherit;
-}
-
-.small .logo-text {
-  font-size: 14px;
-}
-
-.default .logo-text {
-  font-size: 16px;
-}
-
-.large .logo-text {
-  font-size: 20px;
 }
 </style>

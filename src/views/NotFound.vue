@@ -67,4 +67,98 @@ p {
   background: #5a6fd8;
   transform: translateY(-2px);
 }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .not-found {
+    padding: 15px;
+  }
+  
+  .not-found-content {
+    max-width: 100%;
+    padding: 30px 20px;
+  }
+  
+  h1 {
+    font-size: 56px;
+  }
+  
+  h2 {
+    font-size: 20px;
+  }
+  
+  p {
+    font-size: 14px;
+    margin-bottom: 25px;
+  }
+  
+  .back-home {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .not-found {
+    padding: 10px;
+  }
+  
+  .not-found-content {
+    padding: 25px 15px;
+  }
+  
+  h1 {
+    font-size: 48px;
+  }
+  
+  h2 {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+  
+  p {
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+  
+  .back-home {
+    padding: 10px 18px;
+    font-size: 13px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 360px) {
+  .not-found-content {
+    padding: 20px 12px;
+  }
+  
+  h1 {
+    font-size: 42px;
+  }
+  
+  h2 {
+    font-size: 16px;
+  }
+  
+  p {
+    font-size: 12px;
+  }
+}
+
+/* Touch devices optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .back-home {
+    min-height: 44px;
+  }
+  
+  .back-home:hover {
+    transform: none;
+  }
+  
+  .back-home:active {
+    transform: scale(0.98);
+  }
+}
 </style>

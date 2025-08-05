@@ -72,9 +72,10 @@
             </td>
             <td class="price">{{ formatCurrency(order.total) }}</td>
             <td>
-              <span class="status-badge" :class="order.status">
-                {{ getStatusText(order.status) }}
-              </span>
+              <StatusBadge 
+                :status="order.status" 
+                :size="isMobile ? 'small' : 'normal'"
+              />
             </td>
             <td>{{ formatDate(order.createdAt) }}</td>
             <td>
@@ -162,7 +163,8 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import StatusBadge from '@/components/ui/StatusBadge.vue'
 
 const searchTerm = ref('')
 const selectedStatus = ref('')
@@ -171,6 +173,21 @@ const dateTo = ref('')
 const showAddModal = ref(false)
 const showDetailModal = ref(false)
 const selectedOrder = ref(null)
+const isMobile = ref(false)
+
+// Check if device is mobile
+const checkMobile = () => {
+  isMobile.value = window.innerWidth <= 768
+}
+
+onMounted(() => {
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile)
+})
 
 const sampleOrders = ref([
   {
@@ -426,38 +443,6 @@ const closeDetailModal = () => {
   font-weight: bold;
 }
 
-.status-badge {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.status-badge.pending {
-  background: #fff3cd;
-  color: #856404;
-}
-
-.status-badge.confirmed {
-  background: #d1ecf1;
-  color: #0c5460;
-}
-
-.status-badge.shipping {
-  background: #d4edda;
-  color: #155724;
-}
-
-.status-badge.completed {
-  background: #d1ecf1;
-  color: #0c5460;
-}
-
-.status-badge.cancelled {
-  background: #f8d7da;
-  color: #721c24;
-}
-
 .action-buttons {
   display: flex;
   gap: 8px;
@@ -557,5 +542,481 @@ const closeDetailModal = () => {
 .detail-table tfoot td {
   font-weight: bold;
   background: #f8f9fa;
+}
+
+/* Responsive Design */
+/* Large Screen Optimizations */
+@media (min-width: 1600px) {
+  .orders-page {
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .page-header {
+    margin-bottom: 2.5rem;
+  }
+  
+  .filters {
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .filter-controls {
+    gap: 1.5rem;
+  }
+  
+  .search-input,
+  .filter-select {
+    padding: 1rem;
+    font-size: 1rem;
+  }
+  
+  .table th,
+  .table td {
+    padding: 1rem;
+    font-size: 0.9375rem;
+  }
+  
+  .product-info {
+    font-size: 0.9375rem;
+  }
+  
+  .actions {
+    gap: 1rem;
+  }
+  
+  .btn {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9375rem;
+  }
+}
+
+@media (min-width: 1920px) {
+  .orders-page {
+    max-width: 2000px;
+    padding: 2.5rem;
+  }
+  
+  .filters {
+    padding: 2.5rem;
+  }
+  
+  .table th,
+  .table td {
+    padding: 1.25rem;
+    font-size: 1rem;
+  }
+  
+  .btn {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 1400px) {
+  .filter-controls {
+    display: flex;
+    gap: 1rem;
+    max-width: none;
+  }
+  
+  .table-container {
+    overflow-x: visible;
+  }
+  
+  .table {
+    min-width: auto;
+  }
+}
+
+@media (max-width: 1400px) {
+  .orders-page {
+    max-width: 100%;
+  }
+  
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 1200px) {
+  .table th,
+  .table td {
+    padding: 12px 8px;
+    font-size: 14px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .products-list {
+    max-width: 180px;
+  }
+  
+  .customer-info {
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .page-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+  
+  .page-header h2 {
+    text-align: center;
+  }
+  
+  .filters {
+    padding: 15px;
+  }
+  
+  .filter-controls {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .filter-select {
+    width: 100%;
+  }
+  
+  .table th,
+  .table td {
+    padding: 10px 6px;
+    font-size: 13px;
+  }
+  
+  .customer-info {
+    font-size: 13px;
+    min-width: 100px;
+  }
+  
+  .customer-info small {
+    font-size: 11px;
+  }
+  
+  .products-list {
+    font-size: 12px;
+    max-width: 150px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 4px;
+    min-width: 80px;
+  }
+  
+  .btn-sm {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .status-select {
+    width: 100%;
+  }
+}
+
+@media (max-width: 900px) {
+  .filter-controls {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .table {
+    min-width: 900px;
+  }
+  
+  .products-list {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .product-item {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (max-width: 768px) {
+  .orders-page {
+    padding: 0 10px;
+  }
+  
+  .page-header {
+    margin-bottom: 20px;
+  }
+  
+  .page-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  .filters {
+    padding: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .search-input {
+    margin-bottom: 10px;
+  }
+  
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .table {
+    min-width: 900px;
+  }
+  
+  .table th,
+  .table td {
+    padding: 8px 5px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  
+  .customer-info {
+    min-width: 120px;
+  }
+  
+  .customer-info strong {
+    display: block;
+    font-size: 12px;
+  }
+  
+  .customer-info small {
+    font-size: 10px;
+    color: #666;
+  }
+  
+  .products-list {
+    max-width: 150px;
+    overflow: hidden;
+  }
+  
+  .product-item {
+    font-size: 11px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .price {
+    font-weight: bold;
+    color: #22c55e;
+  }
+  
+  .action-buttons {
+    min-width: 100px;
+  }
+  
+  .btn-sm {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+  
+  .status-select {
+    font-size: 10px;
+    padding: 3px 5px;
+  }
+  
+  .modal {
+    width: 95%;
+    margin: 10px;
+  }
+  
+  .modal-header {
+    padding: 15px;
+  }
+  
+  .modal-header h3 {
+    font-size: 1.2rem;
+  }
+  
+  .modal-body {
+    padding: 15px;
+  }
+  
+  .detail-section {
+    margin-bottom: 20px;
+  }
+  
+  .detail-section h4 {
+    font-size: 1.1rem;
+  }
+  
+  .detail-table th,
+  .detail-table td {
+    padding: 8px 6px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .orders-page {
+    padding: 0 5px;
+  }
+  
+  .page-header h2 {
+    font-size: 1.3rem;
+  }
+  
+  .table {
+    min-width: 1000px;
+  }
+  
+  .table th,
+  .table td {
+    padding: 6px 4px;
+    font-size: 11px;
+  }
+  
+  .btn {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+  
+  .btn-sm {
+    padding: 4px 6px;
+    font-size: 10px;
+  }
+  
+  .search-input,
+  .filter-select {
+    padding: 8px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .orders-page {
+    padding: 0;
+  }
+  
+  .page-header {
+    margin-bottom: 15px;
+  }
+  
+  .page-header h2 {
+    font-size: 1.2rem;
+  }
+  
+  .filters {
+    padding: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .table {
+    min-width: 1100px;
+  }
+  
+  .table th,
+  .table td {
+    padding: 5px 3px;
+    font-size: 10px;
+  }
+  
+  .customer-info {
+    min-width: 100px;
+  }
+  
+  .customer-info strong {
+    font-size: 11px;
+  }
+  
+  .customer-info small {
+    font-size: 9px;
+  }
+  
+  .products-list {
+    max-width: 120px;
+  }
+  
+  .product-item {
+    font-size: 10px;
+  }
+  
+  .btn {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+  
+  .btn-sm {
+    padding: 3px 5px;
+    font-size: 9px;
+  }
+  
+  .status-select {
+    font-size: 9px;
+    padding: 2px 4px;
+  }
+  
+  .modal {
+    width: 98%;
+    margin: 5px;
+  }
+  
+  .modal-header {
+    padding: 12px;
+  }
+  
+  .modal-header h3 {
+    font-size: 1.1rem;
+  }
+  
+  .modal-body {
+    padding: 12px;
+  }
+  
+  .detail-table th,
+  .detail-table td {
+    padding: 6px 4px;
+    font-size: 11px;
+  }
+}
+
+/* Touch devices optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .table tbody tr {
+    cursor: pointer;
+  }
+  
+  .table tbody tr:active {
+    background: #f8f9fa;
+  }
+  
+  .search-input,
+  .filter-select {
+    min-height: 44px;
+  }
+  
+  .status-select {
+    min-height: 44px;
+  }
+}
+
+/* Landscape orientation on small devices */
+@media (max-width: 768px) and (orientation: landscape) {
+  .modal {
+    max-height: 95vh;
+  }
+  
+  .modal-body {
+    max-height: calc(95vh - 120px);
+    overflow-y: auto;
+  }
 }
 </style>
