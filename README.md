@@ -1,76 +1,189 @@
-# GearUp - Website Bán Giày
+# 🚀 DATN_GearUp - Admin Dashboard
 
-Dự án website bán giày GearUp sử dụng Vue.js 3 cho phần Frontend.
+A modern, responsive admin dashboard for GearUp shoe store management system built with Vue 3 and Vite.
 
-## 🚀 Tính năng chính
+## ✨ Features
 
-- **Dashboard**: Thống kê tổng quan về doanh số, sản phẩm, khách hàng
-- **Quản lý Sản phẩm**: CRUD sản phẩm, phân loại theo danh mục, thương hiệu
-- **Quản lý Khách hàng**: Quản lý thông tin khách hàng, trạng thái tài khoản
-- **Quản lý Nhân viên**: Quản lý thông tin nhân viên, phân quyền
-- **Quản lý Hóa đơn**: Theo dõi đơn hàng, cập nhật trạng thái
-- **Quản lý Đợt giảm giá**: Tạo và quản lý các chương trình khuyến mãi
-- **Quản lý Phiếu giảm giá**: Tạo và quản lý mã giảm giá
+### � Authentication System
+- Secure login/logout functionality
+- Session management with localStorage
+- Route protection with authentication guards
 
-## 🛠️ Công nghệ sử dụng
+### 📊 Dashboard & Analytics
+- Real-time statistics overview
+- Revenue charts and analytics
+- Top-selling products tracking
+- Recent orders monitoring
 
-- **Frontend**: Vue.js 3 + Vite
-- **State Management**: Pinia
-- **Routing**: Vue Router 4
-- **HTTP Client**: Axios
-- **CSS**: CSS3 với responsive design
+### 🛍️ Product Management
+- Complete CRUD operations for products
+- Product categorization and filtering
+- Inventory tracking
+- Image management
 
-## 📁 Cấu trúc thư mục
+### 👥 Customer Management
+- Customer profiles and data
+- Purchase history tracking
+- Customer analytics
 
+### 👨‍💼 Employee Management
+- Staff management system
+- Role-based access control
+- Employee performance tracking
+
+### 🧾 Order Management
+- Order processing workflow
+- Order status tracking
+- Invoice generation
+
+### 🏷️ Promotions & Discounts
+- Discount campaigns management
+- Coupon system
+- Promotional tools
+
+## 🛠️ Tech Stack
+
+- **Frontend Framework:** Vue 3 (Composition API)
+- **Build Tool:** Vite
+- **Routing:** Vue Router 4
+- **State Management:** Pinia
+- **Styling:** CSS3 with Scoped Components
+- **Icons:** Unicode Emojis
+- **Authentication:** Custom JWT-like system
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js (v16 or higher)
+- npm or yarn
+
+### Installation
+
+1. Clone the repository
+```bash
+git clone https://github.com/tsunjinx/DATN_GearUp.git
+cd DATN_GearUp
 ```
-src/
-├── assets/           # Tài nguyên tĩnh (hình ảnh, icons)
-├── components/       # Component tái sử dụng
-├── layouts/          # Layout components
-├── router/           # Cấu hình Vue Router
-├── services/         # API services
-├── stores/           # Pinia stores
-├── utils/            # Utility functions
-├── views/            # Các trang chính
-├── App.vue           # Component gốc
-├── main.js           # Entry point
-└── style.css         # Global styles
-```
 
-## 🔧 Cài đặt và chạy dự án
-
-### Yêu cầu hệ thống
-- Node.js >= 16.0.0
-- npm hoặc yarn
-
-### Các bước cài đặt
-
-1. **Cài đặt dependencies**
+2. Install dependencies
 ```bash
 npm install
 ```
 
-2. **Chạy development server**
+3. Start development server
 ```bash
 npm run dev
 ```
 
-3. **Build cho production**
-```bash
-npm run build
+4. Open your browser and navigate to `http://localhost:5173`
+
+### Demo Credentials
+- **Username:** `admin`
+- **Password:** `admin`
+
+## 📁 Project Structure
+
+```
+src/
+├── components/          # Reusable UI components
+│   └── ui/             # UI-specific components
+├── composables/        # Vue composition functions
+├── layouts/            # Layout components
+├── router/             # Vue Router configuration
+├── services/           # API services
+├── stores/             # Pinia stores
+├── views/              # Page components
+├── assets/             # Static assets
+└── utils/              # Utility functions
 ```
 
-4. **Preview build**
+## 🔧 Available Scripts
+
 ```bash
-npm run preview
+# Development
+npm run dev              # Start development server
+npm run build           # Build for production
+npm run preview         # Preview production build
+
+# Code Quality
+npm run lint            # Run ESLint
+npm run lint:check      # Check linting without fixing
+npm run format          # Format code with Prettier
+npm run format:check    # Check formatting
+npm run type-check      # Run TypeScript type checking
 ```
 
-## 🎯 Các trang chính
+## 🌟 Key Features Details
 
-- **Dashboard** (`/`): Thống kê tổng quan, biểu đồ doanh thu
-- **Sản phẩm** (`/products`): Quản lý sản phẩm với tìm kiếm và lọc
-- **Khách hàng** (`/customers`): Quản lý thông tin khách hàng
-- **Nhân viên** (`/employees`): Quản lý nhân viên và phân quyền
-- **Hóa đơn** (`/orders`): Quản lý đơn hàng và trạng thái
-- **Đợt giảm giá** (`/discounts`): Tạo chương trình khuyến mãi
-- **Phiếu giảm giá** (`/coupons`): Tạo và quản lý mã giảm giá
+### Authentication Flow
+- Login page with form validation
+- Automatic redirection based on authentication status
+- Session persistence with localStorage
+- Protected routes requiring authentication
+
+### Dashboard Overview
+- Statistics cards showing key metrics
+- Monthly revenue chart with interactive bars
+- Top-selling products list with rankings
+- Recent orders table with status indicators
+
+### Admin Layout
+- Responsive sidebar navigation
+- Professional header with user info
+- Consistent styling across all pages
+- Mobile-friendly design
+
+## 🎨 Design System
+
+- **Primary Colors:** Blue gradient (#667eea to #764ba2)
+- **Typography:** Segoe UI font family
+- **Components:** Modern card-based layout
+- **Responsive:** Mobile-first approach
+- **Icons:** Unicode emojis for simplicity
+
+## 🔒 Security Features
+
+- Route-level authentication guards
+- Protected admin routes
+- Guest-only routes (login page)
+- Session validation
+- Automatic logout functionality
+
+## 📱 Responsive Design
+
+The application is fully responsive and works seamlessly across:
+- Desktop computers
+- Tablets
+- Mobile phones
+
+## 🛣️ Roadmap
+
+- [ ] Backend API integration
+- [ ] Real-time notifications
+- [ ] Advanced analytics
+- [ ] Multi-language support
+- [ ] Dark mode theme
+- [ ] Export functionality
+- [ ] Advanced search and filtering
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is for educational purposes as part of a graduation thesis (DATN).
+
+## 👨‍💻 Author
+
+**tsunjinx**
+- GitHub: [@tsunjinx](https://github.com/tsunjinx)
+- Email: hoangnongls154@gmail.com
+
+---
+
+⭐ If you find this project helpful, please give it a star!
