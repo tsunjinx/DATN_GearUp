@@ -52,7 +52,7 @@
               Reset
             </button>
           </div>
-          
+
           <!-- Price Input Controls -->
           <div class="price-inputs-container">
             <div class="price-input-group">
