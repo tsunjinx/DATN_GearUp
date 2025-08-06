@@ -1,4 +1,6 @@
+import './assets/variables.css'
 import './style.css'
+import './assets/button-animations.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'

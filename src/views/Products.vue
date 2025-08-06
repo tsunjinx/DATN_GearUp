@@ -36,20 +36,16 @@
             Đặt lại
           </button>
         </div>
-        
+
         <div class="filters-content">
           <div class="search-section">
             <div class="search-box">
               <i class="search-icon">🔍</i>
-              <input
-                v-model="searchTerm"
-                type="text"
-                placeholder="Tìm kiếm theo tên sản phẩm, mã sản phẩm..."
-                class="search-input"
-              />
+              <input v-model="searchTerm" type="text" placeholder="Tìm kiếm theo tên sản phẩm, mã sản phẩm..."
+                class="search-input" />
             </div>
           </div>
-          
+
           <div class="filter-controls">
             <div class="filter-group">
               <label>Danh mục</label>
@@ -61,7 +57,7 @@
                 <option value="formal">Giày tây</option>
               </select>
             </div>
-            
+
             <div class="filter-group">
               <label>Thương hiệu</label>
               <select v-model="selectedBrand" class="form-control">
@@ -72,7 +68,7 @@
                 <option value="converse">Converse</option>
               </select>
             </div>
-            
+
             <div class="filter-group">
               <label>Trạng thái</label>
               <select v-model="selectedStatus" class="form-control">
@@ -82,28 +78,20 @@
                 <option value="low-stock">Sắp hết hàng</option>
               </select>
             </div>
-            
+
             <div class="filter-group">
               <label>Khoảng giá</label>
               <div class="price-range">
-                <input
-                  v-model.number="priceRange.min"
-                  type="number"
-                  placeholder="Từ"
-                  class="form-control price-input"
-                />
+                <input v-model.number="priceRange.min" type="number" placeholder="Từ"
+                  class="form-control price-input" />
                 <span class="price-separator">-</span>
-                <input
-                  v-model.number="priceRange.max"
-                  type="number"
-                  placeholder="Đến"
-                  class="form-control price-input"
-                />
+                <input v-model.number="priceRange.max" type="number" placeholder="Đến"
+                  class="form-control price-input" />
               </div>
             </div>
           </div>
         </div>
-        
+
         <div class="filters-summary">
           <div class="summary-stats">
             <span class="summary-item">
@@ -126,26 +114,22 @@
         </h3>
         <div class="table-actions">
           <div class="view-options">
-            <button 
-              class="btn btn-sm" 
+            <button class="btn btn-sm"
               :class="{ 'btn-primary': viewMode === 'table', 'btn-outline': viewMode !== 'table' }"
-              @click="viewMode = 'table'"
-            >
+              @click="viewMode = 'table'">
               <i class="btn-icon">📋</i>
               Bảng
             </button>
-            <button 
-              class="btn btn-sm" 
+            <button class="btn btn-sm"
               :class="{ 'btn-primary': viewMode === 'grid', 'btn-outline': viewMode !== 'grid' }"
-              @click="viewMode = 'grid'"
-            >
+              @click="viewMode = 'grid'">
               <i class="btn-icon">🔲</i>
               Lưới
             </button>
           </div>
         </div>
       </div>
-      
+
       <div class="card-body" v-if="viewMode === 'table'">
         <div class="table-responsive">
           <table class="table">
@@ -174,11 +158,8 @@
                 </td>
                 <td>
                   <div class="product-image-cell">
-                    <img 
-                      :src="product.image || '/placeholder-shoe.jpg'" 
-                      :alt="product.name"
-                      class="product-thumbnail"
-                    />
+                    <img :src="product.image || '/placeholder-shoe.jpg'" :alt="product.name"
+                      class="product-thumbnail" />
                   </div>
                 </td>
                 <td>
@@ -191,12 +172,16 @@
                   <span class="product-code">#{{ product.code }}</span>
                 </td>
                 <td>
-                  <span class="brand-badge" :class="getBrandClass(product.brand)">
-                    {{ getBrandName(product.brand) }}
-                  </span>
+                  <div class="brand-logo-cell">
+                    <img :src="getBrandLogo(product.brand)" :alt="getBrandName(product.brand)" class="brand-logo"
+                      @error="handleBrandLogoError" />
+                    <span class="brand-name">{{ getBrandName(product.brand) }}</span>
+                  </div>
                 </td>
                 <td>
-                  <span class="category-badge">{{ getCategoryName(product.category) }}</span>
+                  <span class="category-badge" :class="getCategoryClass(product.category)">
+                    {{ getCategoryName(product.category) }}
+                  </span>
                 </td>
                 <td>
                   <div class="price-cell">
@@ -232,25 +217,13 @@
                 </td>
                 <td>
                   <div class="action-buttons">
-                    <button 
-                      class="btn btn-sm btn-outline" 
-                      @click="viewProduct(product)"
-                      title="Xem chi tiết"
-                    >
+                    <button class="btn btn-sm btn-outline" @click="viewProduct(product)" title="Xem chi tiết">
                       <i class="btn-icon">👁️</i>
                     </button>
-                    <button 
-                      class="btn btn-sm btn-outline" 
-                      @click="editProduct(product)"
-                      title="Chỉnh sửa"
-                    >
+                    <button class="btn btn-sm btn-outline" @click="editProduct(product)" title="Chỉnh sửa">
                       <i class="btn-icon">✏️</i>
                     </button>
-                    <button 
-                      class="btn btn-sm btn-outline btn-danger" 
-                      @click="deleteProduct(product.id)"
-                      title="Xóa"
-                    >
+                    <button class="btn btn-sm btn-outline btn-danger" @click="deleteProduct(product.id)" title="Xóa">
                       <i class="btn-icon">🗑️</i>
                     </button>
                   </div>
@@ -259,52 +232,36 @@
             </tbody>
           </table>
         </div>
-        
+
         <!-- Pagination -->
         <div class="pagination-section">
           <div class="pagination-info">
-            Hiển thị {{ (currentPage - 1) * itemsPerPage + 1 }} - 
-            {{ Math.min(currentPage * itemsPerPage, filteredProducts.length) }} 
+            Hiển thị {{ (currentPage - 1) * itemsPerPage + 1 }} -
+            {{ Math.min(currentPage * itemsPerPage, filteredProducts.length) }}
             của {{ filteredProducts.length }} sản phẩm
           </div>
           <div class="pagination-controls">
-            <button 
-              class="btn btn-sm btn-outline" 
-              :disabled="currentPage === 1"
-              @click="currentPage--"
-            >
+            <button class="btn btn-sm btn-outline" :disabled="currentPage === 1" @click="currentPage--">
               ← Trước
             </button>
             <span class="page-numbers">
-              <button 
-                v-for="page in visiblePages" 
-                :key="page"
-                class="btn btn-sm"
+              <button v-for="page in visiblePages" :key="page" class="btn btn-sm"
                 :class="{ 'btn-primary': page === currentPage, 'btn-outline': page !== currentPage }"
-                @click="currentPage = page"
-              >
+                @click="currentPage = page">
                 {{ page }}
               </button>
             </span>
-            <button 
-              class="btn btn-sm btn-outline" 
-              :disabled="currentPage === totalPages"
-              @click="currentPage++"
-            >
+            <button class="btn btn-sm btn-outline" :disabled="currentPage === totalPages" @click="currentPage++">
               Tiếp →
             </button>
           </div>
         </div>
       </div>
-      
+
       <!-- Grid View -->
       <div class="card-body" v-else>
         <div class="products-grid">
-          <div
-            v-for="product in paginatedProducts"
-            :key="product.id"
-            class="product-grid-card"
-          >
+          <div v-for="product in paginatedProducts" :key="product.id" class="product-grid-card">
             <div class="product-image">
               <img :src="product.image || '/placeholder-shoe.jpg'" :alt="product.name" />
               <div class="product-overlay">
@@ -318,7 +275,11 @@
             </div>
             <div class="product-grid-info">
               <h4 class="product-grid-name">{{ product.name }}</h4>
-              <p class="product-grid-brand">{{ getBrandName(product.brand) }}</p>
+              <div class="product-grid-brand">
+                <img :src="getBrandLogo(product.brand)" :alt="getBrandName(product.brand)" class="brand-logo-small"
+                  @error="handleBrandLogoError" />
+                <span class="brand-name-small">{{ getBrandName(product.brand) }}</span>
+              </div>
               <div class="product-grid-price">{{ formatCurrency(product.price) }}</div>
               <div class="product-grid-meta">
                 <span class="stock-info">Kho: {{ product.stock }}</span>
@@ -347,26 +308,16 @@
             <div class="form-row">
               <div class="form-group">
                 <label class="required">Tên sản phẩm</label>
-                <input 
-                  v-model="productForm.name" 
-                  type="text" 
-                  class="form-control"
-                  placeholder="Nhập tên sản phẩm"
-                  required 
-                />
+                <input v-model="productForm.name" type="text" class="form-control" placeholder="Nhập tên sản phẩm"
+                  required />
               </div>
               <div class="form-group">
                 <label class="required">Mã sản phẩm</label>
-                <input 
-                  v-model="productForm.code" 
-                  type="text" 
-                  class="form-control"
-                  placeholder="Mã tự động hoặc nhập thủ công"
-                  required 
-                />
+                <input v-model="productForm.code" type="text" class="form-control"
+                  placeholder="Mã tự động hoặc nhập thủ công" required />
               </div>
             </div>
-            
+
             <div class="form-row">
               <div class="form-group">
                 <label class="required">Thương hiệu</label>
@@ -389,45 +340,30 @@
                 </select>
               </div>
             </div>
-            
+
             <div class="form-row">
               <div class="form-group">
                 <label class="required">Giá bán</label>
                 <div class="input-group">
-                  <input 
-                    v-model.number="productForm.price" 
-                    type="number" 
-                    class="form-control"
-                    placeholder="0"
-                    required 
-                  />
+                  <input v-model.number="productForm.price" type="number" class="form-control" placeholder="0"
+                    required />
                   <span class="input-suffix">₫</span>
                 </div>
               </div>
               <div class="form-group">
                 <label>Giá gốc</label>
                 <div class="input-group">
-                  <input 
-                    v-model.number="productForm.originalPrice" 
-                    type="number" 
-                    class="form-control"
-                    placeholder="0"
-                  />
+                  <input v-model.number="productForm.originalPrice" type="number" class="form-control"
+                    placeholder="0" />
                   <span class="input-suffix">₫</span>
                 </div>
               </div>
             </div>
-            
+
             <div class="form-row">
               <div class="form-group">
                 <label class="required">Số lượng tồn kho</label>
-                <input 
-                  v-model.number="productForm.stock" 
-                  type="number" 
-                  class="form-control"
-                  placeholder="0"
-                  required 
-                />
+                <input v-model.number="productForm.stock" type="number" class="form-control" placeholder="0" required />
               </div>
               <div class="form-group">
                 <label>Trạng thái</label>
@@ -437,17 +373,13 @@
                 </select>
               </div>
             </div>
-            
+
             <div class="form-group">
               <label>Mô tả sản phẩm</label>
-              <textarea 
-                v-model="productForm.description" 
-                class="form-control"
-                rows="4"
-                placeholder="Nhập mô tả chi tiết về sản phẩm"
-              ></textarea>
+              <textarea v-model="productForm.description" class="form-control" rows="4"
+                placeholder="Nhập mô tả chi tiết về sản phẩm"></textarea>
             </div>
-            
+
             <div class="form-group">
               <label>Hình ảnh sản phẩm</label>
               <div class="image-upload">
@@ -455,7 +387,7 @@
                 <p class="upload-hint">Chọn hình ảnh JPG, PNG (tối đa 5MB)</p>
               </div>
             </div>
-            
+
             <div class="form-actions">
               <button type="button" class="btn btn-secondary" @click="closeModal">
                 <i class="btn-icon">❌</i>
@@ -569,7 +501,7 @@ const sampleProducts = ref([
 
 const filteredProducts = computed(() => {
   let products = sampleProducts.value
-  
+
   if (searchTerm.value) {
     const search = searchTerm.value.toLowerCase()
     products = products.filter(product =>
@@ -577,15 +509,15 @@ const filteredProducts = computed(() => {
       product.code.toLowerCase().includes(search)
     )
   }
-  
+
   if (selectedCategory.value) {
     products = products.filter(product => product.category === selectedCategory.value)
   }
-  
+
   if (selectedBrand.value) {
     products = products.filter(product => product.brand === selectedBrand.value)
   }
-  
+
   if (selectedStatus.value) {
     if (selectedStatus.value === 'low-stock') {
       products = products.filter(product => product.stock <= 10)
@@ -593,15 +525,15 @@ const filteredProducts = computed(() => {
       products = products.filter(product => product.status === selectedStatus.value)
     }
   }
-  
+
   if (priceRange.value.min !== null) {
     products = products.filter(product => product.price >= priceRange.value.min)
   }
-  
+
   if (priceRange.value.max !== null) {
     products = products.filter(product => product.price <= priceRange.value.max)
   }
-  
+
   return products
 })
 
@@ -617,7 +549,7 @@ const visiblePages = computed(() => {
   const pages = []
   const total = totalPages.value
   const current = currentPage.value
-  
+
   if (total <= 7) {
     for (let i = 1; i <= total; i++) {
       pages.push(i)
@@ -641,7 +573,7 @@ const visiblePages = computed(() => {
       pages.push('...', total)
     }
   }
-  
+
   return pages
 })
 
@@ -670,6 +602,21 @@ const getBrandName = (brand) => {
   return brands[brand] || brand
 }
 
+const getBrandLogo = (brand) => {
+  const brandLogos = {
+    nike: '/brand-logos/nike.svg',
+    adidas: '/brand-logos/adidas.svg',
+    puma: '/brand-logos/puma.svg',
+    converse: '/brand-logos/converse.svg'
+  }
+  return brandLogos[brand] || '/brand-logos/default.svg'
+}
+
+const handleBrandLogoError = (event) => {
+  // Fallback to a generic brand icon if logo fails to load
+  event.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCA0MCAyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iMjAiIGZpbGw9IiNmM2Y0ZjYiLz4KICA8dGV4dCB4PSIyMCIgeT0iMTIiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI4IiBmaWxsPSIjNjc3NDgwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5CUkFORDwvdGV4dD4KPC9zdmc+'
+}
+
 const getBrandClass = (brand) => {
   return `brand-${brand}`
 }
@@ -682,6 +629,10 @@ const getCategoryName = (category) => {
     formal: 'Giày tây'
   }
   return categories[category] || category
+}
+
+const getCategoryClass = (category) => {
+  return `category-${category}`
 }
 
 const getStatusText = (status) => {
@@ -1026,41 +977,123 @@ onMounted(() => {
   font-size: 0.75rem;
 }
 
+.brand-logo-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 100px;
+}
+
+.brand-logo {
+  width: 40px;
+  height: 20px;
+  object-fit: contain;
+  border-radius: 0.25rem;
+  background: var(--gray-50);
+  padding: 0.125rem;
+  border: 1px solid var(--border-light);
+  transition: all 0.2s ease;
+}
+
+.brand-logo:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-sm);
+}
+
+.brand-name {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--gray-700);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+/* Keep original brand badge styles for fallback or other uses */
 .brand-badge {
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
+  letter-spacing: 0.025em;
+  border: 1px solid transparent;
 }
 
 .brand-nike {
-  background: #ff6b35;
-  color: white;
+  background: var(--orange-500);
+  color: var(--white);
+  border-color: var(--orange-600);
 }
 
 .brand-adidas {
-  background: #000;
-  color: white;
+  background: var(--gray-900);
+  color: var(--white);
+  border-color: var(--gray-800);
 }
 
 .brand-puma {
-  background: #ffd100;
-  color: #000;
+  background: var(--yellow-400);
+  color: var(--gray-900);
+  border-color: var(--yellow-500);
 }
 
 .brand-converse {
-  background: #e31e24;
-  color: white;
+  background: var(--red-600);
+  color: var(--white);
+  border-color: var(--red-700);
 }
 
 .category-badge {
-  background: var(--gray-100);
-  color: var(--gray-700);
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
   font-size: 0.75rem;
   font-weight: 500;
+  text-transform: capitalize;
+  letter-spacing: 0.025em;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+}
+
+/* Dynamic category colors */
+.category-sneakers {
+  background: var(--primary-100);
+  color: var(--primary-700);
+  border-color: var(--primary-200);
+}
+
+.category-boots {
+  background: var(--warning-100);
+  color: var(--warning-700);
+  border-color: var(--warning-200);
+}
+
+.category-sandals {
+  background: var(--info-100);
+  color: var(--info-700);
+  border-color: var(--info-200);
+}
+
+.category-formal {
+  background: var(--success-100);
+  color: var(--success-700);
+  border-color: var(--success-200);
+}
+
+/* Default fallback */
+.category-badge:not([class*="category-"]) {
+  background: var(--gray-100);
+  color: var(--gray-700);
+  border-color: var(--gray-200);
+}
+
+/* Hover effects */
+.category-badge:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .price-cell {
@@ -1206,9 +1239,28 @@ onMounted(() => {
 }
 
 .product-grid-brand {
-  color: var(--gray-600);
-  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
   margin: 0 0 0.5rem 0;
+}
+
+.brand-logo-small {
+  width: 32px;
+  height: 16px;
+  object-fit: contain;
+  border-radius: 0.125rem;
+  background: var(--gray-50);
+  padding: 0.125rem;
+  border: 1px solid var(--border-light);
+}
+
+.brand-name-small {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
 }
 
 .product-grid-price {
@@ -1325,13 +1377,19 @@ onMounted(() => {
     flex-direction: column;
     gap: 1rem;
   }
-  
+
   .filter-controls {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   }
-  
+
   .form-row {
     grid-template-columns: 1fr;
+  }
+
+  /* Medium screen category badges */
+  .category-badge {
+    font-size: 0.6875rem;
+    padding: 0.1875rem 0.4375rem;
   }
 }
 
@@ -1339,19 +1397,82 @@ onMounted(() => {
   .table-responsive {
     font-size: 0.75rem;
   }
-  
+
   .products-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .pagination-section {
     flex-direction: column;
     gap: 1rem;
   }
-  
+
   .summary-stats {
     flex-direction: column;
     gap: 0.5rem;
+  }
+
+  /* Responsive category badges */
+  .category-badge {
+    font-size: 0.625rem;
+    padding: 0.125rem 0.375rem;
+    min-height: 20px;
+  }
+
+  /* Ensure better contrast on small screens */
+  .category-sneakers {
+    background: var(--primary-200);
+    color: var(--primary-800);
+  }
+
+  .category-boots {
+    background: var(--warning-200);
+    color: var(--warning-800);
+  }
+
+  .category-sandals {
+    background: var(--info-200);
+    color: var(--info-800);
+  }
+
+  .category-formal {
+    background: var(--success-200);
+    color: var(--success-800);
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+  .category-badge {
+    font-size: 0.5rem;
+    padding: 0.125rem 0.25rem;
+    min-height: 18px;
+    border-radius: 0.125rem;
+  }
+
+  /* Enhanced contrast for very small screens */
+  .category-sneakers {
+    background: var(--primary-600);
+    color: var(--white);
+    border-color: var(--primary-700);
+  }
+
+  .category-boots {
+    background: var(--warning-600);
+    color: var(--white);
+    border-color: var(--warning-700);
+  }
+
+  .category-sandals {
+    background: var(--info-600);
+    color: var(--white);
+    border-color: var(--info-700);
+  }
+
+  .category-formal {
+    background: var(--success-600);
+    color: var(--white);
+    border-color: var(--success-700);
   }
 }
 </style>

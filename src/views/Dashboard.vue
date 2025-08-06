@@ -1,8 +1,29 @@
 <template>
   <div class="dashboard">
+    <!-- Dashboard Header with Action Buttons -->
+    <div class="dashboard-header">
+      <div class="header-content">
+        <h1 class="dashboard-title">📊Tổng Quan</h1>
+        <div class="header-actions">
+          <button class="btn btn-primary fade-in" style="animation-delay: 0.1s" @click="refreshData">
+            <span class="icon">🔄</span>
+            Làm mới
+          </button>
+          <button class="btn btn-success fade-in" style="animation-delay: 0.2s" @click="exportData">
+            <span class="icon">📊</span>
+            Xuất báo cáo
+          </button>
+          <button class="btn btn-info fade-in" style="animation-delay: 0.3s" @click="viewAnalytics">
+            <span class="icon">📈</span>
+            Phân tích
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Charts Section - Moved to top -->
     <div class="charts-section">
-      <div class="chart-card">
+      <div class="chart-card fade-in" style="animation-delay: 0.5s">
         <div class="chart-header">
           <h3>Doanh thu theo tháng</h3>
           <div class="chart-controls">
@@ -13,8 +34,10 @@
         </div>
         <div class="chart-content">
           <div class="chart-bars">
-            <div v-for="(month, index) in monthlyRevenue" :key="index" class="chart-bar"
-              :style="{ height: `${calculateBarHeight(month.value)}%` }" :class="{ 'current-month': month.current }">
+            <div v-for="(month, index) in monthlyRevenue" :key="index" class="chart-bar" :style="{
+              height: `${calculateBarHeight(month.value)}%`,
+              animationDelay: `${index * 0.1}s`
+            }" :class="{ 'current-month': month.current }" style="animation: chartBarGrow 0.8s ease-out both">
               <div class="bar-tooltip">{{ formatCurrency(month.value) }}</div>
             </div>
           </div>
@@ -25,7 +48,7 @@
           </div>
         </div>
       </div>
-      <div class="chart-card">
+      <div class="chart-card fade-in" style="animation-delay: 0.6s">
         <div class="chart-header">
           <h3>Sản phẩm bán chạy</h3>
           <div class="chart-controls">
@@ -60,7 +83,7 @@
 
     <!-- Statistics Grid -->
     <div class="stats-grid">
-      <div class="stat-card">
+      <div class="stat-card fade-in" style="animation-delay: 0.1s">
         <div class="stat-icon">👟</div>
         <div class="stat-info">
           <h3>{{ totalProducts }}</h3>
@@ -68,7 +91,7 @@
         </div>
       </div>
 
-      <div class="stat-card">
+      <div class="stat-card fade-in" style="animation-delay: 0.2s">
         <div class="stat-icon">👥</div>
         <div class="stat-info">
           <h3>{{ totalCustomers }}</h3>
@@ -76,7 +99,7 @@
         </div>
       </div>
 
-      <div class="stat-card">
+      <div class="stat-card fade-in" style="animation-delay: 0.3s">
         <div class="stat-icon">🧾</div>
         <div class="stat-info">
           <h3>{{ totalOrders }}</h3>
@@ -84,7 +107,7 @@
         </div>
       </div>
 
-      <div class="stat-card">
+      <div class="stat-card fade-in" style="animation-delay: 0.4s">
         <div class="stat-icon">💰</div>
         <div class="stat-info">
           <h3>{{ formatCurrency(totalRevenue) }}</h3>
@@ -130,10 +153,14 @@ import { ref, computed, onMounted } from 'vue'
 import { useProductStore } from '../stores/productStore.js'
 import { useCustomerStore } from '../stores/customerStore.js'
 import { useOrderStore } from '../stores/orderStore.js'
+import { useButtonAnimations } from '@/composables/useButtonAnimations.js'
 
 const productStore = useProductStore()
 const customerStore = useCustomerStore()
 const orderStore = useOrderStore()
+
+// Button animations composable
+const { triggerSuccess, triggerError, withLoadingAnimation, staggeredFadeIn } = useButtonAnimations()
 
 // Chart data
 const selectedYear = ref(new Date().getFullYear())
@@ -236,87 +263,181 @@ const calculatePercentage = (sold) => {
   return Math.round((sold / maxSold) * 100)
 }
 
+// Dashboard action methods with animations using composable
+const refreshData = async (event) => {
+  await withLoadingAnimation(event, async () => {
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 2000))
+
+    // Refresh store data
+    await Promise.all([
+      productStore.fetchProducts(),
+      customerStore.fetchCustomers(),
+      orderStore.fetchOrders()
+    ])
+
+    return 'Data refreshed successfully!'
+  }, {
+    onSuccess: (result) => console.log(result),
+    onError: (error) => console.error('Refresh failed:', error)
+  })
+}
+
+const exportData = async (event) => {
+  await withLoadingAnimation(event, async () => {
+    // Simulate export process
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    return 'Export completed successfully!'
+  }, {
+    onSuccess: (result) => console.log(result),
+    onError: (error) => console.error('Export failed:', error)
+  })
+}
+
+const viewAnalytics = (event) => {
+  triggerSuccess(event)
+  console.log('Opening analytics view...')
+}
+
 onMounted(() => {
   productStore.fetchProducts()
   customerStore.fetchCustomers()
   orderStore.fetchOrders()
+
+  // Add staggered animations to header buttons
+  staggeredFadeIn('.header-actions', 150)
 })
 </script>
 
 <style scoped>
 .dashboard {
-  max-width: 1200px;
+  width: 100%;
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 0;
+}
+
+.dashboard-header {
+  margin-bottom: var(--spacing-3xl);
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl) var(--spacing-3xl);
+  color: var(--white);
+  box-shadow: var(--shadow-lg);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-xl);
+}
+
+.dashboard-title {
+  margin: 0;
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.header-actions .btn {
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-weight: var(--font-weight-semibold);
+}
+
+.header-actions .btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px) scale(1.05);
 }
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-3xl);
 }
 
 .stat-card {
-  background: white;
-  padding: 25px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: var(--surface);
+  padding: var(--card-padding);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
   display: flex;
   align-items: center;
+  transition: all var(--transition-slow);
 }
 
 .stat-icon {
-  font-size: 40px;
-  margin-right: 20px;
+  font-size: var(--font-size-5xl);
+  margin-right: var(--spacing-xl);
 }
 
 .stat-info h3 {
-  margin: 0 0 5px 0;
-  font-size: 28px;
-  color: #2c3e50;
+  margin: 0 0 var(--spacing-xs) 0;
+  font-size: var(--font-size-4xl);
+  color: var(--gray-900);
+  font-weight: var(--font-weight-bold);
 }
 
 .stat-info p {
   margin: 0;
-  color: #7f8c8d;
+  color: var(--gray-700);
+  font-weight: var(--font-weight-semibold);
 }
 
 .charts-section {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-bottom: 30px;
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-3xl);
 }
 
 .chart-card {
-  background: white;
-  padding: 25px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: var(--surface);
+  padding: var(--card-padding);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
 }
 
 .chart-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-xl);
 }
 
 .chart-header h3 {
   margin: 0;
-  color: #2c3e50;
+  color: var(--gray-900);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-xl);
 }
 
 .chart-filter {
-  padding: 6px 12px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-  background: #f8f9fa;
-  font-size: 14px;
-  color: #495057;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: var(--font-size-sm);
+  color: var(--gray-800);
+  font-weight: var(--font-weight-semibold);
 }
 
 .chart-content {
-  height: 250px;
+  height: 280px;
   position: relative;
 }
 
@@ -324,19 +445,41 @@ onMounted(() => {
   display: flex;
   justify-content: space-around;
   align-items: flex-end;
-  height: 200px;
+  height: 220px;
+}
+
+@keyframes chartBarGrow {
+  0% {
+    height: 0 !important;
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 .chart-bar {
   width: 24px;
-  background: #667eea;
-  border-radius: 4px 4px 0 0;
+  background: var(--primary-500);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
   position: relative;
-  transition: height 0.3s ease;
+  transition: all var(--transition-normal);
+  transform-origin: bottom;
+}
+
+.chart-bar:hover {
+  background: var(--primary-600);
+  transform: scaleY(1.05);
 }
 
 .chart-bar.current-month {
-  background: #764ba2;
+  background: var(--primary-600);
+  box-shadow: 0 0 10px var(--primary-600-alpha-50);
 }
 
 .chart-bar:hover .bar-tooltip {
@@ -348,14 +491,16 @@ onMounted(() => {
   top: -30px;
   left: 50%;
   transform: translateX(-50%);
-  background: #2c3e50;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
+  background: var(--gray-900);
+  color: var(--text-inverse);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity var(--transition-fast);
   white-space: nowrap;
+  z-index: var(--z-tooltip);
 }
 
 .chart-labels {
@@ -365,10 +510,11 @@ onMounted(() => {
 }
 
 .chart-label {
-  font-size: 12px;
-  color: #6c757d;
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
   text-align: center;
   width: 24px;
+  font-weight: var(--font-weight-medium);
 }
 
 .top-products {
@@ -390,24 +536,25 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f8f9fa;
-  font-weight: bold;
-  font-size: 14px;
+  background: var(--gray-100);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
 }
 
 .top-product-item:nth-child(1) .product-rank {
   background: #FFD700;
-  color: #fff;
+  color: var(--text-inverse);
 }
 
 .top-product-item:nth-child(2) .product-rank {
   background: #C0C0C0;
-  color: #fff;
+  color: var(--text-inverse);
 }
 
 .top-product-item:nth-child(3) .product-rank {
   background: #CD7F32;
-  color: #fff;
+  color: var(--text-inverse);
 }
 
 .product-image-container {
@@ -427,16 +574,18 @@ onMounted(() => {
 }
 
 .product-name {
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-sm);
+  color: var(--gray-900);
 }
 
 .product-meta {
   display: flex;
   gap: 10px;
-  font-size: 12px;
-  color: #6c757d;
+  font-size: var(--font-size-xs);
+  color: var(--gray-700);
   margin-top: 3px;
+  font-weight: var(--font-weight-semibold);
 }
 
 .product-percentage {
@@ -446,26 +595,29 @@ onMounted(() => {
 
 .percentage-bar {
   height: 6px;
-  background: #667eea;
-  border-radius: 3px;
+  background: var(--primary-500);
+  border-radius: var(--radius-sm);
   margin-bottom: 4px;
 }
 
 .product-percentage span {
-  font-size: 12px;
-  color: #6c757d;
+  font-size: var(--font-size-xs);
+  color: var(--gray-700);
+  font-weight: var(--font-weight-semibold);
 }
 
 .recent-orders {
-  background: white;
-  padding: 25px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: var(--surface);
+  padding: var(--card-padding);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
 }
 
 .recent-orders h3 {
   margin-top: 0;
-  color: #2c3e50;
+  color: var(--gray-900);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-xl);
 }
 
 .table-responsive {
@@ -480,42 +632,45 @@ onMounted(() => {
 
 .table th,
 .table td {
-  padding: 12px;
+  padding: var(--spacing-md);
   text-align: left;
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid var(--border);
+  color: var(--gray-800);
+  font-weight: var(--font-weight-semibold);
 }
 
 .table th {
-  background: #f8f9fa;
-  font-weight: 600;
-  color: #495057;
+  background: var(--gray-50);
+  font-weight: var(--font-weight-bold);
+  color: var(--gray-900);
+  font-size: var(--font-size-sm);
 }
 
 .status-badge {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
 }
 
 .status-badge.pending {
-  background: #fff3cd;
-  color: #856404;
+  background: var(--warning-100);
+  color: var(--warning-800);
 }
 
 .status-badge.completed {
-  background: #d1ecf1;
-  color: #0c5460;
+  background: var(--info-100);
+  color: var(--info-800);
 }
 
 .status-badge.shipping {
-  background: #d4edda;
-  color: #155724;
+  background: var(--success-100);
+  color: var(--success-800);
 }
 
 .status-badge.cancelled {
-  background: #f8d7da;
-  color: #721c24;
+  background: var(--error-100);
+  color: var(--error-800);
 }
 
 /* Responsive Design */
@@ -650,6 +805,32 @@ onMounted(() => {
     padding: 0;
   }
 
+  .dashboard-header {
+    margin-bottom: 20px;
+    padding: 16px 20px;
+    border-radius: 8px;
+  }
+
+  .header-content {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .dashboard-title {
+    font-size: 24px;
+  }
+
+  .header-actions {
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .header-actions .btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
@@ -688,61 +869,145 @@ onMounted(() => {
 }
 
 @media (max-width: 900px) {
+  .dashboard {
+    padding: 0 var(--spacing-md);
+  }
+
+  .dashboard-header {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+    text-align: center;
+  }
+
+  .dashboard-header h1 {
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .dashboard-header .subtitle {
+    font-size: var(--font-size-sm);
+  }
+
+  .header-actions {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-lg);
+  }
+
+  .header-actions .btn {
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: var(--font-size-sm);
+  }
+
   .charts-section {
-    margin-bottom: 24px;
+    margin-bottom: var(--spacing-xl);
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xl);
   }
 
   .chart-header {
     flex-wrap: wrap;
-    gap: 8px;
+    gap: var(--spacing-sm);
   }
 
   .chart-filter {
     min-width: 120px;
+  }
+
+  .chart-content {
+    height: 240px;
+  }
+
+  .chart-bars {
+    height: 180px;
+    justify-content: space-evenly;
+  }
+
+  .chart-bar {
+    width: 20px;
+    margin: 0 2px;
+  }
+
+  .bar-tooltip {
+    font-size: var(--font-size-xs);
+    padding: var(--spacing-xs);
+  }
+}
+
+@media (max-width: 820px) {
+  .dashboard {
+    padding: 0 var(--spacing-sm);
+  }
+
+  .dashboard-header {
+    padding: var(--spacing-md) var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .charts-section {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-content {
+    height: 220px;
+  }
+
+  .chart-bars {
+    height: 160px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+  }
+
+  .stat-card {
+    padding: var(--spacing-lg);
   }
 }
 
 @media (max-width: 768px) {
   .stats-grid {
     grid-template-columns: 1fr;
-    gap: 12px;
-    margin-bottom: 20px;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
   }
 
   .stat-card {
-    padding: 16px;
+    padding: var(--spacing-lg);
     flex-direction: row;
     text-align: left;
   }
 
   .stat-icon {
-    margin: 0 16px 0 0;
-    font-size: 36px;
+    margin: 0 var(--spacing-lg) 0 0;
+    font-size: var(--font-size-4xl);
   }
 
   .charts-section {
-    gap: 16px;
-    margin-bottom: 20px;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
   }
 
   .chart-card {
-    padding: 16px;
+    padding: var(--spacing-lg);
   }
 
   .chart-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
-    margin-bottom: 16px;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
   }
 
   .chart-header h3 {
-    font-size: 16px;
+    font-size: var(--font-size-lg);
   }
 
   .chart-filter {
-    font-size: 12px;
-    padding: 4px 8px;
+    font-size: var(--font-size-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
     width: 100%;
     max-width: 150px;
   }
@@ -756,7 +1021,13 @@ onMounted(() => {
   }
 
   .chart-bar {
-    width: 18px;
+    width: 16px;
+    margin: 0 1px;
+  }
+
+  .bar-tooltip {
+    font-size: 10px;
+    padding: 2px 4px;
   }
 
   .top-products {

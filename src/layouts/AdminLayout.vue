@@ -4,18 +4,19 @@
     <div class="mobile-overlay" :class="{ active: mobileMenuOpen }" @click="closeMobileMenu"></div>
 
     <!-- Sidebar -->
-    <aside class="sidebar" :class="{
-      'sidebar-collapsed': sidebarCollapsed && !isMobile,
-      'sidebar-open': mobileMenuOpen && isMobile
-    }">
+    <aside :class="sidebarClass">
       <div class="sidebar-header">
         <div class="logo-container">
-          <div class="logo-wrapper" :class="{ 'logo-hidden': sidebarCollapsed && !isMobile }">
+          <div class="logo-wrapper" :class="{ 'logo-hidden': (sidebarCollapsed || isTablet) && !isMobile }">
             <GearUpLogo variant="small" />
           </div>
         </div>
         <button class="sidebar-toggle" @click="toggleSidebar" v-if="!isMobile">
-          <i class="icon">☰</i>
+          <div class="hamburger-icon" :class="{ 'active': sidebarCollapsed }">
+            <span class="line"></span>
+            <span class="line"></span>
+            <span class="line"></span>
+          </div>
         </button>
       </div>
 
@@ -24,43 +25,43 @@
           <li>
             <router-link to="/" class="nav-link" exact @click="closeMobileMenu">
               <i class="nav-icon">📊</i>
-              <span v-if="!sidebarCollapsed || isMobile" class="nav-text">Thống kê & Báo cáo</span>
+              <span v-if="!(sidebarCollapsed || isTablet) || isMobile" class="nav-text">Thống kê & Báo cáo</span>
             </router-link>
           </li>
           <li>
             <router-link to="/products" class="nav-link" exact @click="closeMobileMenu">
               <i class="nav-icon">👟</i>
-              <span v-if="!sidebarCollapsed || isMobile" class="nav-text">Quản lý Sản phẩm</span>
+              <span v-if="!(sidebarCollapsed || isTablet) || isMobile" class="nav-text">Quản lý Sản phẩm</span>
             </router-link>
           </li>
           <li>
-            <router-link to="/orders" class="nav-link" exact>
+            <router-link to="/orders" class="nav-link" exact @click="closeMobileMenu">
               <i class="nav-icon">🧾</i>
-              <span v-if="!sidebarCollapsed" class="nav-text">Quản lý Hóa đơn</span>
+              <span v-if="!(sidebarCollapsed || isTablet) || isMobile" class="nav-text">Quản lý Hóa đơn</span>
             </router-link>
           </li>
           <li>
-            <router-link to="/customers" class="nav-link" exact>
+            <router-link to="/customers" class="nav-link" exact @click="closeMobileMenu">
               <i class="nav-icon">👥</i>
-              <span v-if="!sidebarCollapsed" class="nav-text">Quản lý Khách hàng</span>
+              <span v-if="!(sidebarCollapsed || isTablet) || isMobile" class="nav-text">Quản lý Khách hàng</span>
             </router-link>
           </li>
           <li>
-            <router-link to="/employees" class="nav-link" exact>
+            <router-link to="/employees" class="nav-link" exact @click="closeMobileMenu">
               <i class="nav-icon">👨‍💼</i>
-              <span v-if="!sidebarCollapsed" class="nav-text">Quản lý Nhân viên</span>
+              <span v-if="!(sidebarCollapsed || isTablet) || isMobile" class="nav-text">Quản lý Nhân viên</span>
             </router-link>
           </li>
           <li>
-            <router-link to="/discounts" class="nav-link" exact>
+            <router-link to="/discounts" class="nav-link" exact @click="closeMobileMenu">
               <i class="nav-icon">🏷️</i>
-              <span v-if="!sidebarCollapsed" class="nav-text">Đợt giảm giá</span>
+              <span v-if="!(sidebarCollapsed || isTablet) || isMobile" class="nav-text">Đợt giảm giá</span>
             </router-link>
           </li>
           <li>
-            <router-link to="/coupons" class="nav-link" exact>
+            <router-link to="/coupons" class="nav-link" exact @click="closeMobileMenu">
               <i class="nav-icon">🎫</i>
-              <span v-if="!sidebarCollapsed" class="nav-text">Phiếu giảm giá</span>
+              <span v-if="!(sidebarCollapsed || isTablet) || isMobile" class="nav-text">Phiếu giảm giá</span>
             </router-link>
           </li>
         </ul>
@@ -73,7 +74,11 @@
       <header class="top-header">
         <div class="header-left">
           <button class="mobile-menu-toggle" @click="toggleMobileMenu" v-if="isMobile">
-            <i class="icon">☰</i>
+            <div class="hamburger-icon" :class="{ 'active': mobileMenuOpen }">
+              <span class="line"></span>
+              <span class="line"></span>
+              <span class="line"></span>
+            </div>
           </button>
           <div class="breadcrumb">
             <router-link to="/" class="breadcrumb-link">Trang chủ</router-link>
@@ -110,14 +115,6 @@
 
       <!-- Page Content -->
       <div class="page-content">
-        <div class="page-header">
-          <h1 class="page-title">
-            <span class="page-icon">{{ pageIcon }}</span>
-            {{ pageTitle }}
-          </h1>
-          <p class="page-subtitle">{{ pageSubtitle }}</p>
-        </div>
-
         <div class="content-area">
           <router-view />
         </div>
@@ -139,21 +136,46 @@ const authStore = useAuthStore()
 const sidebarCollapsed = ref(false)
 const mobileMenuOpen = ref(false)
 const isMobile = ref(false)
+const isTablet = ref(false)
+const windowWidth = ref(0)
 
 const displayName = computed(() => authStore.displayName)
 
-// Check if device is mobile
-const checkMobile = () => {
+// Dynamic responsive breakpoints
+const checkResponsive = () => {
+  windowWidth.value = window.innerWidth
   isMobile.value = window.innerWidth <= 768
+  isTablet.value = window.innerWidth > 768 && window.innerWidth <= 1024
+
+  // Auto-collapse sidebar for medium screens
+  if (window.innerWidth <= 1024 && window.innerWidth > 768) {
+    sidebarCollapsed.value = true
+  } else if (window.innerWidth > 1024) {
+    sidebarCollapsed.value = false
+  }
 }
 
+// Computed class for dynamic sidebar sizing
+const sidebarClass = computed(() => {
+  const classes = ['sidebar']
+
+  if (isMobile.value) {
+    classes.push('sidebar-mobile')
+    if (mobileMenuOpen.value) classes.push('sidebar-open')
+  } else if (isTablet.value || sidebarCollapsed.value) {
+    classes.push('sidebar-collapsed')
+  }
+
+  return classes.join(' ')
+})
+
 onMounted(() => {
-  checkMobile()
-  window.addEventListener('resize', checkMobile)
+  checkResponsive()
+  window.addEventListener('resize', checkResponsive)
 })
 
 onUnmounted(() => {
-  window.removeEventListener('resize', checkMobile)
+  window.removeEventListener('resize', checkResponsive)
 })
 
 const pageTitle = computed(() => {
@@ -173,38 +195,6 @@ const pageTitle = computed(() => {
     '/coupons': 'Quản lý Mã giảm giá'
   }
   return titles[route.path] || 'GearUp Admin'
-})
-
-const pageSubtitle = computed(() => {
-  const subtitles = {
-    '/': 'Tổng quan về doanh thu và hiệu suất kinh doanh',
-    '/products': 'Quản lý danh mục sản phẩm và kho hàng',
-    '/orders': 'Theo dõi và xử lý đơn hàng khách hàng',
-    '/customers': 'Thông tin và lịch sử khách hàng',
-    '/employees': 'Quản lý nhân sự và phân quyền hệ thống',
-    '/discounts': 'Thiết lập chương trình khuyến mãi và đợt giảm giá',
-    '/coupons': 'Tạo và quản lý mã giảm giá cho khách hàng'
-  }
-  return subtitles[route.path] || 'Hệ thống quản lý cửa hàng giày GearUp'
-})
-
-const pageIcon = computed(() => {
-  // First try to get icon from route meta
-  if (route.meta?.icon) {
-    return route.meta.icon
-  }
-
-  // Fallback to static mapping
-  const icons = {
-    '/': '📊',
-    '/products': '👟',
-    '/orders': '🧾',
-    '/customers': '👥',
-    '/employees': '👨‍💼',
-    '/discounts': '🏷️',
-    '/coupons': '🎫'
-  }
-  return icons[route.path] || '🏪'
 })
 
 const toggleSidebar = () => {
@@ -237,29 +227,66 @@ const logout = () => {
   width: 280px;
   min-width: 280px;
   max-width: 320px;
-  background: white;
+  background: var(--surface);
   border-right: 1px solid var(--border);
   transition: all 0.3s ease;
   position: relative;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
 }
 
+/* Dynamic responsive sidebar states */
 .sidebar-collapsed {
-  width: 80px;
-  min-width: 80px;
-  text-align: center;
+  width: 70px;
+  min-width: 70px;
+}
+
+.sidebar-mobile {
+  position: fixed;
+  left: -100%;
+  top: 0;
+  height: 100vh;
+  z-index: 1000;
+  width: 280px;
+  transition: left 0.3s ease;
+  box-shadow: var(--shadow-xl);
+}
+
+.sidebar-mobile.sidebar-open {
+  left: 0;
 }
 
 .sidebar-collapsed .nav-link {
   padding: 0.875rem 0;
-  margin: 0.25rem 0;
+  margin: 0.25rem;
   justify-content: center;
-  width: 100%;
-  min-width: 48px;
-  display: flex;
-  align-items: center;
+  width: calc(100% - 0.5rem);
+  border-radius: var(--radius-sm);
+}
+
+.sidebar-collapsed .nav-icon {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.sidebar-collapsed .nav-text {
+  display: none;
+}
+
+.sidebar-collapsed .logo-wrapper,
+.sidebar-collapsed .logo-hidden {
+  display: none;
+}
+
+.sidebar-collapsed .sidebar-header {
+  padding: 1rem 0.5rem;
+  justify-content: center;
+}
+
+.sidebar-collapsed .sidebar-toggle {
+  margin: 0.5rem auto 0;
 }
 
 .sidebar-collapsed .nav-link.router-link-exact-active {
@@ -339,25 +366,213 @@ const logout = () => {
 }
 
 .sidebar-toggle {
-  background: none;
-  border: none;
-  padding: 0.625rem;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  padding: 0.75rem;
   cursor: pointer;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   color: var(--gray-600);
   transition: all 0.2s ease;
   position: relative;
   flex-shrink: 0;
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.125rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar-toggle:hover {
   background: var(--gray-100);
+  transform: scale(1.05);
+}
+
+.sidebar-toggle:active {
+  transform: scale(0.95);
+}
+
+/* Animated Hamburger Icon - "Oreos" Concept */
+.hamburger-icon {
+  width: 24px;
+  height: 18px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.hamburger-icon .line {
+  height: 3px;
+  background: var(--gray-600);
+  border-radius: 6px;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transform-origin: center;
+  position: relative;
+}
+
+.hamburger-icon .line:nth-child(1) {
+  width: 100%;
+}
+
+.hamburger-icon .line:nth-child(2) {
+  width: 100%;
+}
+
+.hamburger-icon .line:nth-child(3) {
+  width: 100%;
+}
+
+/* Enhanced Sidebar Toggle Animation - "Stepped Lines" Concept */
+.sidebar-toggle .hamburger-icon.active .line:nth-child(1) {
+  transform: translateX(8px);
+  width: 60%;
+  background: var(--primary-600);
+}
+
+.sidebar-toggle .hamburger-icon.active .line:nth-child(2) {
+  transform: translateX(4px);
+  width: 80%;
+  background: var(--primary-600);
+}
+
+.sidebar-toggle .hamburger-icon.active .line:nth-child(3) {
+  transform: translateX(0px);
+  width: 100%;
+  background: var(--primary-600);
+}
+
+/* Enhanced Mobile Menu Toggle Animation - "Stepped Lines" Concept */
+.mobile-menu-toggle .hamburger-icon.active .line:nth-child(1) {
+  transform: translateX(8px);
+  width: 60%;
+  background: var(--primary-600);
+}
+
+.mobile-menu-toggle .hamburger-icon.active .line:nth-child(2) {
+  transform: translateX(4px);
+  width: 80%;
+  background: var(--primary-600);
+}
+
+.mobile-menu-toggle .hamburger-icon.active .line:nth-child(3) {
+  transform: translateX(0px);
+  width: 100%;
+  background: var(--primary-600);
+}
+
+/* Enhanced Hover Effects with Elegant Micro-interactions */
+.sidebar-toggle:hover .hamburger-icon .line {
+  background: var(--gray-700);
+}
+
+.sidebar-toggle:hover .hamburger-icon .line:nth-child(1) {
+  transform: translateY(-1px);
+  width: 95%;
+}
+
+.sidebar-toggle:hover .hamburger-icon .line:nth-child(2) {
+  transform: scaleX(1.05);
+}
+
+.sidebar-toggle:hover .hamburger-icon .line:nth-child(3) {
+  transform: translateY(1px);
+  width: 95%;
+}
+
+.mobile-menu-toggle:hover .hamburger-icon .line {
+  background: var(--gray-700);
+}
+
+.mobile-menu-toggle:hover .hamburger-icon .line:nth-child(1) {
+  transform: translateY(-1px);
+  width: 95%;
+}
+
+.mobile-menu-toggle:hover .hamburger-icon .line:nth-child(2) {
+  transform: scaleX(1.05);
+}
+
+.mobile-menu-toggle:hover .hamburger-icon .line:nth-child(3) {
+  transform: translateY(1px);
+  width: 95%;
+}
+
+/* Active State Colors - Override hover transforms */
+.sidebar-toggle .hamburger-icon.active .line {
+  background: var(--primary-600) !important;
+}
+
+.mobile-menu-toggle .hamburger-icon.active .line {
+  background: var(--primary-600) !important;
+}
+
+/* Specific active state transforms (higher specificity) - "Stepped Lines" Pattern */
+.sidebar-toggle .hamburger-icon.active .line:nth-child(1) {
+  transform: translateX(8px) !important;
+  width: 60% !important;
+  height: 3px !important;
+  border-radius: 6px !important;
+}
+
+.sidebar-toggle .hamburger-icon.active .line:nth-child(2) {
+  transform: translateX(4px) !important;
+  width: 80% !important;
+  height: 3px !important;
+  border-radius: 6px !important;
+}
+
+.sidebar-toggle .hamburger-icon.active .line:nth-child(3) {
+  transform: translateX(0px) !important;
+  width: 100% !important;
+  height: 3px !important;
+  border-radius: 6px !important;
+}
+
+.mobile-menu-toggle .hamburger-icon.active .line:nth-child(1) {
+  transform: translateX(8px) !important;
+  width: 60% !important;
+  height: 3px !important;
+  border-radius: 6px !important;
+}
+
+.mobile-menu-toggle .hamburger-icon.active .line:nth-child(2) {
+  transform: translateX(4px) !important;
+  width: 80% !important;
+  height: 3px !important;
+  border-radius: 6px !important;
+}
+
+.mobile-menu-toggle .hamburger-icon.active .line:nth-child(3) {
+  transform: translateX(0px) !important;
+  width: 100% !important;
+  height: 3px !important;
+  border-radius: 6px !important;
+}
+
+/* Enhanced button states */
+.sidebar-toggle:hover {
+  background: var(--gray-100);
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-menu-toggle:hover {
+  background: var(--gray-200);
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Focus States for Accessibility */
+.sidebar-toggle:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+.mobile-menu-toggle:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
 }
 
 .sidebar-nav {
@@ -447,11 +662,29 @@ const logout = () => {
 }
 
 /* Main Content */
+/* Main Content */
 .main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
   min-width: 0;
+  transition: margin-left 0.3s ease;
+}
+
+/* Dynamic main content margins based on sidebar state */
+.admin-layout:has(.sidebar-collapsed:not(.sidebar-mobile)) .main-content {
+  margin-left: 0;
+}
+
+.admin-layout:has(.sidebar-mobile) .main-content {
+  margin-left: 0;
+}
+
+/* Fallback for browsers that don't support :has() */
+@supports not selector(:has(*)) {
+  .main-content {
+    margin-left: 0;
+  }
 }
 
 /* Top Header */
@@ -581,37 +814,6 @@ const logout = () => {
   overflow-y: auto;
 }
 
-.page-header {
-  margin-bottom: 2rem;
-}
-
-.page-title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--gray-900);
-  margin-bottom: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.page-icon {
-  font-size: 2.25rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 2.5rem;
-  height: 2.5rem;
-  background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
-  border-radius: 12px;
-  border: 2px solid var(--primary-200);
-}
-
-.page-subtitle {
-  color: var(--gray-600);
-  font-size: 1rem;
-}
-
 .content-area {
   min-height: calc(100vh - 300px);
 }
@@ -627,33 +829,32 @@ const logout = () => {
   }
 }
 
-/* Desktop to tablet transition - keep logo visible but compress sidebar */
-@media (max-width: 1024px) {
-  .sidebar {
-    width: 240px;
-    /* Keep reasonable width instead of collapsing too much */
+/* Mobile overlay styles */
+@media (max-width: 768px) {
+  .mobile-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
   }
 
-  .page-title {
-    font-size: 1.75rem;
-    gap: 0.5rem;
-  }
-
-  .page-icon {
-    font-size: 1.875rem;
-    min-width: 2rem;
-    height: 2rem;
-  }
-
-  .breadcrumb {
-    font-size: 0.8125rem;
+  .mobile-overlay.active {
+    opacity: 1;
+    visibility: visible;
   }
 }
 
 /* Tablet transition point - start collapsing sidebar but keep mobile menu hidden */
 @media (max-width: 900px) {
   .sidebar {
-    width: 72px;
+    width: 70px;
+    min-width: 70px;
   }
 
   .sidebar .nav-text {
@@ -661,22 +862,75 @@ const logout = () => {
   }
 
   .logo-wrapper {
-    opacity: 0;
-    transform: scale(0.8);
-    width: 0;
-    overflow: hidden;
+    display: none;
+  }
+
+  .logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 40px;
+    padding: 0.5rem 0;
   }
 
   .sidebar-header {
-    padding: 1rem 0.75rem;
+    padding: 0.5rem;
     justify-content: center;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.25rem;
   }
 
   .sidebar-toggle {
     position: static;
     margin: 0 auto;
+    padding: 0.5rem;
+    font-size: 16px;
+  }
+
+  /* Ensure proper spacing and alignment */
+  .nav-link {
+    justify-content: center;
+    padding: 0.75rem 0.5rem;
+    margin: 0.125rem 0.25rem;
+    border-radius: 6px;
+  }
+
+  .nav-icon {
+    margin: 0;
+    font-size: 18px;
+  }
+
+  .main-content {
+    margin-left: 70px;
+  }
+}
+
+@media (max-width: 820px) {
+  .sidebar {
+    width: 64px;
+    min-width: 64px;
+  }
+
+  .logo-wrapper {
+    display: none;
+  }
+
+  .sidebar-header {
+    padding: 0.5rem 0.25rem;
+  }
+
+  .nav-link {
+    padding: 0.5rem 0.25rem;
+    justify-content: center;
+    margin: 0.125rem;
+  }
+
+  .nav-icon {
+    font-size: 16px;
+  }
+
+  .main-content {
+    margin-left: 64px;
   }
 }
 
@@ -693,7 +947,7 @@ const logout = () => {
     z-index: 1000;
     width: 280px;
     transition: left 0.3s ease;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-xl);
   }
 
   .sidebar.sidebar-open {
@@ -751,32 +1005,29 @@ const logout = () => {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.5rem;
-    background: var(--gray-100);
-    border: none;
-    border-radius: 0.375rem;
+    padding: 0.75rem;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 0.75rem;
     cursor: pointer;
-    font-size: 1.25rem;
     color: var(--gray-600);
+    transition: all 0.2s ease;
+    width: 48px;
+    height: 48px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .mobile-menu-toggle:hover {
+    background: var(--gray-200);
+    transform: scale(1.05);
+  }
+
+  .mobile-menu-toggle:active {
+    transform: scale(0.95);
   }
 
   .page-content {
     padding: 1rem;
-  }
-
-  .page-title {
-    font-size: 1.5rem;
-    gap: 0.5rem;
-  }
-
-  .page-icon {
-    font-size: 1.625rem;
-    min-width: 1.75rem;
-    height: 1.75rem;
-  }
-
-  .page-subtitle {
-    font-size: 0.875rem;
   }
 
   .user-details {
@@ -811,22 +1062,6 @@ const logout = () => {
 }
 
 @media (max-width: 640px) {
-  .page-header {
-    margin-bottom: 1rem;
-  }
-
-  .page-title {
-    font-size: 1.25rem;
-    gap: 0.375rem;
-  }
-
-  .page-icon {
-    font-size: 1.375rem;
-    min-width: 1.5rem;
-    height: 1.5rem;
-    flex-shrink: 0;
-  }
-
   .breadcrumb-current {
     max-width: 150px;
     overflow: hidden;
@@ -853,21 +1088,6 @@ const logout = () => {
 
   .top-header {
     padding: 0.75rem;
-  }
-
-  .page-title {
-    font-size: 1.125rem;
-    gap: 0.25rem;
-    flex-wrap: wrap;
-  }
-
-  .page-icon {
-    font-size: 1.25rem;
-    min-width: 1.25rem;
-    height: 1.25rem;
-    padding: 0.25rem;
-    flex-shrink: 0;
-    border-radius: 8px;
   }
 
   .breadcrumb {
@@ -898,8 +1118,9 @@ const logout = () => {
   }
 
   .mobile-menu-toggle {
-    padding: 0.375rem;
-    font-size: 1.125rem;
+    padding: 0.5rem;
+    width: 40px;
+    height: 40px;
   }
 
   /* Prevent icon stretching in the sidebar */

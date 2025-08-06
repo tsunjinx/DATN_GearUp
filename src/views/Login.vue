@@ -4,7 +4,9 @@
       <!-- Left Side - Branding -->
       <div class="login-branding">
         <div class="branding-content">
-          <GearUpLogo variant="large" />
+          <div class="logo-container">
+            <GearUpLogo variant="large" />
+          </div>
           <div class="features-list">
           </div>
         </div>
@@ -185,6 +187,24 @@ const handleLogin = async () => {
 .branding-content {
   text-align: center;
   z-index: 1;
+}
+
+.logo-container {
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.logo-container:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
 .brand-title {
@@ -712,6 +732,12 @@ const handleLogin = async () => {
 }
 
 @media (max-width: 768px) {
+  .logo-container {
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-radius: 0.75rem;
+  }
+
   .login-page {
     padding: 1rem;
     align-items: flex-start;
@@ -758,6 +784,13 @@ const handleLogin = async () => {
 }
 
 @media (max-width: 480px) {
+  .logo-container {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    border-width: 1px;
+  }
+
   .login-page {
     padding: 0.5rem;
   }

@@ -1,0 +1,11 @@
+<svg width="40" height="20" viewBox="0 0 40 20" xmlns="http://www.w3.org/2000/svg">
+  <!-- Converse Star -->
+  <g fill="#E31E24">
+    <circle cx="10" cy="10" r="8"/>
+    <polygon points="10,3 12,8 17,8 13,11 15,16 10,13 5,16 7,11 3,8 8,8" fill="#fff"/>
+    <!-- Converse text -->
+    <text x="20" y="12" font-family="Arial, sans-serif" font-size="7" font-weight="bold">
+      CONVERSE
+    </text>
+  </g>
+</svg>

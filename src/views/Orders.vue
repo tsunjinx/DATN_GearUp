@@ -3,36 +3,32 @@
     <div class="page-header">
       <h2>Quản lý Hóa đơn</h2>
       <div class="header-actions">
-        <button class="btn btn-secondary" @click="resetAllFilters">
+        <button class="btn btn-secondary fade-in" style="animation-delay: 0.1s" @click="resetAllFilters">
           <span class="icon">🔄</span>
           Đặt lại bộ lọc
         </button>
-        <button class="btn btn-success" @click="exportToExcel">
+        <button class="btn btn-success fade-in" style="animation-delay: 0.2s" @click="exportToExcel">
           <span class="icon">📊</span>
           Xuất Excel
         </button>
-        <button class="btn btn-info" @click="scanQR">
+        <button class="btn btn-info fade-in" style="animation-delay: 0.3s" @click="scanQR">
           <span class="icon">📱</span>
           Quét QR
         </button>
-        <button class="btn btn-primary" @click="showAddModal = true">
+        <button class="btn btn-primary fade-in" style="animation-delay: 0.4s" @click="showAddModal = true">
           <span class="icon">➕</span>
           Tạo hóa đơn
         </button>
       </div>
     </div>
-    
+
     <div class="filters">
+      <!-- Search and Basic Filters Row -->
       <div class="filter-row">
         <div class="search-box">
-          <input
-            v-model="searchTerm"
-            type="text"
-            placeholder="Tìm kiếm hóa đơn..."
-            class="search-input"
-          />
+          <input v-model="searchTerm" type="text" placeholder="Tìm kiếm hóa đơn..." class="search-input" />
         </div>
-        <div class="filter-controls">
+        <div class="basic-filters">
           <select v-model="selectedStatus" class="filter-select">
             <option value="">Tất cả trạng thái</option>
             <option value="pending">Chờ xử lý</option>
@@ -41,93 +37,56 @@
             <option value="completed">Hoàn thành</option>
             <option value="cancelled">Đã hủy</option>
           </select>
-          <input
-            v-model="dateFrom"
-            type="date"
-            class="filter-select"
-            placeholder="Từ ngày"
-          />
-          <input
-            v-model="dateTo"
-            type="date"
-            class="filter-select"
-            placeholder="Đến ngày"
-          />
+          <input v-model="dateFrom" type="date" class="filter-select" placeholder="Từ ngày" />
+          <input v-model="dateTo" type="date" class="filter-select" placeholder="Đến ngày" />
+        </div>
+      </div>
+
+      <!-- Combined Price Range Filter Container -->
+      <div class="price-filter-container">
+        <div class="price-range-section">
+          <div class="price-range-header">
+            <span class="price-label">Khoảng giá</span>
+            <button type="button" class="price-reset-btn" @click="resetPriceRange"
+              v-if="priceRange.min > 0 || priceRange.max < 10000000">
+              Reset
+            </button>
+          </div>
           
-          <!-- Modern Price Range Filter -->
-          <div class="price-range-modern">
-            <div class="price-range-header">
-              <span class="price-label">Khoảng giá</span>
-              <button 
-                type="button" 
-                class="price-reset-btn" 
-                @click="resetPriceRange"
-                v-if="priceRange.min > 0 || priceRange.max < 10000000"
-              >
-                Reset
-              </button>
+          <!-- Price Input Controls -->
+          <div class="price-inputs-container">
+            <div class="price-input-group">
+              <label class="input-label">Từ</label>
+              <input v-model.number="priceRange.min" type="number" placeholder="0" class="price-input-modern"
+                @input="updatePriceRange" />
             </div>
-            <div class="price-inputs-modern">
-              <div class="price-input-group">
-                <label class="input-label">Từ</label>
-                <input
-                  v-model.number="priceRange.min"
-                  type="number"
-                  placeholder="0"
-                  class="price-input-modern"
-                  @input="updatePriceRange"
-                />
-              </div>
-              <div class="price-separator-modern">-</div>
-              <div class="price-input-group">
-                <label class="input-label">Đến</label>
-                <input
-                  v-model.number="priceRange.max"
-                  type="number"
-                  placeholder="10,000,000"
-                  class="price-input-modern"
-                  @input="updatePriceRange"
-                />
-              </div>
+            <div class="price-separator-modern">-</div>
+            <div class="price-input-group">
+              <label class="input-label">Đến</label>
+              <input v-model.number="priceRange.max" type="number" placeholder="10,000,000" class="price-input-modern"
+                @input="updatePriceRange" />
+            </div>
+          </div>
+
+          <!-- Price Range Slider -->
+          <div class="price-slider-section">
+            <div class="slider-track-container">
+              <div class="slider-track"></div>
+              <div class="slider-range" :style="sliderRangeStyle"></div>
+              <input v-model.number="priceRange.min" type="range" :min="0" :max="10000000" :step="100000"
+                class="slider-input slider-min" @input="updatePriceRange" />
+              <input v-model.number="priceRange.max" type="range" :min="0" :max="10000000" :step="100000"
+                class="slider-input slider-max" @input="updatePriceRange" />
+            </div>
+            <div class="price-display">
+              <span class="price-min">{{ formatCurrency(priceRange.min) }}</span>
+              <span class="price-max">{{ formatCurrency(priceRange.max) }}</span>
             </div>
           </div>
         </div>
       </div>
-      
-      <!-- Modern Price Range Slider -->
-      <div class="price-slider-section">
-        <div class="slider-track-container">
-          <div class="slider-track"></div>
-          <div 
-            class="slider-range" 
-            :style="sliderRangeStyle"
-          ></div>
-          <input
-            v-model.number="priceRange.min"
-            type="range"
-            :min="0"
-            :max="10000000"
-            :step="100000"
-            class="slider-input slider-min"
-            @input="updatePriceRange"
-          />
-          <input
-            v-model.number="priceRange.max"
-            type="range"
-            :min="0"
-            :max="10000000"
-            :step="100000"
-            class="slider-input slider-max"
-            @input="updatePriceRange"
-          />
-        </div>
-        <div class="price-display">
-          <span class="price-min">{{ formatCurrency(priceRange.min) }}</span>
-          <span class="price-max">{{ formatCurrency(priceRange.max) }}</span>
-        </div>
-      </div>
     </div>
-    
+
     <!-- Order Statistics -->
     <div class="order-statistics">
       <div class="stat-item">
@@ -139,7 +98,7 @@
         <span class="stat-value total-value">{{ formatCurrency(totalOrderValue) }}</span>
       </div>
     </div>
-    
+
     <div class="table-container">
       <table class="table">
         <thead>
@@ -171,10 +130,7 @@
             </td>
             <td class="price">{{ formatCurrency(order.total) }}</td>
             <td>
-              <StatusBadge 
-                :status="order.status" 
-                :size="isMobile ? 'small' : 'normal'"
-              />
+              <StatusBadge :status="order.status" :size="isMobile ? 'small' : 'normal'" />
             </td>
             <td>{{ formatDate(order.createdAt) }}</td>
             <td>
@@ -182,11 +138,8 @@
                 <button class="btn btn-sm btn-outline" @click="viewOrder(order)">
                   Xem
                 </button>
-                <select 
-                  v-if="order.status !== 'completed' && order.status !== 'cancelled'"
-                  @change="updateStatus(order.id, $event.target.value)"
-                  class="status-select"
-                >
+                <select v-if="order.status !== 'completed' && order.status !== 'cancelled'"
+                  @change="updateStatus(order.id, $event.target.value)" class="status-select">
                   <option value="">Cập nhật</option>
                   <option value="confirmed">Xác nhận</option>
                   <option value="shipping">Giao hàng</option>
@@ -199,7 +152,7 @@
         </tbody>
       </table>
     </div>
-    
+
     <!-- Order Detail Modal -->
     <div v-if="showDetailModal" class="modal-overlay" @click="closeDetailModal">
       <div class="modal large-modal" @click.stop>
@@ -215,7 +168,7 @@
               <p><strong>SĐT:</strong> {{ selectedOrder.customerPhone }}</p>
               <p><strong>Địa chỉ:</strong> {{ selectedOrder.customerAddress }}</p>
             </div>
-            
+
             <div class="detail-section">
               <h4>Sản phẩm</h4>
               <table class="detail-table">
@@ -243,10 +196,10 @@
                 </tfoot>
               </table>
             </div>
-            
+
             <div class="detail-section">
               <h4>Thông tin đơn hàng</h4>
-              <p><strong>Trạng thái:</strong> 
+              <p><strong>Trạng thái:</strong>
                 <span class="status-badge" :class="selectedOrder.status">
                   {{ getStatusText(selectedOrder.status) }}
                 </span>
@@ -339,7 +292,7 @@ const sampleOrders = ref([
 
 const filteredOrders = computed(() => {
   let orders = sampleOrders.value
-  
+
   if (searchTerm.value) {
     orders = orders.filter(order =>
       order.id.toString().includes(searchTerm.value) ||
@@ -347,28 +300,28 @@ const filteredOrders = computed(() => {
       order.customerPhone.includes(searchTerm.value)
     )
   }
-  
+
   if (selectedStatus.value) {
     orders = orders.filter(order => order.status === selectedStatus.value)
   }
-  
+
   if (dateFrom.value) {
-    orders = orders.filter(order => 
+    orders = orders.filter(order =>
       new Date(order.createdAt) >= new Date(dateFrom.value)
     )
   }
-  
+
   if (dateTo.value) {
-    orders = orders.filter(order => 
+    orders = orders.filter(order =>
       new Date(order.createdAt) <= new Date(dateTo.value)
     )
   }
-  
+
   // Price range filter
-  orders = orders.filter(order => 
+  orders = orders.filter(order =>
     order.total >= priceRange.value.min && order.total <= priceRange.value.max
   )
-  
+
   return orders
 })
 
@@ -383,7 +336,7 @@ const sliderRangeStyle = computed(() => {
   const max = priceRange.value.max
   const minPercent = (min / 10000000) * 100
   const maxPercent = (max / 10000000) * 100
-  
+
   return {
     left: `${minPercent}%`,
     right: `${100 - maxPercent}%`
@@ -425,7 +378,7 @@ const viewOrder = (order) => {
 
 const updateStatus = (orderId, newStatus) => {
   if (!newStatus) return
-  
+
   const orderIndex = sampleOrders.value.findIndex(o => o.id === orderId)
   if (orderIndex !== -1) {
     sampleOrders.value[orderIndex].status = newStatus
@@ -476,110 +429,116 @@ const closeDetailModal = () => {
 
 <style scoped>
 .orders-page {
-  max-width: 1400px;
+  max-width: var(--container-max-width);
 }
 
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: var(--spacing-3xl);
   flex-wrap: wrap;
-  gap: 20px;
+  gap: var(--spacing-xl);
 }
 
 .page-header h2 {
   margin: 0;
-  color: #2c3e50;
+  color: var(--text-primary);
 }
 
 .header-actions {
   display: flex;
-  gap: 12px;
+  gap: var(--spacing-md);
   align-items: center;
   flex-wrap: wrap;
 }
 
 .btn {
-  padding: 10px 20px;
-  border-radius: 8px;
+  padding: var(--spacing-sm) var(--spacing-xl);
+  border-radius: var(--radius-md);
   border: none;
   cursor: pointer;
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  transition: all 0.3s ease;
-  font-size: 14px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  gap: var(--spacing-sm);
+  transition: all var(--transition-normal);
+  font-size: var(--font-size-sm);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+  color: var(--white);
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, #2980b9 0%, #1f618d 100%);
+  background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
 }
 
 .btn-secondary {
-  background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--gray-500) 0%, var(--gray-600) 100%);
+  color: var(--white);
 }
 
 .btn-secondary:hover {
-  background: linear-gradient(135deg, #7f8c8d 0%, #6c7b7d 100%);
+  background: linear-gradient(135deg, var(--gray-600) 0%, var(--gray-700) 100%);
 }
 
 .btn-success {
-  background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--success-500) 0%, var(--success-600) 100%);
+  color: var(--white);
 }
 
 .btn-success:hover {
-  background: linear-gradient(135deg, #229954 0%, #1e8449 100%);
+  background: linear-gradient(135deg, var(--success-600) 0%, var(--success-700) 100%);
 }
 
 .btn-info {
-  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--info-500) 0%, var(--info-600) 100%);
+  color: var(--white);
 }
 
 .btn-info:hover {
-  background: linear-gradient(135deg, #138496 0%, #0f6674 100%);
+  background: linear-gradient(135deg, var(--info-600) 0%, var(--info-700) 100%);
 }
 
 .btn-outline {
-  background: transparent;
-  color: #3498db;
-  border: 1px solid #3498db;
+  background: var(--primary-50);
+  color: var(--primary-700);
+  border: 1px solid var(--primary-500);
+}
+
+.btn-outline:hover {
+  background: var(--primary-100);
+  color: var(--primary-800);
+  border-color: var(--primary-600);
 }
 
 .btn-sm {
-  padding: 6px 12px;
-  font-size: 14px;
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: var(--font-size-sm);
 }
 
 .filters {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  margin-bottom: 20px;
+  background: var(--surface);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--spacing-xl);
 }
 
 .filter-row {
   display: flex;
-  gap: 20px;
+  gap: var(--spacing-xl);
   align-items: center;
   flex-wrap: wrap;
-  margin-bottom: 15px;
+  margin-bottom: var(--spacing-lg);
 }
 
 .search-box {
@@ -589,51 +548,55 @@ const closeDetailModal = () => {
 
 .search-input {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
 }
 
-.filter-controls {
+.basic-filters {
   display: flex;
-  gap: 15px;
+  gap: var(--spacing-lg);
   flex-wrap: wrap;
   align-items: center;
 }
 
 .filter-select {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
   min-width: 120px;
 }
 
-/* Modern Price Range Filter */
-.price-range-modern {
+/* Combined Price Filter Container */
+.price-filter-container {
   background: linear-gradient(135deg, #f8fafb 0%, #f1f5f9 100%);
   border: 1px solid #e2e8f0;
   border-radius: 12px;
-  padding: 16px;
+  padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   transition: all 0.3s ease;
 }
 
-.price-range-modern:hover {
+.price-filter-container:hover {
   border-color: #3498db;
   box-shadow: 0 4px 12px rgba(52, 152, 219, 0.1);
+}
+
+.price-range-section {
+  width: 100%;
 }
 
 .price-range-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .price-label {
   font-weight: 600;
   color: #334155;
-  font-size: 14px;
+  font-size: 16px;
   letter-spacing: 0.025em;
 }
 
@@ -642,7 +605,7 @@ const closeDetailModal = () => {
   color: white;
   border: none;
   border-radius: 6px;
-  padding: 4px 12px;
+  padding: 6px 14px;
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
@@ -656,10 +619,11 @@ const closeDetailModal = () => {
   box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
 }
 
-.price-inputs-modern {
+.price-inputs-container {
   display: flex;
   align-items: flex-end;
   gap: 12px;
+  margin-bottom: 20px;
 }
 
 .price-input-group {
@@ -706,13 +670,13 @@ const closeDetailModal = () => {
   align-items: center;
 }
 
-/* Modern Price Slider Section */
+/* Price Range Slider Within Container */
 .price-slider-section {
   background: white;
-  border-radius: 12px;
-  padding: 20px;
+  border-radius: 8px;
+  padding: 16px;
   border: 1px solid #e2e8f0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
 }
 
 .slider-track-container {
@@ -831,7 +795,7 @@ const closeDetailModal = () => {
   background: white;
   padding: 15px 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 30px;
   display: flex;
   gap: 30px;
@@ -863,7 +827,7 @@ const closeDetailModal = () => {
 .table-container {
   background: white;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
 
@@ -924,12 +888,12 @@ const closeDetailModal = () => {
   font-size: 13px;
   font-weight: 500;
   background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  color: #495057;
+  color: var(--gray-800);
   cursor: pointer;
   transition: all 0.3s ease;
   min-width: 120px;
   appearance: none;
-  background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23666" d="M2 0L0 2h4zm0 5L0 3h4z"/></svg>');
+  background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23333" d="M2 0L0 2h4zm0 5L0 3h4z"/></svg>');
   background-repeat: no-repeat;
   background-position: right 8px center;
   background-size: 12px;
@@ -950,12 +914,12 @@ const closeDetailModal = () => {
 .status-select option {
   padding: 8px 12px;
   background: white;
-  color: #495057;
+  color: var(--gray-800);
   font-weight: 500;
 }
 
 .status-select option:first-child {
-  color: #6c757d;
+  color: var(--gray-600);
   font-style: italic;
 }
 
@@ -965,7 +929,7 @@ const closeDetailModal = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1055,40 +1019,40 @@ const closeDetailModal = () => {
     margin: 0 auto;
     padding: 2rem;
   }
-  
+
   .page-header {
     margin-bottom: 2.5rem;
   }
-  
+
   .filters {
     padding: 2rem;
     margin-bottom: 2rem;
   }
-  
+
   .filter-controls {
     gap: 1.5rem;
   }
-  
+
   .search-input,
   .filter-select {
     padding: 1rem;
     font-size: 1rem;
   }
-  
+
   .table th,
   .table td {
     padding: 1rem;
     font-size: 0.9375rem;
   }
-  
+
   .product-info {
     font-size: 0.9375rem;
   }
-  
+
   .actions {
     gap: 1rem;
   }
-  
+
   .btn {
     padding: 0.75rem 1.25rem;
     font-size: 0.9375rem;
@@ -1100,17 +1064,17 @@ const closeDetailModal = () => {
     max-width: 2000px;
     padding: 2.5rem;
   }
-  
+
   .filters {
     padding: 2.5rem;
   }
-  
+
   .table th,
   .table td {
     padding: 1.25rem;
     font-size: 1rem;
   }
-  
+
   .btn {
     padding: 1rem 1.5rem;
     font-size: 1rem;
@@ -1118,16 +1082,16 @@ const closeDetailModal = () => {
 }
 
 @media (min-width: 1400px) {
-  .filter-controls {
+  .basic-filters {
     display: flex;
     gap: 1rem;
     max-width: none;
   }
-  
+
   .table-container {
     overflow-x: visible;
   }
-  
+
   .table {
     min-width: auto;
   }
@@ -1137,7 +1101,7 @@ const closeDetailModal = () => {
   .orders-page {
     max-width: 100%;
   }
-  
+
   .table-container {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -1145,21 +1109,22 @@ const closeDetailModal = () => {
 }
 
 @media (max-width: 1200px) {
+
   .table th,
   .table td {
     padding: 12px 8px;
     font-size: 14px;
   }
-  
+
   .action-buttons {
     flex-direction: column;
     gap: 5px;
   }
-  
+
   .products-list {
     max-width: 180px;
   }
-  
+
   .customer-info {
     min-width: 120px;
   }
@@ -1171,116 +1136,117 @@ const closeDetailModal = () => {
     gap: 15px;
     align-items: stretch;
   }
-  
+
   .page-header h2 {
     text-align: center;
   }
-  
+
   .header-actions {
     justify-content: center;
     gap: 8px;
   }
-  
+
   .btn {
     padding: 8px 16px;
     font-size: 13px;
   }
-  
+
   .filters {
     padding: 15px;
   }
-  
+
   .filter-row {
     flex-direction: column;
     align-items: stretch;
     gap: 15px;
   }
-  
-  .filter-controls {
+
+  .basic-filters {
     flex-direction: column;
     gap: 10px;
   }
-  
+
   .filter-select {
     width: 100%;
   }
-  
-  .price-range-modern {
+
+  .price-filter-container {
     margin-top: 15px;
-    padding: 12px;
+    padding: 16px;
   }
-  
-  .price-inputs-modern {
+
+  .price-inputs-container {
     gap: 8px;
+    margin-bottom: 16px;
   }
-  
+
   .price-input-modern {
     padding: 8px 10px;
     font-size: 13px;
   }
-  
+
   .price-slider-section {
-    padding: 16px;
-    margin-top: 10px;
+    padding: 12px;
+    margin-top: 0;
   }
-  
+
   .slider-track-container {
     height: 36px;
     margin: 0 8px;
   }
-  
+
   .price-display {
     margin-top: 12px;
     padding: 10px 12px;
   }
-  
+
   .price-min,
   .price-max {
     font-size: 13px;
   }
-  
+
   .order-statistics {
     padding: 12px 15px;
     gap: 20px;
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .stat-item {
     justify-content: space-between;
   }
-  
+
   .table th,
   .table td {
     padding: 10px 6px;
     font-size: 13px;
   }
-  
+
   .customer-info {
     font-size: 13px;
     min-width: 100px;
   }
-  
+
   .customer-info small {
     font-size: 11px;
   }
-  
+
   .products-list {
     font-size: 12px;
     max-width: 150px;
   }
-  
+
   .action-buttons {
     flex-direction: column;
     gap: 4px;
     min-width: 80px;
   }
-  
+
   .btn-sm {
     width: 100%;
     justify-content: center;
   }
-  
+
   .status-select {
     width: 100%;
     min-width: 100px;
@@ -1291,21 +1257,21 @@ const closeDetailModal = () => {
 }
 
 @media (max-width: 900px) {
-  .filter-controls {
+  .basic-filters {
     grid-template-columns: 1fr;
     gap: 8px;
   }
-  
+
   .table {
     min-width: 900px;
   }
-  
+
   .products-list {
     max-width: 120px;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  
+
   .product-item {
     white-space: nowrap;
     overflow: hidden;
@@ -1317,171 +1283,172 @@ const closeDetailModal = () => {
   .orders-page {
     padding: 0 10px;
   }
-  
+
   .page-header {
     margin-bottom: 20px;
     gap: 12px;
   }
-  
+
   .page-header h2 {
     font-size: 1.5rem;
   }
-  
+
   .header-actions {
     flex-direction: column;
     gap: 8px;
   }
-  
+
   .btn {
     width: 100%;
     justify-content: center;
     padding: 10px 16px;
     font-size: 14px;
   }
-  
+
   .filters {
     padding: 12px;
     margin-bottom: 15px;
   }
-  
+
   .filter-row {
     gap: 12px;
   }
-  
+
   .search-input {
     margin-bottom: 0;
   }
-  
-  .price-range-modern {
-    padding: 10px;
+
+  .price-filter-container {
+    padding: 12px;
     border-radius: 8px;
   }
-  
+
   .price-range-header {
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
-  
+
   .price-label {
     font-size: 13px;
   }
-  
+
   .price-reset-btn {
     padding: 3px 8px;
     font-size: 11px;
   }
-  
-  .price-inputs-modern {
+
+  .price-inputs-container {
     gap: 6px;
+    margin-bottom: 12px;
   }
-  
+
   .price-input-modern {
     padding: 8px 10px;
     font-size: 13px;
   }
-  
+
   .input-label {
     font-size: 11px;
   }
-  
+
   .price-slider-section {
     padding: 12px;
   }
-  
+
   .slider-track-container {
     height: 32px;
     margin: 0 6px;
   }
-  
+
   .slider-input::-webkit-slider-thumb {
     height: 16px;
     width: 16px;
   }
-  
+
   .slider-input::-moz-range-thumb {
     height: 16px;
     width: 16px;
   }
-  
+
   .price-display {
     margin-top: 10px;
     padding: 8px 10px;
   }
-  
+
   .price-min,
   .price-max {
     font-size: 12px;
   }
-  
+
   .order-statistics {
     padding: 10px 12px;
     margin-bottom: 20px;
     gap: 15px;
   }
-  
+
   .stat-item {
     font-size: 14px;
   }
-  
+
   .stat-value {
     font-size: 1em;
   }
-  
+
   .table-container {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
-  
+
   .table {
     min-width: 900px;
   }
-  
+
   .table th,
   .table td {
     padding: 8px 5px;
     font-size: 12px;
     white-space: nowrap;
   }
-  
+
   .customer-info {
     min-width: 120px;
   }
-  
+
   .customer-info strong {
     display: block;
     font-size: 12px;
   }
-  
+
   .customer-info small {
     font-size: 10px;
     color: #666;
   }
-  
+
   .products-list {
     max-width: 150px;
     overflow: hidden;
   }
-  
+
   .product-item {
     font-size: 11px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  
+
   .price {
     font-weight: bold;
     color: #22c55e;
   }
-  
+
   .action-buttons {
     min-width: 100px;
   }
-  
+
   .btn-sm {
     padding: 4px 8px;
     font-size: 11px;
   }
-  
+
   .status-select {
     font-size: 11px;
     padding: 4px 8px;
@@ -1490,32 +1457,32 @@ const closeDetailModal = () => {
     background-size: 10px;
     background-position: right 6px center;
   }
-  
+
   .modal {
     width: 95%;
     margin: 10px;
   }
-  
+
   .modal-header {
     padding: 15px;
   }
-  
+
   .modal-header h3 {
     font-size: 1.2rem;
   }
-  
+
   .modal-body {
     padding: 15px;
   }
-  
+
   .detail-section {
     margin-bottom: 20px;
   }
-  
+
   .detail-section h4 {
     font-size: 1.1rem;
   }
-  
+
   .detail-table th,
   .detail-table td {
     padding: 8px 6px;
@@ -1527,31 +1494,31 @@ const closeDetailModal = () => {
   .orders-page {
     padding: 0 5px;
   }
-  
+
   .page-header h2 {
     font-size: 1.3rem;
   }
-  
+
   .table {
     min-width: 1000px;
   }
-  
+
   .table th,
   .table td {
     padding: 6px 4px;
     font-size: 11px;
   }
-  
+
   .btn {
     font-size: 13px;
     padding: 8px 12px;
   }
-  
+
   .btn-sm {
     padding: 4px 6px;
     font-size: 10px;
   }
-  
+
   .search-input,
   .filter-select {
     padding: 8px;
@@ -1563,172 +1530,172 @@ const closeDetailModal = () => {
   .orders-page {
     padding: 0;
   }
-  
+
   .page-header {
     margin-bottom: 15px;
     gap: 10px;
   }
-  
+
   .page-header h2 {
     font-size: 1.2rem;
   }
-  
+
   .header-actions {
     gap: 6px;
   }
-  
+
   .btn {
     padding: 8px 12px;
     font-size: 12px;
   }
-  
+
   .btn .icon {
     font-size: 14px;
   }
-  
+
   .filters {
     padding: 10px;
     margin-bottom: 10px;
   }
-  
+
   .filter-row {
     gap: 10px;
   }
-  
+
   .price-range-modern {
     padding: 8px;
     border-radius: 6px;
   }
-  
+
   .price-range-header {
     margin-bottom: 6px;
   }
-  
+
   .price-label {
     font-size: 12px;
   }
-  
+
   .price-reset-btn {
     padding: 2px 6px;
     font-size: 10px;
   }
-  
+
   .price-inputs-modern {
     gap: 4px;
   }
-  
+
   .price-input-modern {
     padding: 6px 8px;
     font-size: 12px;
   }
-  
+
   .input-label {
     font-size: 10px;
   }
-  
+
   .price-separator-modern {
     font-size: 14px;
   }
-  
+
   .price-slider-section {
     padding: 10px;
   }
-  
+
   .slider-track-container {
     height: 28px;
     margin: 0 4px;
   }
-  
+
   .slider-track,
   .slider-range {
     height: 3px;
   }
-  
+
   .slider-input {
     height: 28px;
   }
-  
+
   .slider-input::-webkit-slider-thumb {
     height: 14px;
     width: 14px;
     border: 2px solid white;
   }
-  
+
   .slider-input::-moz-range-thumb {
     height: 14px;
     width: 14px;
     border: 2px solid white;
   }
-  
+
   .price-display {
     margin-top: 8px;
     padding: 6px 8px;
   }
-  
+
   .price-min,
   .price-max {
     font-size: 11px;
     padding: 3px 6px;
   }
-  
+
   .order-statistics {
     padding: 8px 10px;
     margin-bottom: 15px;
     gap: 12px;
   }
-  
+
   .stat-item {
     font-size: 13px;
   }
-  
+
   .stat-label {
     font-size: 12px;
   }
-  
+
   .stat-value {
     font-size: 14px;
   }
-  
+
   .table {
     min-width: 1100px;
   }
-  
+
   .table th,
   .table td {
     padding: 5px 3px;
     font-size: 10px;
   }
-  
+
   .customer-info {
     min-width: 100px;
   }
-  
+
   .customer-info strong {
     font-size: 11px;
   }
-  
+
   .customer-info small {
     font-size: 9px;
   }
-  
+
   .products-list {
     max-width: 120px;
   }
-  
+
   .product-item {
     font-size: 10px;
   }
-  
+
   .btn {
     font-size: 12px;
     padding: 6px 10px;
   }
-  
+
   .btn-sm {
     padding: 3px 5px;
     font-size: 9px;
   }
-  
+
   .status-select {
     font-size: 10px;
     padding: 3px 6px;
@@ -1738,24 +1705,24 @@ const closeDetailModal = () => {
     background-position: right 4px center;
     border-width: 1px;
   }
-  
+
   .modal {
     width: 98%;
     margin: 5px;
   }
-  
+
   .modal-header {
     padding: 12px;
   }
-  
+
   .modal-header h3 {
     font-size: 1.1rem;
   }
-  
+
   .modal-body {
     padding: 12px;
   }
-  
+
   .detail-table th,
   .detail-table td {
     padding: 6px 4px;
@@ -1769,20 +1736,20 @@ const closeDetailModal = () => {
     min-height: 44px;
     min-width: 44px;
   }
-  
+
   .table tbody tr {
     cursor: pointer;
   }
-  
+
   .table tbody tr:active {
     background: #f8f9fa;
   }
-  
+
   .search-input,
   .filter-select {
     min-height: 44px;
   }
-  
+
   .status-select {
     min-height: 44px;
   }
@@ -1793,7 +1760,7 @@ const closeDetailModal = () => {
   .modal {
     max-height: 95vh;
   }
-  
+
   .modal-body {
     max-height: calc(95vh - 120px);
     overflow-y: auto;
