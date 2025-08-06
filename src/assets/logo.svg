@@ -1,20 +1,20 @@
 <!-- GearUp Logo SVG -->
 <svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
-  <!-- Green wave pattern -->
-  <g transform="translate(10, 10)">
-    <!-- Wave lines -->
-    <path d="M5 35 Q15 25 25 35 T45 35" stroke="#4ade80" stroke-width="2" fill="none"/>
-    <path d="M5 30 Q15 20 25 30 T45 30" stroke="#4ade80" stroke-width="2" fill="none"/>
-    <path d="M5 25 Q15 15 25 25 T45 25" stroke="#4ade80" stroke-width="2" fill="none"/>
-    <path d="M5 20 Q15 10 25 20 T45 20" stroke="#4ade80" stroke-width="2" fill="none"/>
-    <path d="M5 15 Q15 5 25 15 T45 15" stroke="#4ade80" stroke-width="2" fill="none"/>
+  <!-- Green wave pattern - centered horizontally and vertically -->
+  <g transform="translate(30, 15)">
+    <!-- Wave lines - perfectly centered within the group -->
+    <path d="M0 24 Q10 14 20 24 T40 24" stroke="#4ade80" stroke-width="2.5" fill="none"/>
+    <path d="M0 20 Q10 10 20 20 T40 20" stroke="#4ade80" stroke-width="2.5" fill="none"/>
+    <path d="M0 16 Q10 6 20 16 T40 16" stroke="#4ade80" stroke-width="2.5" fill="none"/>
+    <path d="M0 12 Q10 2 20 12 T40 12" stroke="#4ade80" stroke-width="2.5" fill="none"/>
+    <path d="M0 8 Q10 -2 20 8 T40 8" stroke="#4ade80" stroke-width="2.5" fill="none"/>
   </g>
   
-  <!-- Vertical separator line -->
-  <line x1="70" y1="10" x2="70" y2="50" stroke="#1f2937" stroke-width="2"/>
+  <!-- Vertical separator line - perfectly centered -->
+  <line x1="80" y1="15" x2="80" y2="45" stroke="#1f2937" stroke-width="2"/>
   
-  <!-- GEARUP Text -->
-  <text x="85" y="35" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#1f2937">
+  <!-- GEARUP Text - moved 5% to the left and 5.5% down -->
+  <text x="132" y="33" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#1f2937" dominant-baseline="middle" text-anchor="middle">
     GEARUP
   </text>
 </svg>

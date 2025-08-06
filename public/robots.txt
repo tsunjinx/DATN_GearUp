@@ -1,0 +1,12 @@
+# GearUp - Robots.txt
+User-agent: *
+Disallow: /admin/
+Disallow: /api/
+Disallow: /login
+Allow: /
+
+# Sitemap location
+Sitemap: https://gearup.local/sitemap.xml
+
+# Crawl delay for respectful crawling
+Crawl-delay: 1

@@ -7,6 +7,41 @@
     <meta name="description" content="GearUp - Hệ thống quản lý cửa hàng giày chuyên nghiệp" />
     <meta name="keywords" content="quản lý cửa hàng, giày, GearUp, bán hàng, inventory" />
     <meta name="author" content="GearUp Team" />
+    
+    <!-- Critical Resource Hints for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="dns-prefetch" href="//api.gearup.local">
+    
+    <!-- Critical CSS inlined for faster FCP -->
+    <style>
+      /* Critical CSS for initial render */
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+      #app { min-height: 100vh; display: flex; flex-direction: column; }
+      .loading-screen { display: flex; align-items: center; justify-content: center; height: 100vh; background: #f8fafc; }
+      .loading-spinner { width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top-color: #3b82f6; border-radius: 50%; animation: spin 1s linear infinite; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+    
+    <title>GearUp - Quản lý cửa hàng giày</title>
+  </head>
+  <body>
+    <div id="app">
+      <!-- Loading screen for better perceived performance -->
+      <div class="loading-screen">
+        <div class="loading-spinner"></div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html><html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="GearUp - Hệ thống quản lý cửa hàng giày chuyên nghiệp" />
+    <meta name="keywords" content="quản lý cửa hàng, giày, GearUp, bán hàng, inventory" />
+    <meta name="author" content="GearUp Team" />
     <title>GearUp - Quản lý cửa hàng giày</title>
   </head>
   <body>

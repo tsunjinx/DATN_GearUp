@@ -90,16 +90,23 @@
 
         <div class="header-right">
           <div class="header-actions">
-            <button class="notifications-btn" @click="toggleNotifications">
-              <div class="notification-icon-wrapper">
+            <button class="notification-button" @click="toggleNotifications">
+              <div class="bell-icon-container">
                 <!-- Clean Bell Icon -->
-                <svg class="notification-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2">
+                <svg class="bell-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
                   <path d="M13.73 21a2 2 0 0 1-3.46 0" />
                 </svg>
-                <!-- Pulse on top-right of bell -->
-                <div class="notification-pulse" v-if="unreadNotifications > 0"></div>
+                <!-- Notification count badge with dynamic animation -->
+                <div 
+                  class="notification-count" 
+                  :class="{ 'updating': isCountUpdating }"
+                  v-if="unreadNotifications > 0"
+                  :key="unreadNotifications"
+                >
+                  {{ unreadNotifications > 9 ? '9+' : unreadNotifications }}
+                </div>
               </div>
             </button>
 
@@ -158,7 +165,7 @@
                         Đánh dấu tất cả đã đọc
                       </button>
                       <button type="button" class="close-modal-btn" @click="closeAllNotificationsModal" title="Đóng">
-                        <i class="close-icon" aria-hidden="true">✕</i>
+                        <img class="close-icon" src="@/assets/close.png" alt="Close" aria-hidden="true">
                       </button>
                     </div>
                   </div>
@@ -166,11 +173,15 @@
                   <div class="modal-filters">
                     <div class="filter-tabs">
                       <button v-for="filter in notificationFilters" :key="filter.key" class="filter-tab"
-                        :class="{ 'active': selectedFilter === filter.key }" @click="selectedFilter = filter.key">
+                        :class="{ 'active': selectedFilter === filter.key }" @click="selectFilter(filter.key)">
                         <i class="tab-icon">{{ filter.icon }}</i>
                         {{ filter.label }}
-                        <span v-if="getFilterCount(filter.key) > 0" class="tab-badge">
-                          {{ getFilterCount(filter.key) }}
+                        <span v-show="filterCounts[filter.key] > 0" class="tab-badge" 
+                              :class="{ 
+                                'badge-unread': getUnreadCountForFilter(filter.key) > 0,
+                                'badge-read': getUnreadCountForFilter(filter.key) === 0 && filterCounts[filter.key] > 0 
+                              }">
+                          {{ filterCounts[filter.key] }}
                         </span>
                       </button>
                     </div>
@@ -248,29 +259,84 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick, defineAsyncComponent, shallowRef, markRaw } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
-import GearUpLogo from '@/components/ui/GearUpLogo.vue'
+
+// Lazy load components for better performance
+const GearUpLogo = defineAsyncComponent({
+  loader: () => import('@/components/ui/GearUpLogo.vue'),
+  delay: 200,
+  timeout: 3000,
+  loadingComponent: { template: '<div class="logo-skeleton"></div>' }
+})
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 
-const sidebarCollapsed = ref(false)
+const sidebarCollapsed = ref(true) // Default to closed/collapsed
 const userToggledSidebar = ref(false) // Track if user manually toggled sidebar
 const mobileMenuOpen = ref(false)
 const isMobile = ref(false)
 const isTablet = ref(false)
 const windowWidth = ref(0)
 
+// Load user's sidebar preference from localStorage
+const loadSidebarPreference = () => {
+  try {
+    const savedCollapsed = localStorage.getItem('gearup-sidebar-collapsed')
+    const savedUserToggled = localStorage.getItem('gearup-sidebar-user-toggled')
+    
+    // Only load preferences if user has actually toggled the sidebar before
+    if (savedUserToggled === 'true' && savedCollapsed !== null) {
+      sidebarCollapsed.value = JSON.parse(savedCollapsed)
+      userToggledSidebar.value = JSON.parse(savedUserToggled)
+    }
+    // Otherwise, keep the new default (closed)
+  } catch (error) {
+    console.warn('Failed to load sidebar preferences:', error)
+  }
+}
+
+// Save user's sidebar preference to localStorage
+const saveSidebarPreference = () => {
+  try {
+    localStorage.setItem('gearup-sidebar-collapsed', JSON.stringify(sidebarCollapsed.value))
+    localStorage.setItem('gearup-sidebar-user-toggled', JSON.stringify(userToggledSidebar.value))
+  } catch (error) {
+    console.warn('Failed to save sidebar preferences:', error)
+  }
+}
+
+// Reset sidebar to default state (for testing)
+const resetSidebarToDefault = () => {
+  try {
+    localStorage.removeItem('gearup-sidebar-collapsed')
+    localStorage.removeItem('gearup-sidebar-user-toggled')
+    sidebarCollapsed.value = true // New default
+    userToggledSidebar.value = false
+    console.log('Sidebar reset to default (closed)')
+  } catch (error) {
+    console.warn('Failed to reset sidebar preferences:', error)
+  }
+}
+
+// Make reset function available globally for testing
+if (import.meta.env.DEV) {
+  window.resetSidebar = resetSidebarToDefault
+}
+
 // Notifications state
 const showNotifications = ref(false)
 const showAllNotificationsModal = ref(false)
 const isModalClosing = ref(false)
 const selectedFilter = ref('all')
+const isCountUpdating = ref(false)
+const previousUnreadCount = ref(0)
 
-const notificationFilters = [
+// Optimized notification filters - use markRaw for static data
+const notificationFilters = markRaw([
   { key: 'all', label: 'Tất cả', icon: '📋' },
   { key: 'unread', label: 'Chưa đọc', icon: '🔴' },
   { key: 'order', label: 'Đơn hàng', icon: '🛒' },
@@ -278,8 +344,10 @@ const notificationFilters = [
   { key: 'review', label: 'Đánh giá', icon: '⭐' },
   { key: 'customer', label: 'Khách hàng', icon: '👤' },
   { key: 'report', label: 'Báo cáo', icon: '📊' }
-]
-const notifications = ref([
+])
+
+// Use shallowRef for large arrays that don't need deep reactivity
+const notifications = shallowRef([
   {
     id: 1,
     title: 'Đơn hàng mới',
@@ -383,29 +451,27 @@ const showLogo = computed(() => {
   return !sidebarCollapsed.value
 })
 
+// Memoized computed properties for better performance
 const unreadNotifications = computed(() => {
   const count = notifications.value.filter(n => !n.isRead).length
-  console.log('Unread notifications count:', count)
   return count
 })
 
+// Optimized with early return and reduced iterations
 const filteredNotificationsModal = computed(() => {
-  let filtered = notifications.value
-
-  switch (selectedFilter.value) {
-    case 'unread':
-      filtered = filtered.filter(n => !n.isRead)
-      break
-    case 'order':
-    case 'inventory':
-    case 'review':
-    case 'customer':
-    case 'report':
-      filtered = filtered.filter(n => n.type === selectedFilter.value)
-      break
-    default:
-      // 'all' - no filtering needed
-      break
+  const notifs = notifications.value
+  
+  // Early return for 'all' filter to avoid unnecessary filtering
+  if (selectedFilter.value === 'all') {
+    return [...notifs].sort((a, b) => b.timestamp - a.timestamp)
+  }
+  
+  let filtered
+  if (selectedFilter.value === 'unread') {
+    filtered = notifs.filter(n => !n.isRead)
+  } else {
+    // For type filters
+    filtered = notifs.filter(n => n.type === selectedFilter.value)
   }
 
   return filtered.sort((a, b) => b.timestamp - a.timestamp)
@@ -413,8 +479,16 @@ const filteredNotificationsModal = computed(() => {
 
 // Store previous width to detect significant changes
 const previousWidth = ref(window.innerWidth)
+const isInitialLoad = ref(true) // Track if this is the first load
 
-// Dynamic responsive breakpoints with debounce protection
+// Debounced resize handler for better performance
+let resizeTimeout = null
+const debouncedCheckResponsive = () => {
+  if (resizeTimeout) clearTimeout(resizeTimeout)
+  resizeTimeout = setTimeout(checkResponsive, 150) // 150ms debounce
+}
+
+// Optimized responsive breakpoints with performance considerations
 const checkResponsive = () => {
   const currentWidth = window.innerWidth
   const widthDifference = Math.abs(currentWidth - previousWidth.value)
@@ -423,6 +497,39 @@ const checkResponsive = () => {
   windowWidth.value = currentWidth
   isMobile.value = currentWidth <= 768
   isTablet.value = currentWidth > 768 && currentWidth <= 1024
+
+  // Performance: Only log in development
+  if (import.meta.env.DEV) {
+    console.log('📐 Window resized:', {
+      newWidth: currentWidth,
+      isMobile: isMobile.value,
+      isTablet: isTablet.value
+    })
+  }
+
+  // On initial load, set reasonable defaults without forcing changes
+  if (isInitialLoad.value) {
+    // Set initial state based on screen size but don't force changes
+    if (currentWidth <= 768) {
+      // Mobile: sidebar should be closed (mobile overlay pattern)
+      sidebarCollapsed.value = true // Mobile uses overlay, keep collapsed
+      mobileMenuOpen.value = false
+    } else if (currentWidth <= 1024) {
+      // Tablet: default to collapsed
+      if (!userToggledSidebar.value) {
+        sidebarCollapsed.value = true
+      }
+    } else {
+      // Desktop: default to collapsed (changed from expanded)
+      if (!userToggledSidebar.value) {
+        sidebarCollapsed.value = true
+      }
+    }
+    
+    isInitialLoad.value = false
+    previousWidth.value = currentWidth
+    return
+  }
 
   // Only reset sidebar state for significant width changes (not DevTools toggle)
   // This prevents DevTools from interfering with user interactions
@@ -434,9 +541,11 @@ const checkResponsive = () => {
         sidebarCollapsed.value = true
       }
     } else if (currentWidth > 1024) {
-      // On desktop, expand sidebar and reset user toggle state
-      sidebarCollapsed.value = false
-      userToggledSidebar.value = false
+      // On desktop, default to collapsed unless user has toggled
+      if (!userToggledSidebar.value) {
+        sidebarCollapsed.value = true
+      }
+      // Don't reset user toggle state anymore - let user preference persist
     }
 
     // Update previous width only for significant changes
@@ -448,7 +557,7 @@ const checkResponsive = () => {
     mobileMenuOpen.value = false
   }
 
-  // Debug logging
+  // Debug logging (only when not initial load)
   console.log('Responsive check:', {
     width: currentWidth,
     previousWidth: previousWidth.value,
@@ -458,20 +567,60 @@ const checkResponsive = () => {
     isTablet: isTablet.value,
     sidebarCollapsed: sidebarCollapsed.value,
     userToggledSidebar: userToggledSidebar.value,
-    mobileMenuOpen: mobileMenuOpen.value
+    mobileMenuOpen: mobileMenuOpen.value,
+    isInitialLoad: isInitialLoad.value
   })
 }
 
 onMounted(() => {
+  // Load user preferences first
+  loadSidebarPreference()
+  
+  // Then check responsive layout
   checkResponsive()
-  window.addEventListener('resize', checkResponsive)
-  document.addEventListener('click', handleClickOutside)
+  
+  // Use debounced resize handler for better performance
+  window.addEventListener('resize', debouncedCheckResponsive, { passive: true })
+  document.addEventListener('click', handleClickOutside, { passive: true })
+  
+  // Initialize previous count
+  previousUnreadCount.value = unreadNotifications.value
 })
 
 onUnmounted(() => {
-  window.removeEventListener('resize', checkResponsive)
+  // Clean up timers
+  if (resizeTimeout) clearTimeout(resizeTimeout)
+  
+  // Remove event listeners
+  window.removeEventListener('resize', debouncedCheckResponsive)
   document.removeEventListener('click', handleClickOutside)
 })
+
+// Optimized watchers with better performance
+watch(unreadNotifications, (newCount, oldCount) => {
+  if (newCount !== oldCount && oldCount !== undefined) {
+    // Trigger update animation
+    isCountUpdating.value = true
+    
+    // Reset animation class after animation completes
+    setTimeout(() => {
+      isCountUpdating.value = false
+    }, 600)
+  }
+  
+  previousUnreadCount.value = newCount
+}, { immediate: false })
+
+// Simplified notification watcher - only in development
+if (import.meta.env.DEV) {
+  watch(notifications, () => {
+    console.log('Notifications changed, filter counts will update automatically')
+  }, { deep: true })
+  
+  watch(selectedFilter, (newFilter) => {
+    console.log('Filter changed to:', newFilter)
+  })
+}
 
 const pageTitle = computed(() => {
   // First try to get title from route meta, remove "GearUp - " prefix for display
@@ -500,6 +649,9 @@ const toggleSidebar = () => {
     userToggledSidebar.value = true
   }
 
+  // Save user preferences
+  saveSidebarPreference()
+
   console.log('Sidebar toggled:', {
     collapsed: sidebarCollapsed.value,
     userToggled: userToggledSidebar.value,
@@ -521,6 +673,7 @@ const closeMenu = () => {
   } else if (isTablet.value && !sidebarCollapsed.value) {
     sidebarCollapsed.value = true
     userToggledSidebar.value = true // Keep user preference when closing via overlay
+    saveSidebarPreference() // Save the preference
   }
 }
 
@@ -536,17 +689,33 @@ const toggleNotifications = () => {
   console.log('New state:', showNotifications.value)
 }
 
-const markAsRead = (notificationId) => {
-  const notification = notifications.value.find(n => n.id === notificationId)
-  if (notification) {
-    notification.isRead = true
+const markAsRead = async (notificationId) => {
+  // Performance: Update specific notification without creating new array
+  const notificationIndex = notifications.value.findIndex(n => n.id === notificationId)
+  if (notificationIndex !== -1) {
+    notifications.value[notificationIndex] = {
+      ...notifications.value[notificationIndex],
+      isRead: true
+    }
+    // Trigger reactivity for shallowRef
+    notifications.value = [...notifications.value]
+  }
+  
+  if (import.meta.env.DEV) {
+    console.log(`Notification ${notificationId} marked as read`)
   }
 }
 
-const markAllAsRead = () => {
-  notifications.value.forEach(notification => {
-    notification.isRead = true
-  })
+const markAllAsRead = async () => {
+  // Performance: Batch update all notifications
+  notifications.value = notifications.value.map(notification => ({
+    ...notification,
+    isRead: true
+  }))
+  
+  if (import.meta.env.DEV) {
+    console.log('All notifications marked as read')
+  }
 }
 
 const viewAllNotifications = () => {
@@ -565,14 +734,45 @@ const closeAllNotificationsModal = () => {
   }, 400) // 400ms matches the animation duration
 }
 
+const selectFilter = (filterKey) => {
+  selectedFilter.value = filterKey
+  
+  // Performance: Only add debug logging in development
+  if (import.meta.env.DEV) {
+    console.log('� Selecting filter:', filterKey)
+    console.log('💾 Filter count:', filterCounts.value[filterKey])
+  }
+}
+
+// Create reactive computed properties for filter counts
+const filterCounts = computed(() => {
+  const counts = {
+    all: notifications.value.length,
+    unread: notifications.value.filter(n => !n.isRead).length,
+    order: notifications.value.filter(n => n.type === 'order').length,
+    inventory: notifications.value.filter(n => n.type === 'inventory').length,
+    review: notifications.value.filter(n => n.type === 'review').length,
+    customer: notifications.value.filter(n => n.type === 'customer').length,
+    report: notifications.value.filter(n => n.type === 'report').length
+  }
+  
+  console.log('Filter counts updated:', counts)
+  return counts
+})
+
 const getFilterCount = (filterKey) => {
+  return filterCounts.value[filterKey] || 0
+}
+
+const getUnreadCountForFilter = (filterKey) => {
   switch (filterKey) {
     case 'all':
-      return notifications.value.length
+      return notifications.value.filter(n => !n.isRead).length
     case 'unread':
       return notifications.value.filter(n => !n.isRead).length
     default:
-      return notifications.value.filter(n => n.type === filterKey).length
+      // For specific types, count unread notifications of that type
+      return notifications.value.filter(n => n.type === filterKey && !n.isRead).length
   }
 }
 
@@ -631,7 +831,7 @@ const formatTimeAgo = (timestamp) => {
 
 // Close notifications when clicking outside
 const handleClickOutside = (event) => {
-  if (showNotifications.value && !event.target.closest('.notifications-btn') && !event.target.closest('.notifications-dropdown')) {
+  if (showNotifications.value && !event.target.closest('.notification-button') && !event.target.closest('.notifications-dropdown')) {
     showNotifications.value = false
   }
   if (showAllNotificationsModal.value && !event.target.closest('.notifications-modal')) {
@@ -641,17 +841,24 @@ const handleClickOutside = (event) => {
 </script>
 
 <style scoped>
+/* Performance optimizations */
 .admin-layout {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
   background: var(--gray-50);
+  /* Performance: Enable hardware acceleration */
+  transform: translate3d(0, 0, 0);
+  will-change: auto;
 }
 
-/* Sidebar Styles */
+/* Performance: Add contain property for better rendering */
 .sidebar {
   width: 280px;
   min-width: 280px;
   max-width: 320px;
+  height: 100vh;
   background: var(--surface);
   border-right: 1px solid var(--border);
   transition: all 0.3s ease;
@@ -660,6 +867,23 @@ const handleClickOutside = (event) => {
   flex-direction: column;
   box-shadow: var(--shadow-sm);
   overflow: hidden;
+  contain: layout style paint;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Logo loading skeleton */
+.logo-skeleton {
+  width: 120px;
+  height: 32px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading-shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes loading-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
 /* Dynamic responsive sidebar states */
@@ -1093,6 +1317,8 @@ const handleClickOutside = (event) => {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  height: 100vh;
+  overflow: hidden;
   position: relative;
   /* For overlay positioning */
   transition: margin-left 0.3s ease;
@@ -1167,152 +1393,157 @@ const handleClickOutside = (event) => {
   position: relative;
 }
 
-.notifications-btn {
+/* Modern Notification Button */
+.notification-button {
   position: relative;
-  padding: 0.75rem;
-  border-radius: 0.75rem;
-  border: 1.5px solid var(--gray-200);
-  background: var(--surface) !important;
-  /* Force override any global styles */
-  background-image: none !important;
-  /* Remove any background images */
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
   cursor: pointer;
-  z-index: 10;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-.notifications-btn:hover {
-  background: var(--gray-50);
+.notification-button:hover {
+  background: rgba(255, 255, 255, 1);
   border-color: var(--primary-300);
-  transform: translateY(-1px) scale(1.02);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
-.notifications-btn:active {
-  transform: translateY(0) scale(0.98);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+.notification-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-/* Notification Icon Wrapper */
-.notification-icon-wrapper {
+.bell-icon-container {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 100%;
+  width: 20px;
+  height: 20px;
 }
 
-/* Clean SVG Notification Icon */
-.notification-icon {
+.bell-icon {
   width: 20px;
   height: 20px;
   color: var(--gray-600);
   transition: all 0.2s ease;
-  flex-shrink: 0;
 }
 
-.notifications-btn:hover .notification-icon {
+.notification-button:hover .bell-icon {
   color: var(--primary-600);
   transform: scale(1.05);
 }
 
-.notifications-btn:active .notification-icon {
-  color: var(--primary-700);
-  transform: scale(0.95);
-}
-
-/* Pulse positioned on top-right of bell icon */
-.notification-pulse {
+.notification-count {
   position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 6px;
-  height: 6px;
-  background: var(--error);
-  border-radius: 50%;
-  animation: simplePulse 2s infinite;
-  pointer-events: none;
-}
-
-@keyframes simplePulse {
-  0% {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  50% {
-    opacity: 0.5;
-    transform: scale(1.2);
-  }
-
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* Enhanced Notification Badge */
-.notification-badge {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  background: linear-gradient(135deg, var(--error) 0%, #dc2626 100%);
+  top: -6px;
+  right: -6px;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
   color: white;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  width: 18px;
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 18px;
   height: 18px;
-  border-radius: 50%;
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 2px solid white;
   box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
-  animation: badgeBounce 0.5s ease-out;
-  z-index: 2;
+  z-index: 1;
+  animation: badgeEntrance 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), 
+             badgePulse 3s infinite 0.5s;
+  transform-origin: center;
 }
 
-@keyframes badgeBounce {
+/* Enhanced badge entrance animation */
+@keyframes badgeEntrance {
   0% {
-    transform: scale(0);
     opacity: 0;
+    transform: scale(0) rotate(-180deg);
+    box-shadow: 0 0 0 rgba(239, 68, 68, 0);
   }
-
   50% {
-    transform: scale(1.3);
     opacity: 1;
+    transform: scale(1.3) rotate(-90deg);
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
   }
-
+  70% {
+    transform: scale(0.9) rotate(-30deg);
+  }
+  85% {
+    transform: scale(1.1) rotate(10deg);
+  }
   100% {
-    transform: scale(1);
     opacity: 1;
+    transform: scale(1) rotate(0deg);
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
   }
 }
 
-/* Focus State for Accessibility */
-/* CRITICAL: Override global button animations that interfere with notification icon */
-/* The button-animations.css file adds ::before pseudo-elements that cause duplicate icons */
-.notifications-btn::before,
-.notifications-btn::after,
-.btn.notifications-btn::before,
-.btn.notifications-btn::after,
-.btn-outline.notifications-btn::before,
-.btn-outline.notifications-btn::after {
-  display: none !important;
-  content: none !important;
-  background: none !important;
-  background-image: none !important;
-  width: 0 !important;
-  height: 0 !important;
+/* Continuous pulse animation */
+@keyframes badgePulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+  }
+  50% {
+    transform: scale(1.15);
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.5);
+  }
 }
 
-.notifications-btn:focus-visible {
+/* Special animation for count updates */
+.notification-count.updating {
+  animation: badgeUpdate 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes badgeUpdate {
+  0% {
+    transform: scale(1);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  }
+  25% {
+    transform: scale(1.4) rotate(15deg);
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    box-shadow: 0 6px 24px rgba(245, 158, 11, 0.6);
+  }
+  50% {
+    transform: scale(0.8) rotate(-10deg);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.5);
+  }
+  75% {
+    transform: scale(1.2) rotate(5deg);
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+  }
+}
+
+/* Hover effect for notification button affects badge */
+.notification-button:hover .notification-count {
+  animation-play-state: paused;
+  transform: scale(1.1);
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.5);
+}
+
+.notification-button:focus-visible {
   outline: 2px solid var(--primary-500);
   outline-offset: 2px;
-  border-color: var(--primary-400);
 }
 
 
@@ -1536,6 +1767,20 @@ const handleClickOutside = (event) => {
   cursor: pointer;
 }
 
+/* Override the reset for specific styled buttons */
+.notifications-modal .mark-all-read-modal {
+  background: var(--primary-500) !important;
+  color: white !important;
+  border: 2px solid var(--primary-500) !important;
+  padding: 0.5rem 1rem !important;
+}
+
+.notifications-modal .close-modal-btn {
+  background: white !important;
+  border: 2px solid var(--gray-300) !important;
+  padding: 0 !important;
+}
+
 .notifications-modal button:focus {
   outline: 0;
 }
@@ -1656,23 +1901,25 @@ const handleClickOutside = (event) => {
 }
 
 .mark-all-read-modal {
-  background: var(--primary-500);
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.2s ease;
+  background: var(--primary-500) !important;
+  color: white !important;
+  border: 2px solid var(--primary-500) !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  transition: all 0.2s ease !important;
 }
 
 .mark-all-read-modal:hover {
-  background: var(--primary-600);
-  transform: translateY(-1px);
+  background: var(--primary-600) !important;
+  color: white !important;
+  border-color: var(--primary-600) !important;
+  transform: translateY(-1px) !important;
 }
 
 .action-icon {
@@ -1680,8 +1927,8 @@ const handleClickOutside = (event) => {
 }
 
 .close-modal-btn {
-  background: var(--gray-100) !important;
-  border: none !important;
+  background: white !important;
+  border: 2px solid var(--gray-300) !important;
   width: 2.5rem !important;
   height: 2.5rem !important;
   border-radius: 50% !important;
@@ -1690,10 +1937,10 @@ const handleClickOutside = (event) => {
   align-items: center !important;
   justify-content: center !important;
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-  color: var(--gray-600) !important;
+  color: var(--gray-700) !important;
   padding: 0 !important;
   margin: 0 !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
   font-family: inherit !important;
   font-size: inherit !important;
   line-height: 1 !important;
@@ -1736,10 +1983,11 @@ const handleClickOutside = (event) => {
 }
 
 .close-modal-btn:hover {
-  background: var(--gray-200) !important;
-  color: var(--gray-800) !important;
+  background: var(--red-50) !important;
+  color: var(--red-600) !important;
+  border-color: var(--red-300) !important;
   transform: scale(1.15) rotate(90deg) !important;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.2) !important;
   animation: closeButtonPulse 1.5s infinite ease-in-out !important;
 }
 
@@ -1808,25 +2056,24 @@ const handleClickOutside = (event) => {
 }
 
 .close-icon {
-  font-size: 1.25rem !important;
-  font-weight: bold !important;
-  line-height: 1 !important;
-  color: inherit !important;
+  width: 16px !important;
+  height: 16px !important;
+  object-fit: contain !important;
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
   transform-origin: center !important;
+  filter: brightness(0.4) !important; /* Make the black icon darker gray */
 }
 
 /* Icon rotation animation on hover */
 .close-modal-btn:hover .close-icon {
   transform: rotate(90deg) scale(1.1) !important;
-  color: var(--red-600) !important;
-  text-shadow: 0 0 8px rgba(239, 68, 68, 0.3) !important;
+  filter: brightness(0) saturate(100%) invert(27%) sepia(91%) saturate(2870%) hue-rotate(346deg) brightness(91%) contrast(94%) !important; /* Red color filter */
 }
 
 /* Icon animation on active */
 .close-modal-btn:active .close-icon {
   transform: rotate(180deg) scale(0.8) !important;
-  color: var(--red-700) !important;
+  filter: brightness(0) saturate(100%) invert(9%) sepia(100%) saturate(7093%) hue-rotate(352deg) brightness(86%) contrast(118%) !important; /* Darker red color filter */
 }
 
 /* Special closing animation for the close button when modal is closing */
@@ -1869,19 +2116,19 @@ const handleClickOutside = (event) => {
   0% {
     opacity: 1;
     transform: rotate(0deg) scale(1);
-    color: var(--gray-600);
+    filter: brightness(0.4);
   }
 
   50% {
     opacity: 0.7;
     transform: rotate(180deg) scale(1.2);
-    color: var(--red-500);
+    filter: brightness(0) saturate(100%) invert(27%) sepia(91%) saturate(2870%) hue-rotate(346deg) brightness(91%) contrast(94%);
   }
 
   100% {
     opacity: 0;
     transform: rotate(360deg) scale(0);
-    color: var(--red-700);
+    filter: brightness(0) saturate(100%) invert(9%) sepia(100%) saturate(7093%) hue-rotate(352deg) brightness(86%) contrast(118%);
   }
 }
 
@@ -1897,10 +2144,10 @@ const handleClickOutside = (event) => {
   flex-wrap: wrap;
 }
 
-.filter-tab {
+.notifications-modal .filter-tab {
   background: white;
   border: 1px solid var(--border);
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem 0.75rem !important;
   border-radius: 0.5rem;
   font-size: 0.875rem;
   font-weight: 500;
@@ -1911,19 +2158,36 @@ const handleClickOutside = (event) => {
   transition: all 0.2s ease;
   color: var(--gray-700);
   position: relative;
+  min-height: 40px;
+  box-sizing: border-box !important;
+  white-space: nowrap;
+  /* Performance: Use transform3d for GPU acceleration */
+  transform: translate3d(0, 0, 0);
+  will-change: transform, background-color;
 }
 
-.filter-tab:hover {
-  background: var(--gray-50);
+.notifications-modal .filter-tab:hover {
+  background: var(--gray-50) !important;
   border-color: var(--primary-300);
+  transform: translate3d(0, -1px, 0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.filter-tab.active {
-  background: var(--primary-500);
-  border-color: var(--primary-500);
-  color: white;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+/* Active state - higher specificity and distinct styling */
+.notifications-modal .filter-tab.active {
+  background: var(--primary-500) !important;
+  border-color: var(--primary-500) !important;
+  color: white !important;
+  transform: translate3d(0, -1px, 0) !important;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3) !important;
+}
+
+/* Active tab hover state - slightly different from regular active */
+.notifications-modal .filter-tab.active:hover {
+  background: var(--primary-600) !important;
+  border-color: var(--primary-600) !important;
+  transform: translate3d(0, -2px, 0) !important;
+  box-shadow: 0 6px 16px rgba(34, 197, 94, 0.4) !important;
 }
 
 .tab-icon {
@@ -1931,7 +2195,6 @@ const handleClickOutside = (event) => {
 }
 
 .tab-badge {
-  background: var(--error);
   color: white;
   font-size: 0.75rem;
   font-weight: 600;
@@ -1942,11 +2205,59 @@ const handleClickOutside = (event) => {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.3s ease;
 }
 
-.filter-tab.active .tab-badge {
-  background: rgba(255, 255, 255, 0.2);
+/* Badge colors based on read status */
+.tab-badge.badge-unread {
+  background: var(--error);
   color: white;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+
+.tab-badge.badge-read {
+  background: var(--gray-400);
+  color: white;
+  box-shadow: 0 0 0 2px rgba(156, 163, 175, 0.2);
+}
+
+/* Active tab badges - higher specificity */
+.notifications-modal .filter-tab.active .tab-badge.badge-unread {
+  background: rgba(239, 68, 68, 0.9) !important;
+  color: white !important;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3) !important;
+}
+
+.notifications-modal .filter-tab.active .tab-badge.badge-read {
+  background: rgba(156, 163, 175, 0.8) !important;
+  color: white !important;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Hover effects for badges - regular tabs */
+.notifications-modal .filter-tab:not(.active):hover .tab-badge.badge-unread {
+  background: var(--error) !important;
+  transform: scale(1.05);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
+}
+
+.notifications-modal .filter-tab:not(.active):hover .tab-badge.badge-read {
+  background: var(--gray-500) !important;
+  transform: scale(1.05);
+  box-shadow: 0 0 0 3px rgba(156, 163, 175, 0.3);
+}
+
+/* Hover effects for badges - active tabs */
+.notifications-modal .filter-tab.active:hover .tab-badge.badge-unread {
+  background: rgba(239, 68, 68, 1) !important;
+  transform: scale(1.05);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4) !important;
+}
+
+.notifications-modal .filter-tab.active:hover .tab-badge.badge-read {
+  background: rgba(156, 163, 175, 0.9) !important;
+  transform: scale(1.05);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4) !important;
 }
 
 /* Closing animations for filter tabs */
@@ -2375,10 +2686,13 @@ const handleClickOutside = (event) => {
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
+  height: calc(100vh - 80px); /* Subtract header height */
+  max-height: calc(100vh - 80px);
 }
 
 .content-area {
-  min-height: calc(100vh - 300px);
+  /* Removed min-height to prevent infinite scrolling */
+  width: 100%;
 }
 
 /* Responsive Design */

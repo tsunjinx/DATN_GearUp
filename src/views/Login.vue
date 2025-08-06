@@ -57,24 +57,17 @@
             <button type="submit" class="btn btn-primary btn-login" :disabled="loading || loginSuccess"
               :class="{ 'loading': loading && !loginSuccess, 'success': loginSuccess }">
 
-              <!-- Loading State -->
-              <span v-if="loading && !loginSuccess" class="loading-spinner">
-                <div class="spinner-dots">
-                  <div class="dot"></div>
-                  <div class="dot"></div>
-                  <div class="dot"></div>
-                </div>
-              </span>
+              <div class="button-content">
+                <!-- Success State -->
+                <span v-if="loginSuccess" class="success-icon">✓</span>
 
-              <!-- Success State -->
-              <span v-else-if="loginSuccess" class="success-icon">✓</span>
+                <!-- Default State -->
+                <i v-else class="login-icon">🚀</i>
 
-              <!-- Default State -->
-              <i v-else class="login-icon">🚀</i>
-
-              <span class="button-text">
-                {{ loginSuccess ? 'Đăng nhập thành công' : (loading ? 'Đang đăng nhập...' : 'Đăng nhập') }}
-              </span>
+                <span class="button-text">
+                  {{ loginSuccess ? 'Đăng nhập thành công' : (loading ? 'Đang đăng nhập...' : 'Đăng nhập') }}
+                </span>
+              </div>
             </button>
           </form>
 
@@ -88,7 +81,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore.js'
 import GearUpLogo from '../components/ui/GearUpLogo.vue'
@@ -108,6 +101,7 @@ const form = ref({
 })
 
 const handleLogin = async () => {
+  
   const success = await authStore.login({
     username: form.value.username,
     password: form.value.password,
@@ -198,6 +192,7 @@ const handleLogin = async () => {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
+  margin-right: 1.8rem;
 }
 
 .logo-container:hover {
@@ -413,7 +408,6 @@ const handleLogin = async () => {
   height: 3rem;
   font-size: 1rem;
   font-weight: 600;
-  gap: 0.5rem;
   border-radius: 0.5rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -421,6 +415,18 @@ const handleLogin = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0 1rem;
+}
+
+.button-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  height: 100%;
+  min-height: 1.125rem;
+  position: relative;
 }
 
 .btn-login:hover:not(:disabled) {
@@ -459,6 +465,14 @@ const handleLogin = async () => {
 
 .button-text {
   transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.125rem;
+  min-height: 1.125rem;
+  margin: 0;
+  padding: 0;
+  vertical-align: middle;
 }
 
 .btn-login.loading .button-text {
@@ -484,6 +498,14 @@ const handleLogin = async () => {
 .login-icon {
   font-size: 1.125rem;
   transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.125rem;
+  line-height: 1.125rem;
+  margin: 0;
+  padding: 0;
+  vertical-align: middle;
 }
 
 .btn-login:hover .login-icon {
@@ -495,6 +517,14 @@ const handleLogin = async () => {
   color: white;
   font-weight: bold;
   animation: checkmarkBounce 0.6s ease-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.125rem;
+  line-height: 1.125rem;
+  margin: 0;
+  padding: 0;
+  vertical-align: middle;
 }
 
 @keyframes checkmarkBounce {
@@ -510,54 +540,6 @@ const handleLogin = async () => {
 
   100% {
     transform: scale(1) rotate(0deg);
-    opacity: 1;
-  }
-}
-
-.loading-spinner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 0.5rem;
-}
-
-.spinner-dots {
-  display: flex;
-  gap: 3px;
-  align-items: center;
-}
-
-.spinner-dots .dot {
-  width: 4px;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 50%;
-  animation: dotPulse 1.4s ease-in-out infinite;
-}
-
-.spinner-dots .dot:nth-child(1) {
-  animation-delay: 0s;
-}
-
-.spinner-dots .dot:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.spinner-dots .dot:nth-child(3) {
-  animation-delay: 0.4s;
-}
-
-@keyframes dotPulse {
-
-  0%,
-  60%,
-  100% {
-    transform: scale(1);
-    opacity: 0.5;
-  }
-
-  30% {
-    transform: scale(1.4);
     opacity: 1;
   }
 }

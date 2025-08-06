@@ -7,5 +7,15 @@
   "bracketSpacing": true,
   "arrowParens": "avoid",
   "vueIndentScriptAndStyle": false,
-  "endOfLine": "lf"
+  "endOfLine": "lf",
+  "overrides": [
+    {
+      "files": "*.vue",
+      "options": {
+        "printWidth": 120,
+        "tabWidth": 2,
+        "vueIndentScriptAndStyle": false
+      }
+    }
+  ]
 }

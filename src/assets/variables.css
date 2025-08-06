@@ -313,7 +313,26 @@
 .rounded-xl { border-radius: var(--radius-xl); }
 .rounded-full { border-radius: var(--radius-full); }
 
-/* === DARK MODE SUPPORT === */
+/* === FORCED LIGHT MODE (OVERRIDE SYSTEM PREFERENCES) === */
+/* Ensure consistent light mode appearance regardless of system settings */
+:root {
+  --background: var(--gray-50) !important;
+  --surface: #ffffff !important;
+  --text-primary: var(--gray-900) !important;
+  --text-secondary: var(--gray-600) !important;
+  --text-muted: var(--gray-500) !important;
+  --text-inverse: #ffffff !important;
+  --border: var(--gray-200) !important;
+  --border-light: var(--gray-100) !important;
+  --border-strong: var(--gray-300) !important;
+}
+
+/* === DARK MODE SUPPORT (DISABLED FOR NOW) === */
+/* 
+TODO: Implement proper dark mode support in future versions
+For now, force light mode to prevent color conflicts
+*/
+/* 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: var(--gray-900);
@@ -326,8 +345,14 @@
     --border-strong: var(--gray-600);
   }
 }
+*/
 
-/* === HIGH CONTRAST MODE === */
+/* === HIGH CONTRAST MODE (DISABLED FOR CONSISTENCY) === */
+/* 
+TODO: Implement proper high contrast support in future versions
+For now, disabled to prevent unexpected color changes
+*/
+/*
 @media (prefers-contrast: high) {
   :root {
     --border: var(--gray-900);
@@ -335,6 +360,7 @@
     --text-secondary: var(--gray-800);
   }
 }
+*/
 
 /* === REDUCED MOTION === */
 @media (prefers-reduced-motion: reduce) {

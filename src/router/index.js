@@ -1,17 +1,19 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import AdminLayout from '@/layouts/AdminLayout.vue'
 import { useAuthStore } from '@/stores/authStore'
 
-// Views
-import Dashboard from '@/views/Dashboard.vue'
-import Products from '@/views/Products.vue'
-import Customers from '@/views/Customers.vue'
-import Employees from '@/views/Employees.vue'
-import Orders from '@/views/Orders.vue'
-import Discounts from '@/views/Discounts.vue'
-import Coupons from '@/views/Coupons.vue'
-import Login from '@/views/Login.vue'
-import NotFound from '@/views/NotFound.vue'
+// Lazy load layout with high priority
+const AdminLayout = () => import('@/layouts/AdminLayout.vue')
+
+// Lazy load views for better performance
+const Dashboard = () => import('@/views/Dashboard.vue')
+const Products = () => import('@/views/Products.vue')
+const Customers = () => import('@/views/Customers.vue')
+const Employees = () => import('@/views/Employees.vue')
+const Orders = () => import('@/views/Orders.vue')
+const Discounts = () => import('@/views/Discounts.vue')
+const Coupons = () => import('@/views/Coupons.vue')
+const Login = () => import('@/views/Login.vue')
+const NotFound = () => import('@/views/NotFound.vue')
 
 const routes = [
   // Public routes (no layout)

@@ -170,8 +170,7 @@
     <div v-if="filteredCoupons.length === 0" class="empty-state">
       <div class="empty-icon">🎫</div>
       <h3>Không tìm thấy phiếu giảm giá</h3>
-      <p>{{ searchTerm || selectedStatus ? 'Thử thay đổi bộ lọc để xem kết quả khác' : 'Tạo phiếu giảm giá đầu tiên của
-        bạn' }}</p>
+      <p>{{ searchTerm || selectedStatus ? 'Thử thay đổi bộ lọc để xem kết quả khác' : 'Tạo phiếu giảm giá đầu tiên của bạn' }}</p>
       <button v-if="!searchTerm && !selectedStatus" class="btn btn-primary" @click="showAddModal = true">
         <i class="btn-icon">➕</i>
         Tạo phiếu giảm giá đầu tiên
