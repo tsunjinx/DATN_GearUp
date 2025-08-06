@@ -1,7 +1,7 @@
 <template>
   <div class="products-page">
     <!-- Page Header -->
-    <div class="page-header">
+    <div class="page-header fade-in" style="animation-delay: 0.1s">
       <div class="header-content">
         <div class="header-info">
           <h2 class="page-title">
@@ -24,7 +24,7 @@
     </div>
 
     <!-- Filters & Search -->
-    <div class="filters-section card">
+    <div class="filters-section card fade-in" style="animation-delay: 0.3s">
       <div class="card-body">
         <div class="filters-header">
           <h3 class="filters-title">
@@ -106,7 +106,7 @@
     </div>
 
     <!-- Products Table -->
-    <div class="products-table-section card">
+    <div class="products-table-section card fade-in" style="animation-delay: 0.5s">
       <div class="card-header">
         <h3 class="card-title">
           <i class="table-icon">📋</i>
@@ -407,6 +407,10 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useButtonAnimations } from '@/composables/useButtonAnimations.js'
+
+// Button animations composable
+const { staggeredFadeIn } = useButtonAnimations()
 
 const searchTerm = ref('')
 const selectedCategory = ref('')
@@ -725,6 +729,9 @@ const closeModal = () => {
 
 onMounted(() => {
   console.log('Products page loaded')
+
+  // Add staggered animations to header buttons
+  staggeredFadeIn('.header-actions', 100)
 })
 </script>
 
@@ -1474,5 +1481,32 @@ onMounted(() => {
     color: var(--white);
     border-color: var(--success-700);
   }
+}
+
+/* Page Animations */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeInUp 0.6s ease-out both;
+}
+
+/* Smooth button transitions */
+.header-actions .btn {
+  transition: all 0.3s ease;
+  transform: translateY(0);
+}
+
+.header-actions .btn:hover {
+  transform: translateY(-2px) scale(1.05);
 }
 </style>

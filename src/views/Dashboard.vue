@@ -5,15 +5,15 @@
       <div class="header-content">
         <h1 class="dashboard-title">📊Tổng Quan</h1>
         <div class="header-actions">
-          <button class="btn btn-primary fade-in" style="animation-delay: 0.1s" @click="refreshData">
+          <button class="btn btn-primary" @click="refreshData">
             <span class="icon">🔄</span>
             Làm mới
           </button>
-          <button class="btn btn-success fade-in" style="animation-delay: 0.2s" @click="exportData">
+          <button class="btn btn-success" @click="exportData">
             <span class="icon">📊</span>
             Xuất báo cáo
           </button>
-          <button class="btn btn-info fade-in" style="animation-delay: 0.3s" @click="viewAnalytics">
+          <button class="btn btn-info" @click="viewAnalytics">
             <span class="icon">📈</span>
             Phân tích
           </button>
@@ -304,8 +304,8 @@ onMounted(() => {
   customerStore.fetchCustomers()
   orderStore.fetchOrders()
 
-  // Add staggered animations to header buttons
-  staggeredFadeIn('.header-actions', 150)
+  // Add staggered animations to header buttons with smoother timing
+  staggeredFadeIn('.header-actions', 100)
 })
 </script>
 
@@ -365,9 +365,10 @@ onMounted(() => {
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: var(--spacing-xl);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: clamp(16px, 3vw, 32px);
   margin-bottom: var(--spacing-3xl);
+  padding: 0 8px;
 }
 
 .stat-card {
@@ -378,11 +379,24 @@ onMounted(() => {
   display: flex;
   align-items: center;
   transition: all var(--transition-slow);
+  min-width: 0;
+  overflow: hidden;
+  margin: 4px;
 }
 
 .stat-icon {
   font-size: var(--font-size-5xl);
   margin-right: var(--spacing-xl);
+  flex-shrink: 0;
+}
+
+.stat-info {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .stat-info h3 {
@@ -390,6 +404,33 @@ onMounted(() => {
   font-size: var(--font-size-4xl);
   color: var(--gray-900);
   font-weight: var(--font-weight-bold);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.1;
+  hyphens: auto;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Enhanced responsive handling for revenue stat card */
+.stat-card:nth-child(4) .stat-info h3 {
+  font-size: clamp(0.5rem, 4vw, 1.8rem);
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+  line-height: 1;
+  word-break: break-all;
+  word-spacing: -0.1em;
+  letter-spacing: -0.02em;
+  max-height: 2.5em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .stat-info p {
@@ -674,6 +715,15 @@ onMounted(() => {
 }
 
 /* Responsive Design */
+/* Ultra-wide screen optimizations */
+@media (min-width: 2560px) {
+  .stat-card:nth-child(4) .stat-info h3 {
+    font-size: clamp(1.5rem, 2.5vw, 2.5rem);
+    line-height: 1.1;
+    max-height: 2.8em;
+  }
+}
+
 /* Large Screen Optimizations */
 @media (min-width: 1600px) {
   .dashboard {
@@ -683,12 +733,14 @@ onMounted(() => {
 
   .stats-grid {
     grid-template-columns: repeat(4, 1fr);
-    gap: 2rem;
+    gap: clamp(24px, 4vw, 48px);
     margin-bottom: 2.5rem;
+    padding: 0 12px;
   }
 
   .stat-card {
     padding: 2rem;
+    margin: 6px;
   }
 
   .stat-icon {
@@ -726,12 +778,14 @@ onMounted(() => {
   }
 
   .stats-grid {
-    gap: 2.5rem;
+    gap: clamp(32px, 5vw, 64px);
     margin-bottom: 3rem;
+    padding: 0 16px;
   }
 
   .stat-card {
     padding: 2.5rem;
+    margin: 8px;
   }
 
   .stat-icon {
@@ -758,7 +812,12 @@ onMounted(() => {
 @media (min-width: 1400px) {
   .stats-grid {
     grid-template-columns: repeat(4, 1fr);
-    gap: 1.5rem;
+    gap: clamp(20px, 3.5vw, 40px);
+    padding: 0 10px;
+  }
+
+  .stat-card {
+    margin: 5px;
   }
 
   .charts-section {
@@ -772,11 +831,16 @@ onMounted(() => {
     max-width: 100%;
   }
 
-  .charts-section {
-    gap: 16px;
+  .stats-grid {
+    gap: clamp(16px, 2.5vw, 24px);
+    padding: 0 8px;
   }
 
-  .stats-grid {
+  .stat-card {
+    margin: 4px;
+  }
+
+  .charts-section {
     gap: 16px;
   }
 }
@@ -796,7 +860,31 @@ onMounted(() => {
   }
 
   .stats-grid {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: clamp(16px, 2vw, 24px);
+    padding: 0 8px;
+  }
+
+  .stat-card {
+    margin: 4px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: clamp(16px, 2vw, 20px);
+    padding: 0 8px;
+  }
+
+  .stat-card {
+    min-width: 0;
+    padding: 20px;
+    margin: 4px;
+  }
+
+  .stat-info h3 {
+    font-size: var(--font-size-2xl);
   }
 }
 
@@ -832,12 +920,15 @@ onMounted(() => {
   }
 
   .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: clamp(12px, 2vw, 16px);
+    padding: 0 8px;
   }
 
   .stat-card {
-    padding: 20px;
+    padding: 16px;
+    margin: 4px;
+    min-width: 0;
   }
 
   .stat-icon {
@@ -846,7 +937,15 @@ onMounted(() => {
   }
 
   .stat-info h3 {
-    font-size: 24px;
+    font-size: 18px;
+    line-height: 1.3;
+  }
+
+  /* Enhanced revenue card handling for tablets */
+  .stat-card:nth-child(4) .stat-info h3 {
+    font-size: clamp(0.6rem, 3.5vw, 1.2rem);
+    line-height: 0.95;
+    max-height: 2.2em;
   }
 
   .chart-card {
@@ -958,31 +1057,51 @@ onMounted(() => {
   }
 
   .stats-grid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--spacing-lg);
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: clamp(12px, 1.5vw, 16px);
+    padding: 0 6px;
   }
 
   .stat-card {
-    padding: var(--spacing-lg);
+    padding: var(--spacing-md);
+    margin: 3px;
+    min-width: 0;
   }
 }
 
 @media (max-width: 768px) {
   .stats-grid {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-md);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: clamp(12px, 1.5vw, 16px);
     margin-bottom: var(--spacing-xl);
+    padding: 0 6px;
   }
 
   .stat-card {
-    padding: var(--spacing-lg);
+    padding: var(--spacing-md);
     flex-direction: row;
     text-align: left;
+    margin: 3px;
+    min-width: 0;
   }
 
   .stat-icon {
     margin: 0 var(--spacing-lg) 0 0;
     font-size: var(--font-size-4xl);
+  }
+
+  .stat-info h3 {
+    font-size: 16px;
+    line-height: 1.3;
+  }
+
+  /* Enhanced revenue card specific handling for mobile */
+  .stat-card:nth-child(4) .stat-info h3 {
+    font-size: clamp(0.5rem, 3vw, 1rem);
+    line-height: 0.9;
+    word-break: break-all;
+    max-height: 2em;
+    letter-spacing: -0.03em;
   }
 
   .charts-section {
@@ -1110,10 +1229,18 @@ onMounted(() => {
 }
 
 @media (max-width: 640px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: clamp(8px, 1vw, 12px);
+    padding: 0 4px;
+  }
+
   .stat-card {
     padding: 12px;
     flex-direction: column;
     text-align: center;
+    margin: 2px;
+    min-width: 0;
   }
 
   .stat-icon {
@@ -1122,7 +1249,18 @@ onMounted(() => {
   }
 
   .stat-info h3 {
-    font-size: 20px;
+    font-size: 14px;
+    line-height: 1.3;
+  }
+
+  /* Enhanced revenue card specific handling for small mobile */
+  .stat-card:nth-child(4) .stat-info h3 {
+    font-size: clamp(0.45rem, 2.5vw, 0.9rem);
+    line-height: 0.85;
+    word-break: break-all;
+    max-height: 1.8em;
+    letter-spacing: -0.04em;
+    word-spacing: -0.15em;
   }
 
   .stat-info p {
@@ -1136,15 +1274,29 @@ onMounted(() => {
 
 @media (max-width: 480px) {
   .stats-grid {
-    gap: 8px;
+    gap: clamp(6px, 1vw, 8px);
+    padding: 0 4px;
   }
 
   .stat-card {
-    padding: 12px;
+    padding: 10px;
+    margin: 2px;
+    min-width: 0;
   }
 
   .stat-info h3 {
-    font-size: 18px;
+    font-size: 12px;
+    line-height: 1.3;
+  }
+
+  /* Enhanced revenue card specific handling for very small mobile */
+  .stat-card:nth-child(4) .stat-info h3 {
+    font-size: clamp(0.4rem, 2.2vw, 0.8rem);
+    line-height: 0.8;
+    word-break: break-all;
+    max-height: 1.6em;
+    letter-spacing: -0.05em;
+    word-spacing: -0.2em;
   }
 
   .stat-info p {
@@ -1190,6 +1342,34 @@ onMounted(() => {
   }
 }
 
+/* Ultra small screen optimizations */
+@media (max-width: 320px) {
+  .stats-grid {
+    gap: clamp(4px, 0.5vw, 6px);
+    padding: 0 2px;
+  }
+
+  .stat-card:nth-child(4) .stat-info h3 {
+    font-size: clamp(0.35rem, 2vw, 0.65rem);
+    line-height: 0.75;
+    word-break: break-all;
+    max-height: 1.4em;
+    letter-spacing: -0.06em;
+    word-spacing: -0.25em;
+  }
+
+  .stat-card {
+    padding: 8px;
+    min-width: 0;
+    margin: 1px;
+  }
+
+  .stat-icon {
+    font-size: 24px;
+    margin-right: 8px;
+  }
+}
+
 /* Touch-friendly improvements */
 @media (hover: none) and (pointer: coarse) {
   .chart-bar:hover .bar-tooltip {
@@ -1207,5 +1387,88 @@ onMounted(() => {
   .stat-card:active {
     transform: scale(0.98);
   }
+}
+
+/* Button Animations */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.fade-in {
+  animation: fadeInUp 0.6s ease-out both;
+}
+
+.btn.loading {
+  pointer-events: none;
+  opacity: 0.7;
+  position: relative;
+}
+
+.btn.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.btn.success-state {
+  animation: pulse 0.6s ease-out;
+  background-color: var(--success-500) !important;
+  border-color: var(--success-600) !important;
+}
+
+.btn.error-state {
+  animation: pulse 0.5s ease-out;
+  background-color: var(--error-500) !important;
+  border-color: var(--error-600) !important;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Smooth button transitions */
+.header-actions .btn {
+  transition: all 0.3s ease;
+  transform: translateY(0);
+}
+
+.header-actions .btn:hover {
+  transform: translateY(-2px) scale(1.05);
 }
 </style>

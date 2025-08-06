@@ -1,28 +1,28 @@
 <template>
   <div class="orders-page">
-    <div class="page-header">
+    <div class="page-header fade-in" style="animation-delay: 0.1s">
       <h2>Quản lý Hóa đơn</h2>
       <div class="header-actions">
-        <button class="btn btn-secondary fade-in" style="animation-delay: 0.1s" @click="resetAllFilters">
+        <button class="btn btn-secondary" @click="resetAllFilters">
           <span class="icon">🔄</span>
           Đặt lại bộ lọc
         </button>
-        <button class="btn btn-success fade-in" style="animation-delay: 0.2s" @click="exportToExcel">
+        <button class="btn btn-success" @click="exportToExcel">
           <span class="icon">📊</span>
           Xuất Excel
         </button>
-        <button class="btn btn-info fade-in" style="animation-delay: 0.3s" @click="scanQR">
+        <button class="btn btn-info" @click="scanQR">
           <span class="icon">📱</span>
           Quét QR
         </button>
-        <button class="btn btn-primary fade-in" style="animation-delay: 0.4s" @click="showAddModal = true">
+        <button class="btn btn-primary" @click="showAddModal = true">
           <span class="icon">➕</span>
           Tạo hóa đơn
         </button>
       </div>
     </div>
 
-    <div class="filters">
+    <div class="filters fade-in" style="animation-delay: 0.3s">
       <!-- Search and Basic Filters Row -->
       <div class="filter-row">
         <div class="search-box">
@@ -99,7 +99,7 @@
       </div>
     </div>
 
-    <div class="table-container">
+    <div class="table-container fade-in" style="animation-delay: 0.5s">
       <table class="table">
         <thead>
           <tr>
@@ -216,6 +216,10 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useButtonAnimations } from '@/composables/useButtonAnimations.js'
+
+// Button animations composable
+const { staggeredFadeIn } = useButtonAnimations()
 import StatusBadge from '@/components/ui/StatusBadge.vue'
 
 const searchTerm = ref('')
@@ -241,6 +245,9 @@ const checkMobile = () => {
 onMounted(() => {
   checkMobile()
   window.addEventListener('resize', checkMobile)
+
+  // Add staggered animations to header buttons
+  staggeredFadeIn('.header-actions', 100)
 })
 
 onUnmounted(() => {
@@ -1765,5 +1772,32 @@ const closeDetailModal = () => {
     max-height: calc(95vh - 120px);
     overflow-y: auto;
   }
+}
+
+/* Page Animations */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeInUp 0.6s ease-out both;
+}
+
+/* Smooth button transitions */
+.header-actions .btn {
+  transition: all 0.3s ease;
+  transform: translateY(0);
+}
+
+.header-actions .btn:hover {
+  transform: translateY(-2px) scale(1.05);
 }
 </style>

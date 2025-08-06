@@ -1,7 +1,7 @@
 <template>
   <div class="coupons-page">
     <!-- Header Section -->
-    <div class="page-header">
+    <div class="page-header fade-in" style="animation-delay: 0.1s">
       <div class="header-content">
         <h1 class="page-title">
           <i class="title-icon">🎫</i>
@@ -14,9 +14,9 @@
         Tạo phiếu giảm giá
       </button>
     </div>
-    
+
     <!-- Filters Section -->
-    <div class="filters-section card">
+    <div class="filters-section card fade-in" style="animation-delay: 0.3s">
       <div class="card-body">
         <div class="filter-header">
           <h3 class="filter-title">
@@ -24,21 +24,17 @@
             Bộ lọc & Tìm kiếm
           </h3>
         </div>
-        
+
         <div class="filter-controls">
           <div class="search-group">
             <label>Tìm kiếm phiếu giảm giá</label>
             <div class="search-input-wrapper">
-              <input
-                v-model="searchTerm"
-                type="text"
-                placeholder="Nhập mã hoặc mô tả phiếu giảm giá..."
-                class="form-control search-input"
-              />
+              <input v-model="searchTerm" type="text" placeholder="Nhập mã hoặc mô tả phiếu giảm giá..."
+                class="form-control search-input" />
               <i class="search-icon">🔍</i>
             </div>
           </div>
-          
+
           <div class="filter-group">
             <label>Trạng thái</label>
             <select v-model="selectedStatus" class="form-control filter-select">
@@ -49,7 +45,7 @@
               <option value="disabled">Đã vô hiệu hóa</option>
             </select>
           </div>
-          
+
           <div class="filter-group">
             <label>Loại giảm giá</label>
             <select v-model="selectedType" class="form-control filter-select">
@@ -59,7 +55,7 @@
             </select>
           </div>
         </div>
-        
+
         <div class="filter-summary">
           <span class="summary-text">
             Hiển thị {{ filteredCoupons.length }} trong tổng số {{ sampleCoupons.length }} phiếu giảm giá
@@ -71,19 +67,14 @@
         </div>
       </div>
     </div>
-    
+
     <!-- Coupons Grid -->
-    <div class="coupons-grid">
-      <div
-        v-for="coupon in filteredCoupons"
-        :key="coupon.id"
-        class="coupon-card"
-        :class="{ 
-          'coupon-expired': isExpired(coupon.expiryDate), 
-          'coupon-disabled': !coupon.isActive,
-          'coupon-used': coupon.maxUses && coupon.usedCount >= coupon.maxUses
-        }"
-      >
+    <div class="coupons-grid fade-in" style="animation-delay: 0.5s">
+      <div v-for="coupon in filteredCoupons" :key="coupon.id" class="coupon-card" :class="{
+        'coupon-expired': isExpired(coupon.expiryDate),
+        'coupon-disabled': !coupon.isActive,
+        'coupon-used': coupon.maxUses && coupon.usedCount >= coupon.maxUses
+      }">
         <!-- Coupon Header -->
         <div class="coupon-header">
           <div class="coupon-code-section">
@@ -98,7 +89,7 @@
             </span>
           </div>
         </div>
-        
+
         <!-- Coupon Body -->
         <div class="coupon-body">
           <div class="coupon-value-section">
@@ -108,7 +99,7 @@
             </div>
             <div class="coupon-description">{{ coupon.description }}</div>
           </div>
-          
+
           <div class="coupon-details">
             <div class="detail-row">
               <div class="detail-item">
@@ -119,7 +110,7 @@
                 </div>
               </div>
             </div>
-            
+
             <div class="detail-row">
               <div class="detail-item">
                 <i class="detail-icon">📊</i>
@@ -128,15 +119,12 @@
                   <span class="detail-value">{{ coupon.usedCount }}/{{ coupon.maxUses || '∞' }}</span>
                 </div>
               </div>
-              
+
               <div class="usage-progress">
-                <div 
-                  class="progress-bar"
-                  :style="{ width: getUsagePercentage(coupon) + '%' }"
-                ></div>
+                <div class="progress-bar" :style="{ width: getUsagePercentage(coupon) + '%' }"></div>
               </div>
             </div>
-            
+
             <div v-if="coupon.minOrderValue" class="detail-row">
               <div class="detail-item">
                 <i class="detail-icon">💰</i>
@@ -146,7 +134,7 @@
                 </div>
               </div>
             </div>
-            
+
             <div v-if="coupon.maxDiscountAmount && coupon.type === 'percentage'" class="detail-row">
               <div class="detail-item">
                 <i class="detail-icon">🎯</i>
@@ -158,18 +146,15 @@
             </div>
           </div>
         </div>
-        
+
         <!-- Coupon Actions -->
         <div class="coupon-actions">
           <button class="btn btn-outline btn-sm" @click="editCoupon(coupon)">
             <i class="btn-icon">✏️</i>
             Chỉnh sửa
           </button>
-          <button 
-            class="btn btn-sm"
-            :class="coupon.isActive ? 'btn-warning' : 'btn-success'"
-            @click="toggleStatus(coupon)"
-          >
+          <button class="btn btn-sm" :class="coupon.isActive ? 'btn-warning' : 'btn-success'"
+            @click="toggleStatus(coupon)">
             <i class="btn-icon">{{ coupon.isActive ? '🚫' : '✅' }}</i>
             {{ coupon.isActive ? 'Vô hiệu hóa' : 'Kích hoạt' }}
           </button>
@@ -180,18 +165,19 @@
         </div>
       </div>
     </div>
-    
+
     <!-- Empty State -->
     <div v-if="filteredCoupons.length === 0" class="empty-state">
       <div class="empty-icon">🎫</div>
       <h3>Không tìm thấy phiếu giảm giá</h3>
-      <p>{{ searchTerm || selectedStatus ? 'Thử thay đổi bộ lọc để xem kết quả khác' : 'Tạo phiếu giảm giá đầu tiên của bạn' }}</p>
+      <p>{{ searchTerm || selectedStatus ? 'Thử thay đổi bộ lọc để xem kết quả khác' : 'Tạo phiếu giảm giá đầu tiên của
+        bạn' }}</p>
       <button v-if="!searchTerm && !selectedStatus" class="btn btn-primary" @click="showAddModal = true">
         <i class="btn-icon">➕</i>
         Tạo phiếu giảm giá đầu tiên
       </button>
     </div>
-    
+
     <!-- Add/Edit Coupon Modal -->
     <div v-if="showAddModal || showEditModal" class="modal-overlay" @click="closeModal">
       <div class="modal-content" @click.stop>
@@ -204,7 +190,7 @@
             <i class="close-icon">✕</i>
           </button>
         </div>
-        
+
         <div class="modal-body">
           <form @submit.prevent="saveCoupon" class="coupon-form">
             <div class="form-grid">
@@ -216,36 +202,24 @@
                     Mã phiếu giảm giá *
                   </label>
                   <div class="input-group">
-                    <input
-                      id="code"
-                      v-model="couponForm.code"
-                      type="text"
-                      required
-                      placeholder="Ví dụ: SUMMER2024"
-                      class="form-control"
-                    />
+                    <input id="code" v-model="couponForm.code" type="text" required placeholder="Ví dụ: SUMMER2024"
+                      class="form-control" />
                     <button type="button" class="btn btn-outline btn-sm" @click="generateCode">
                       <i class="btn-icon">🎲</i>
                       Tạo tự động
                     </button>
                   </div>
                 </div>
-                
+
                 <div class="form-group">
                   <label for="description" class="form-label">
                     <i class="label-icon">📝</i>
                     Mô tả *
                   </label>
-                  <textarea
-                    id="description"
-                    v-model="couponForm.description"
-                    required
-                    rows="3"
-                    placeholder="Mô tả chi tiết về phiếu giảm giá..."
-                    class="form-control"
-                  ></textarea>
+                  <textarea id="description" v-model="couponForm.description" required rows="3"
+                    placeholder="Mô tả chi tiết về phiếu giảm giá..." class="form-control"></textarea>
                 </div>
-                
+
                 <div class="form-row">
                   <div class="form-group">
                     <label for="type" class="form-label">
@@ -258,23 +232,16 @@
                       <option value="fixed">Giảm tiền cố định (VNĐ)</option>
                     </select>
                   </div>
-                  
+
                   <div class="form-group">
                     <label for="value" class="form-label">
                       <i class="label-icon">💰</i>
                       Giá trị giảm *
                     </label>
                     <div class="input-with-unit">
-                      <input
-                        id="value"
-                        v-model.number="couponForm.value"
-                        type="number"
-                        required
-                        :min="1"
-                        :max="couponForm.type === 'percentage' ? 100 : undefined"
-                        placeholder="0"
-                        class="form-control"
-                      />
+                      <input id="value" v-model.number="couponForm.value" type="number" required :min="1"
+                        :max="couponForm.type === 'percentage' ? 100 : undefined" placeholder="0"
+                        class="form-control" />
                       <span class="input-unit">
                         {{ couponForm.type === 'percentage' ? '%' : 'VNĐ' }}
                       </span>
@@ -282,7 +249,7 @@
                   </div>
                 </div>
               </div>
-              
+
               <!-- Right Column -->
               <div class="form-column">
                 <div class="form-group">
@@ -290,72 +257,45 @@
                     <i class="label-icon">📅</i>
                     Ngày hết hạn *
                   </label>
-                  <input
-                    id="expiryDate"
-                    v-model="couponForm.expiryDate"
-                    type="datetime-local"
-                    required
-                    class="form-control"
-                  />
+                  <input id="expiryDate" v-model="couponForm.expiryDate" type="datetime-local" required
+                    class="form-control" />
                 </div>
-                
+
                 <div class="form-group">
                   <label for="maxUses" class="form-label">
                     <i class="label-icon">📊</i>
                     Số lượt sử dụng tối đa
                   </label>
-                  <input
-                    id="maxUses"
-                    v-model.number="couponForm.maxUses"
-                    type="number"
-                    min="1"
-                    placeholder="Không giới hạn"
-                    class="form-control"
-                  />
+                  <input id="maxUses" v-model.number="couponForm.maxUses" type="number" min="1"
+                    placeholder="Không giới hạn" class="form-control" />
                   <div class="form-hint">Để trống nếu không giới hạn số lượt sử dụng</div>
                 </div>
-                
+
                 <div class="form-group">
                   <label for="minOrderValue" class="form-label">
                     <i class="label-icon">🛒</i>
                     Giá trị đơn hàng tối thiểu
                   </label>
-                  <input
-                    id="minOrderValue"
-                    v-model.number="couponForm.minOrderValue"
-                    type="number"
-                    min="0"
-                    placeholder="0"
-                    class="form-control"
-                  />
+                  <input id="minOrderValue" v-model.number="couponForm.minOrderValue" type="number" min="0"
+                    placeholder="0" class="form-control" />
                   <div class="form-hint">Đơn hàng phải có giá trị tối thiểu để áp dụng</div>
                 </div>
-                
+
                 <div v-if="couponForm.type === 'percentage'" class="form-group">
                   <label for="maxDiscountAmount" class="form-label">
                     <i class="label-icon">🎯</i>
                     Số tiền giảm tối đa
                   </label>
-                  <input
-                    id="maxDiscountAmount"
-                    v-model.number="couponForm.maxDiscountAmount"
-                    type="number"
-                    min="0"
-                    placeholder="Không giới hạn"
-                    class="form-control"
-                  />
+                  <input id="maxDiscountAmount" v-model.number="couponForm.maxDiscountAmount" type="number" min="0"
+                    placeholder="Không giới hạn" class="form-control" />
                   <div class="form-hint">Giới hạn số tiền giảm tối đa cho phiếu giảm theo %</div>
                 </div>
               </div>
             </div>
-            
+
             <div class="form-status">
               <label class="checkbox-wrapper">
-                <input
-                  v-model="couponForm.isActive"
-                  type="checkbox"
-                  class="form-checkbox"
-                />
+                <input v-model="couponForm.isActive" type="checkbox" class="form-checkbox" />
                 <span class="checkbox-mark"></span>
                 <span class="checkbox-label">
                   <i class="checkbox-icon">✅</i>
@@ -365,7 +305,7 @@
             </div>
           </form>
         </div>
-        
+
         <div class="modal-footer">
           <button type="button" class="btn btn-outline" @click="closeModal">
             <i class="btn-icon">❌</i>
@@ -382,7 +322,11 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useButtonAnimations } from '@/composables/useButtonAnimations.js'
+
+// Button animations composable
+const { staggeredFadeIn } = useButtonAnimations()
 
 const searchTerm = ref('')
 const selectedStatus = ref('')
@@ -406,25 +350,25 @@ const couponForm = ref({
 // Computed properties
 const filteredCoupons = computed(() => {
   let coupons = sampleCoupons.value
-  
+
   if (searchTerm.value) {
     coupons = coupons.filter(coupon =>
       coupon.code.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
       coupon.description.toLowerCase().includes(searchTerm.value.toLowerCase())
     )
   }
-  
+
   if (selectedStatus.value) {
     coupons = coupons.filter(coupon => {
       const status = getCouponStatus(coupon)
       return status === selectedStatus.value
     })
   }
-  
+
   if (selectedType.value) {
     coupons = coupons.filter(coupon => coupon.type === selectedType.value)
   }
-  
+
   return coupons
 })
 
@@ -557,7 +501,7 @@ const deleteCoupon = (id) => {
 
 const saveCoupon = () => {
   if (showAddModal.value) {
-      const newCoupon = {
+    const newCoupon = {
       ...couponForm.value,
       id: Date.now(),
       usedCount: 0,
@@ -593,6 +537,12 @@ const closeModal = () => {
     isActive: true
   }
 }
+
+// Add lifecycle hook
+onMounted(() => {
+  // Add staggered animations to header buttons
+  staggeredFadeIn('.page-header', 100)
+})
 </script>
 
 <style scoped>
@@ -1254,26 +1204,26 @@ const closeModal = () => {
     gap: 16px;
     align-items: stretch;
   }
-  
+
   .filter-controls {
     grid-template-columns: 1fr;
     gap: 16px;
   }
-  
+
   .coupons-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .form-grid {
     grid-template-columns: 1fr;
     gap: 24px;
   }
-  
+
   .form-row {
     grid-template-columns: 1fr;
     gap: 16px;
   }
-  
+
   .modal-content {
     margin: 20px;
     max-height: calc(100vh - 40px);
@@ -1284,167 +1234,227 @@ const closeModal = () => {
   .coupons-page {
     padding: 16px;
   }
-  
+
   .page-header {
     padding: 20px;
   }
-  
+
   .header-content .page-title {
     font-size: 24px;
   }
-  
+
   .coupon-actions {
     flex-direction: column;
   }
-  
+
   .coupon-actions .btn {
     justify-content: center;
   }
 }
+
+/* Page Animations */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeInUp 0.6s ease-out both;
+}
+
+/* Override notification icon positioning for better alignment */
+:deep(.notifications-btn) {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 12px !important;
+}
+
+:deep(.notification-icon-wrapper) {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 24px !important;
+  height: 24px !important;
+}
+
+:deep(.notification-icon) {
+  display: block !important;
+  margin: 0 auto !important;
+}
+
+:deep(.notification-pulse) {
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  width: 8px !important;
+  height: 8px !important;
+  background: var(--error) !important;
+  border-radius: 50% !important;
+  animation: simplePulse 2s infinite !important;
+  pointer-events: none !important;
+}
+
+/* Smooth button transitions */
+.page-header .btn {
+  transition: all 0.3s ease;
+  transform: translateY(0);
+}
+
+.page-header .btn:hover {
+  transform: translateY(-2px) scale(1.05);
+}
 </style>
 
 .coupon-card:hover {
-  transform: translateY(-5px);
+transform: translateY(-5px);
 }
 
 .coupon-card.expired {
-  opacity: 0.7;
-  border-left-color: #e74c3c;
+opacity: 0.7;
+border-left-color: #e74c3c;
 }
 
 .coupon-card.disabled {
-  opacity: 0.6;
-  border-left-color: #95a5a6;
+opacity: 0.6;
+border-left-color: #95a5a6;
 }
 
 .coupon-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+color: white;
+padding: 20px;
+display: flex;
+justify-content: space-between;
+align-items: center;
 }
 
 .coupon-code {
-  font-size: 20px;
-  font-weight: bold;
-  letter-spacing: 2px;
+font-size: 20px;
+font-weight: bold;
+letter-spacing: 2px;
 }
 
 .coupon-body {
-  padding: 20px;
+padding: 20px;
 }
 
 .coupon-value {
-  text-align: center;
-  margin-bottom: 20px;
+text-align: center;
+margin-bottom: 20px;
 }
 
 .coupon-value .value {
-  display: block;
-  font-size: 28px;
-  font-weight: bold;
-  color: #2c3e50;
+display: block;
+font-size: 28px;
+font-weight: bold;
+color: #2c3e50;
 }
 
 .coupon-value .description {
-  color: #7f8c8d;
-  font-size: 14px;
+color: #7f8c8d;
+font-size: 14px;
 }
 
 .coupon-details {
-  margin-bottom: 20px;
+margin-bottom: 20px;
 }
 
 .detail-item {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-  font-size: 14px;
+display: flex;
+justify-content: space-between;
+margin-bottom: 8px;
+font-size: 14px;
 }
 
 .detail-item .label {
-  font-weight: 500;
-  color: #2c3e50;
+font-weight: 500;
+color: #2c3e50;
 }
 
 .coupon-actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+display: flex;
+gap: 8px;
+flex-wrap: wrap;
 }
 
 .status-badge {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
+padding: 4px 12px;
+border-radius: 20px;
+font-size: 12px;
+font-weight: 500;
 }
 
 .status-badge.active {
-  background: #d4edda;
-  color: #155724;
+background: #d4edda;
+color: #155724;
 }
 
 .status-badge.used {
-  background: #fff3cd;
-  color: #856404;
+background: #fff3cd;
+color: #856404;
 }
 
 .status-badge.expired {
-  background: #f8d7da;
-  color: #721c24;
+background: #f8d7da;
+color: #721c24;
 }
 
 .status-badge.disabled {
-  background: #e2e3e5;
-  color: #495057;
+background: #e2e3e5;
+color: #495057;
 }
 
 .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(0,0,0,0.5);
+display: flex;
+align-items: center;
+justify-content: center;
+z-index: 1000;
 }
 
 .modal {
-  background: white;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
+background: white;
+border-radius: 8px;
+width: 90%;
+max-width: 600px;
+max-height: 90vh;
+overflow-y: auto;
 }
 
 .modal-header {
-  padding: 20px;
-  border-bottom: 1px solid #dee2e6;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+padding: 20px;
+border-bottom: 1px solid #dee2e6;
+display: flex;
+justify-content: space-between;
+align-items: center;
 }
 
 .modal-header h3 {
-  margin: 0;
+margin: 0;
 }
 
 .close-btn {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #6c757d;
+background: none;
+border: none;
+font-size: 24px;
+cursor: pointer;
+color: #6c757d;
 }
 
 .modal-body {
-  padding: 20px;
+padding: 20px;
 }
-

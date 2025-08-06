@@ -1,21 +1,16 @@
 <template>
   <div class="discounts-page">
-    <div class="page-header">
+    <div class="page-header fade-in" style="animation-delay: 0.1s">
       <h2>Quản lý Đợt giảm giá</h2>
       <button class="btn btn-primary" @click="showAddModal = true">
         <span class="icon">➕</span>
         Tạo đợt giảm giá
       </button>
     </div>
-    
-    <div class="filters">
+
+    <div class="filters fade-in" style="animation-delay: 0.3s">
       <div class="search-box">
-        <input
-          v-model="searchTerm"
-          type="text"
-          placeholder="Tìm kiếm đợt giảm giá..."
-          class="search-input"
-        />
+        <input v-model="searchTerm" type="text" placeholder="Tìm kiếm đợt giảm giá..." class="search-input" />
       </div>
       <div class="filter-controls">
         <select v-model="selectedStatus" class="filter-select">
@@ -26,28 +21,21 @@
         </select>
       </div>
     </div>
-    
-    <div class="discounts-grid">
-      <div
-        v-for="discount in filteredDiscounts"
-        :key="discount.id"
-        class="discount-card"
-        :class="{ expired: isExpired(discount.endDate) }"
-      >
+
+    <div class="discounts-grid fade-in" style="animation-delay: 0.5s">
+      <div v-for="discount in filteredDiscounts" :key="discount.id" class="discount-card"
+        :class="{ expired: isExpired(discount.endDate) }">
         <div class="discount-header">
           <h3>{{ discount.name }}</h3>
-          <StatusBadge 
-            :status="getDiscountStatus(discount)" 
-            :size="isMobile ? 'small' : 'normal'"
-          />
+          <StatusBadge :status="getDiscountStatus(discount)" :size="isMobile ? 'small' : 'normal'" />
         </div>
-        
+
         <div class="discount-info">
           <div class="discount-value">
             <span class="value">{{ discount.value }}{{ discount.type === 'percentage' ? '%' : ' VNĐ' }}</span>
             <span class="type">{{ discount.type === 'percentage' ? 'Giảm %' : 'Giảm tiền' }}</span>
           </div>
-          
+
           <div class="discount-details">
             <p><strong>Mô tả:</strong> {{ discount.description }}</p>
             <p><strong>Ngày bắt đầu:</strong> {{ formatDate(discount.startDate) }}</p>
@@ -58,16 +46,13 @@
             </p>
           </div>
         </div>
-        
+
         <div class="discount-actions">
           <button class="btn btn-sm btn-outline" @click="editDiscount(discount)">
             Sửa
           </button>
-          <button 
-            class="btn btn-sm"
-            :class="discount.isActive ? 'btn-warning' : 'btn-success'"
-            @click="toggleStatus(discount)"
-          >
+          <button class="btn btn-sm" :class="discount.isActive ? 'btn-warning' : 'btn-success'"
+            @click="toggleStatus(discount)">
             {{ discount.isActive ? 'Tạm dừng' : 'Kích hoạt' }}
           </button>
           <button class="btn btn-sm btn-danger" @click="deleteDiscount(discount.id)">
@@ -76,7 +61,7 @@
         </div>
       </div>
     </div>
-    
+
     <!-- Add/Edit Discount Modal -->
     <div v-if="showAddModal || showEditModal" class="modal-overlay" @click="closeModal">
       <div class="modal" @click.stop>
@@ -154,7 +139,11 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useButtonAnimations } from '@/composables/useButtonAnimations.js'
 import StatusBadge from '@/components/ui/StatusBadge.vue'
+
+// Button animations composable
+const { staggeredFadeIn } = useButtonAnimations()
 
 const searchTerm = ref('')
 const selectedStatus = ref('')
@@ -171,6 +160,9 @@ const checkMobile = () => {
 onMounted(() => {
   checkMobile()
   window.addEventListener('resize', checkMobile)
+
+  // Add staggered animations to header buttons
+  staggeredFadeIn('.page-header', 100)
 })
 
 onUnmounted(() => {
@@ -230,21 +222,21 @@ const sampleDiscounts = ref([
 
 const filteredDiscounts = computed(() => {
   let discounts = sampleDiscounts.value
-  
+
   if (searchTerm.value) {
     discounts = discounts.filter(discount =>
       discount.name.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
       discount.description.toLowerCase().includes(searchTerm.value.toLowerCase())
     )
   }
-  
+
   if (selectedStatus.value) {
     discounts = discounts.filter(discount => {
       const status = getDiscountStatus(discount)
       return status === selectedStatus.value
     })
   }
-  
+
   return discounts
 })
 
@@ -273,7 +265,7 @@ const getDiscountStatus = (discount) => {
   const now = new Date()
   const start = new Date(discount.startDate)
   const end = new Date(discount.endDate)
-  
+
   if (end < now) return 'expired'
   if (!discount.isActive) return 'inactive'
   if (start <= now && end >= now) return 'active'
@@ -427,7 +419,7 @@ const closeModal = () => {
   background: white;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 30px;
   display: flex;
   gap: 20px;
@@ -466,7 +458,7 @@ const closeModal = () => {
 .discount-card {
   background: white;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 20px;
   transition: transform 0.3s;
 }
@@ -530,7 +522,7 @@ const closeModal = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -617,51 +609,51 @@ const closeModal = () => {
     margin: 0 auto;
     padding: 2rem;
   }
-  
+
   .page-header {
     margin-bottom: 2.5rem;
   }
-  
+
   .filters {
     padding: 2rem;
     margin-bottom: 2rem;
   }
-  
+
   .search-input {
     padding: 1rem;
     font-size: 1rem;
   }
-  
+
   .discounts-grid {
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 2rem;
   }
-  
+
   .discount-card {
     padding: 2rem;
   }
-  
+
   .discount-header h3 {
     font-size: 1.5rem;
   }
-  
+
   .discount-value .value {
     font-size: 2.5rem;
   }
-  
+
   .discount-value .type {
     font-size: 1rem;
   }
-  
+
   .discount-details p {
     font-size: 1rem;
     margin-bottom: 1rem;
   }
-  
+
   .discount-actions {
     gap: 1rem;
   }
-  
+
   .btn {
     padding: 0.75rem 1.25rem;
     font-size: 0.9375rem;
@@ -673,32 +665,32 @@ const closeModal = () => {
     max-width: 2000px;
     padding: 2.5rem;
   }
-  
+
   .filters {
     padding: 2.5rem;
   }
-  
+
   .discounts-grid {
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     gap: 2.5rem;
   }
-  
+
   .discount-card {
     padding: 2.5rem;
   }
-  
+
   .discount-header h3 {
     font-size: 1.75rem;
   }
-  
+
   .discount-value .value {
     font-size: 3rem;
   }
-  
+
   .discount-value .type {
     font-size: 1.125rem;
   }
-  
+
   .btn {
     padding: 1rem 1.5rem;
     font-size: 1rem;
@@ -710,7 +702,7 @@ const closeModal = () => {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5rem;
   }
-  
+
   .discount-card {
     padding: 1.5rem;
   }
@@ -720,7 +712,7 @@ const closeModal = () => {
   .discounts-page {
     max-width: 100%;
   }
-  
+
   .discounts-grid {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 18px;
@@ -732,11 +724,11 @@ const closeModal = () => {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
   }
-  
+
   .discount-card {
     padding: 18px;
   }
-  
+
   .discount-value .value {
     font-size: 2rem;
   }
@@ -748,44 +740,44 @@ const closeModal = () => {
     gap: 15px;
     align-items: stretch;
   }
-  
+
   .page-header h2 {
     text-align: center;
   }
-  
+
   .filters {
     padding: 15px;
   }
-  
+
   .filter-controls {
     margin-top: 10px;
     display: flex;
     flex-direction: column;
     gap: 8px;
   }
-  
+
   .filter-select {
     width: 100%;
   }
-  
+
   .discounts-grid {
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 18px;
   }
-  
+
   .discount-card {
     padding: 16px;
   }
-  
+
   .discount-value .value {
     font-size: 1.8rem;
   }
-  
+
   .discount-actions {
     flex-direction: column;
     gap: 8px;
   }
-  
+
   .discount-actions .btn {
     width: 100%;
     justify-content: center;
@@ -797,19 +789,19 @@ const closeModal = () => {
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 16px;
   }
-  
+
   .discount-card {
     padding: 14px;
   }
-  
+
   .discount-header h3 {
     font-size: 1.1rem;
   }
-  
+
   .discount-description {
     font-size: 13px;
   }
-  
+
   .discount-conditions {
     font-size: 12px;
   }
@@ -819,81 +811,81 @@ const closeModal = () => {
   .discounts-page {
     padding: 0 10px;
   }
-  
+
   .page-header {
     margin-bottom: 20px;
   }
-  
+
   .page-header h2 {
     font-size: 1.5rem;
   }
-  
+
   .filters {
     padding: 12px;
     margin-bottom: 20px;
   }
-  
+
   .search-input {
     margin-bottom: 10px;
   }
-  
+
   .discounts-grid {
     grid-template-columns: 1fr;
     gap: 15px;
   }
-  
+
   .discount-card {
     padding: 15px;
   }
-  
+
   .discount-header h3 {
     font-size: 1.2rem;
   }
-  
+
   .discount-value .value {
     font-size: 1.6rem;
   }
-  
+
   .discount-value .type {
     font-size: 12px;
   }
-  
+
   .discount-details p {
     font-size: 13px;
     margin-bottom: 8px;
   }
-  
+
   .btn-sm {
     padding: 6px 12px;
     font-size: 12px;
   }
-  
+
   .modal {
     width: 95%;
     margin: 10px;
   }
-  
+
   .modal-header {
     padding: 15px;
   }
-  
+
   .modal-header h3 {
     font-size: 1.2rem;
   }
-  
+
   .modal-body {
     padding: 15px;
   }
-  
+
   .form-group {
     margin-bottom: 15px;
   }
-  
+
   .form-actions {
     flex-direction: column;
     gap: 8px;
   }
-  
+
   .form-actions .btn {
     width: 100%;
     justify-content: center;
@@ -904,43 +896,43 @@ const closeModal = () => {
   .discounts-page {
     padding: 0 5px;
   }
-  
+
   .page-header h2 {
     font-size: 1.3rem;
   }
-  
+
   .discount-card {
     padding: 12px;
   }
-  
+
   .discount-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
   }
-  
+
   .discount-header h3 {
     font-size: 1.1rem;
   }
-  
+
   .discount-value .value {
     font-size: 1.4rem;
   }
-  
+
   .discount-details p {
     font-size: 12px;
   }
-  
+
   .btn {
     font-size: 13px;
     padding: 8px 12px;
   }
-  
+
   .btn-sm {
     padding: 5px 10px;
     font-size: 11px;
   }
-  
+
   .search-input,
   .filter-select {
     padding: 8px;
@@ -952,77 +944,78 @@ const closeModal = () => {
   .discounts-page {
     padding: 0;
   }
-  
+
   .page-header {
     margin-bottom: 15px;
   }
-  
+
   .page-header h2 {
     font-size: 1.2rem;
   }
-  
+
   .filters {
     padding: 10px;
     margin-bottom: 15px;
   }
-  
+
   .discounts-grid {
     gap: 12px;
   }
-  
+
   .discount-card {
     padding: 10px;
   }
-  
+
   .discount-header h3 {
     font-size: 1rem;
   }
-  
+
   .discount-value .value {
     font-size: 1.3rem;
   }
-  
+
   .discount-value .type {
     font-size: 11px;
   }
-  
+
   .discount-details p {
     font-size: 11px;
     margin-bottom: 6px;
   }
-  
+
   .btn {
     font-size: 12px;
     padding: 6px 10px;
   }
-  
+
   .btn-sm {
     padding: 4px 8px;
     font-size: 10px;
   }
-  
+
   .modal {
     width: 98%;
     margin: 5px;
   }
-  
+
   .modal-header {
     padding: 12px;
   }
-  
+
   .modal-header h3 {
     font-size: 1.1rem;
   }
-  
+
   .modal-body {
     padding: 12px;
   }
-  
+
   .form-group input,
   .form-group select,
   .form-group textarea {
     padding: 8px;
-    font-size: 16px; /* Prevents zoom on iOS */
+    font-size: 16px;
+    /* Prevents zoom on iOS */
   }
 }
 
@@ -1032,20 +1025,20 @@ const closeModal = () => {
     min-height: 44px;
     min-width: 44px;
   }
-  
+
   .discount-card {
     cursor: pointer;
   }
-  
+
   .discount-card:active {
     transform: scale(0.98);
   }
-  
+
   .search-input,
   .filter-select {
     min-height: 44px;
   }
-  
+
   .form-group input,
   .form-group select,
   .form-group textarea {
@@ -1058,12 +1051,12 @@ const closeModal = () => {
   .modal {
     max-height: 95vh;
   }
-  
+
   .modal-body {
     max-height: calc(95vh - 120px);
     overflow-y: auto;
   }
-  
+
   .discounts-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1074,10 +1067,37 @@ const closeModal = () => {
   .discount-actions {
     gap: 6px;
   }
-  
+
   .discount-actions .btn {
     font-size: 10px;
     padding: 4px 6px;
   }
+}
+
+/* Page Animations */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeInUp 0.6s ease-out both;
+}
+
+/* Smooth button transitions */
+.page-header .btn {
+  transition: all 0.3s ease;
+  transform: translateY(0);
+}
+
+.page-header .btn:hover {
+  transform: translateY(-2px) scale(1.05);
 }
 </style>

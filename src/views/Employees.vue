@@ -1,21 +1,16 @@
 <template>
   <div class="employees-page">
-    <div class="page-header">
+    <div class="page-header fade-in" style="animation-delay: 0.1s">
       <h2>Quản lý Nhân viên</h2>
       <button class="btn btn-primary" @click="showAddModal = true">
         <span class="icon">➕</span>
         Thêm nhân viên
       </button>
     </div>
-    
-    <div class="filters">
+
+    <div class="filters fade-in" style="animation-delay: 0.3s">
       <div class="search-box">
-        <input
-          v-model="searchTerm"
-          type="text"
-          placeholder="Tìm kiếm nhân viên..."
-          class="search-input"
-        />
+        <input v-model="searchTerm" type="text" placeholder="Tìm kiếm nhân viên..." class="search-input" />
       </div>
       <div class="filter-controls">
         <select v-model="selectedRole" class="filter-select">
@@ -26,8 +21,8 @@
         </select>
       </div>
     </div>
-    
-    <div class="table-container">
+
+    <div class="table-container fade-in" style="animation-delay: 0.5s">
       <table class="table">
         <thead>
           <tr>
@@ -49,20 +44,13 @@
             <td>{{ employee.email }}</td>
             <td>{{ employee.phone }}</td>
             <td>
-              <StatusBadge 
-                :status="employee.role" 
-                :size="isMobile ? 'small' : 'normal'"
-                variant="outline"
-                :custom-text="getRoleText(employee.role)"
-              />
+              <StatusBadge :status="employee.role" :size="isMobile ? 'small' : 'normal'" variant="outline"
+                :custom-text="getRoleText(employee.role)" />
             </td>
             <td>{{ formatCurrency(employee.salary) }}</td>
             <td>{{ formatDate(employee.startDate) }}</td>
             <td>
-              <StatusBadge 
-                :status="employee.status" 
-                :size="isMobile ? 'small' : 'normal'"
-              />
+              <StatusBadge :status="employee.status" :size="isMobile ? 'small' : 'normal'" />
             </td>
             <td>
               <div class="action-buttons">
@@ -78,7 +66,7 @@
         </tbody>
       </table>
     </div>
-    
+
     <!-- Add/Edit Employee Modal -->
     <div v-if="showAddModal || showEditModal" class="modal-overlay" @click="closeModal">
       <div class="modal" @click.stop>
@@ -142,6 +130,10 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useButtonAnimations } from '@/composables/useButtonAnimations.js'
+
+// Button animations composable
+const { staggeredFadeIn } = useButtonAnimations()
 import StatusBadge from '@/components/ui/StatusBadge.vue'
 
 const searchTerm = ref('')
@@ -159,6 +151,9 @@ const checkMobile = () => {
 onMounted(() => {
   checkMobile()
   window.addEventListener('resize', checkMobile)
+
+  // Add staggered animations to header buttons
+  staggeredFadeIn('.page-header', 100)
 })
 
 onUnmounted(() => {
@@ -210,18 +205,18 @@ const sampleEmployees = ref([
 
 const filteredEmployees = computed(() => {
   let employees = sampleEmployees.value
-  
+
   if (searchTerm.value) {
     employees = employees.filter(employee =>
       employee.fullName.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
       employee.email.toLowerCase().includes(searchTerm.value.toLowerCase())
     )
   }
-  
+
   if (selectedRole.value) {
     employees = employees.filter(employee => employee.role === selectedRole.value)
   }
-  
+
   return employees
 })
 
@@ -369,7 +364,7 @@ const closeModal = () => {
   background: white;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 30px;
   display: flex;
   gap: 20px;
@@ -402,7 +397,7 @@ const closeModal = () => {
 .table-container {
   background: white;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
 
@@ -439,7 +434,7 @@ const closeModal = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -514,45 +509,45 @@ const closeModal = () => {
     margin: 0 auto;
     padding: 2rem;
   }
-  
+
   .page-header {
     margin-bottom: 2.5rem;
   }
-  
+
   .filters {
     padding: 2rem;
     margin-bottom: 2rem;
   }
-  
+
   .filter-controls {
     gap: 1.5rem;
   }
-  
+
   .search-input,
   .filter-select {
     padding: 1rem;
     font-size: 1rem;
   }
-  
+
   .table th,
   .table td {
     padding: 1rem;
     font-size: 0.9375rem;
   }
-  
+
   .employee-info {
     min-width: 200px;
   }
-  
+
   .employee-contact {
     min-width: 180px;
   }
-  
+
   .action-buttons {
     gap: 1rem;
     min-width: 140px;
   }
-  
+
   .btn {
     padding: 0.75rem 1.25rem;
     font-size: 0.9375rem;
@@ -564,29 +559,29 @@ const closeModal = () => {
     max-width: 2000px;
     padding: 2.5rem;
   }
-  
+
   .filters {
     padding: 2.5rem;
   }
-  
+
   .table th,
   .table td {
     padding: 1.25rem;
     font-size: 1rem;
   }
-  
+
   .employee-info {
     min-width: 250px;
   }
-  
+
   .employee-contact {
     min-width: 200px;
   }
-  
+
   .action-buttons {
     min-width: 160px;
   }
-  
+
   .btn {
     padding: 1rem 1.5rem;
     font-size: 1rem;
@@ -599,11 +594,11 @@ const closeModal = () => {
     gap: 1rem;
     max-width: none;
   }
-  
+
   .table-container {
     overflow-x: visible;
   }
-  
+
   .table {
     min-width: auto;
   }
@@ -613,7 +608,7 @@ const closeModal = () => {
   .employees-page {
     max-width: 100%;
   }
-  
+
   .table-container {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -621,21 +616,22 @@ const closeModal = () => {
 }
 
 @media (max-width: 1200px) {
+
   .table th,
   .table td {
     padding: 12px 8px;
     font-size: 14px;
   }
-  
+
   .action-buttons {
     flex-direction: column;
     gap: 5px;
   }
-  
+
   .table {
     min-width: 900px;
   }
-  
+
   .employee-info {
     min-width: 120px;
   }
@@ -647,32 +643,32 @@ const closeModal = () => {
     gap: 15px;
     align-items: stretch;
   }
-  
+
   .page-header h2 {
     text-align: center;
   }
-  
+
   .filters {
     padding: 15px;
   }
-  
+
   .filter-controls {
     margin-top: 10px;
     display: flex;
     flex-direction: column;
     gap: 8px;
   }
-  
+
   .filter-select {
     width: 100%;
   }
-  
+
   .table th,
   .table td {
     padding: 10px 6px;
     font-size: 13px;
   }
-  
+
   .action-buttons {
     min-width: 80px;
   }
@@ -682,27 +678,27 @@ const closeModal = () => {
   .table {
     min-width: 800px;
   }
-  
+
   .table th,
   .table td {
     padding: 8px 5px;
     font-size: 12px;
   }
-  
+
   .employee-info {
     min-width: 100px;
   }
-  
+
   .employee-contact {
     min-width: 90px;
   }
-  
+
   .action-buttons {
     flex-direction: column;
     gap: 4px;
     min-width: 80px;
   }
-  
+
   .btn-sm {
     width: 100%;
     justify-content: center;
@@ -713,80 +709,80 @@ const closeModal = () => {
   .employees-page {
     padding: 0 10px;
   }
-  
+
   .page-header {
     margin-bottom: 20px;
   }
-  
+
   .page-header h2 {
     font-size: 1.5rem;
   }
-  
+
   .filters {
     padding: 12px;
     margin-bottom: 20px;
   }
-  
+
   .search-input {
     margin-bottom: 10px;
   }
-  
+
   .table-container {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
-  
+
   .table {
     min-width: 900px;
   }
-  
+
   .table th,
   .table td {
-        padding: 8px 5px;
+    padding: 8px 5px;
     font-size: 12px;
     white-space: nowrap;
   }
-  
+
   .table th:nth-child(6),
   .table td:nth-child(6) {
     min-width: 100px;
   }
-  
+
   .action-buttons {
     min-width: 80px;
   }
-  
+
   .btn-sm {
     padding: 4px 8px;
     font-size: 11px;
   }
-  
+
   .modal {
     width: 95%;
     margin: 10px;
   }
-  
+
   .modal-header {
     padding: 15px;
   }
-  
+
   .modal-header h3 {
     font-size: 1.2rem;
   }
-  
+
   .modal-body {
     padding: 15px;
   }
-  
+
   .form-group {
     margin-bottom: 15px;
   }
-  
+
   .form-actions {
     flex-direction: column;
     gap: 8px;
   }
-  
+
   .form-actions .btn {
     width: 100%;
     justify-content: center;
@@ -797,31 +793,31 @@ const closeModal = () => {
   .employees-page {
     padding: 0 5px;
   }
-  
+
   .page-header h2 {
     font-size: 1.3rem;
   }
-  
+
   .table {
     min-width: 1000px;
   }
-  
+
   .table th,
   .table td {
     padding: 6px 4px;
     font-size: 11px;
   }
-  
+
   .btn {
     font-size: 13px;
     padding: 8px 12px;
   }
-  
+
   .btn-sm {
     padding: 4px 6px;
     font-size: 10px;
   }
-  
+
   .search-input,
   .filter-select {
     padding: 8px;
@@ -833,61 +829,62 @@ const closeModal = () => {
   .employees-page {
     padding: 0;
   }
-  
+
   .page-header {
     margin-bottom: 15px;
   }
-  
+
   .page-header h2 {
     font-size: 1.2rem;
   }
-  
+
   .filters {
     padding: 10px;
     margin-bottom: 15px;
   }
-  
+
   .table {
     min-width: 1100px;
   }
-  
+
   .table th,
   .table td {
     padding: 5px 3px;
     font-size: 10px;
   }
-  
+
   .btn {
     font-size: 12px;
     padding: 6px 10px;
   }
-  
+
   .btn-sm {
     padding: 3px 5px;
     font-size: 9px;
   }
-  
+
   .modal {
     width: 98%;
     margin: 5px;
   }
-  
+
   .modal-header {
     padding: 12px;
   }
-  
+
   .modal-header h3 {
     font-size: 1.1rem;
   }
-  
+
   .modal-body {
     padding: 12px;
   }
-  
+
   .form-group input,
   .form-group select {
     padding: 8px;
-    font-size: 16px; /* Prevents zoom on iOS */
+    font-size: 16px;
+    /* Prevents zoom on iOS */
   }
 }
 
@@ -897,20 +894,20 @@ const closeModal = () => {
     min-height: 44px;
     min-width: 44px;
   }
-  
+
   .table tbody tr {
     cursor: pointer;
   }
-  
+
   .table tbody tr:active {
     background: #e9ecef;
   }
-  
+
   .search-input,
   .filter-select {
     min-height: 44px;
   }
-  
+
   .form-group input,
   .form-group select {
     min-height: 44px;
@@ -922,10 +919,37 @@ const closeModal = () => {
   .modal {
     max-height: 95vh;
   }
-  
+
   .modal-body {
     max-height: calc(95vh - 120px);
     overflow-y: auto;
   }
+}
+
+/* Page Animations */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeInUp 0.6s ease-out both;
+}
+
+/* Smooth button transitions */
+.page-header .btn {
+  transition: all 0.3s ease;
+  transform: translateY(0);
+}
+
+.page-header .btn:hover {
+  transform: translateY(-2px) scale(1.05);
 }
 </style>

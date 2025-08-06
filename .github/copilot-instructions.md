@@ -1,7 +1,18 @@
 # GearUp Vue.js Project Rules & Guidelines
 
 ## 🎯 Project Overview
-GearUp is a sports shoe e-commerce website built with Vue.js 3 + Composition API, Pinia state management, and Vue Router 4.
+GearUp is a sports shoe e-commerce admin dashboard built with Vue.js 3 + Composition API, Pinia state management, Vue Router 4, and JavaScript.
+
+## ⚠️ CRITICAL: Code Efficiency Principles
+
+### MANDATORY RULES - ZERO TOLERANCE FOR VIOLATIONS:
+1. **NO DEAD CODE** - Every line must have a purpose
+2. **NO DUPLICATE LOGIC** - Use composables for repeated patterns
+3. **NO UNNECESSARY FUNCTIONS** - If used once, inline it
+4. **NO OVER-ENGINEERING** - Solve today's problem, not tomorrow's
+5. **NO COMMENTED CODE** - Delete it or use version control
+6. **NO CONSOLE LOGS IN PRODUCTION** - Use proper debugging tools
+7. **NO MAGIC NUMBERS** - Use named constants
 
 ## 📋 Core Development Principles
 
@@ -411,14 +422,16 @@ src/
 ├── layouts/               # Page layout components
 │   ├── AdminLayout.vue    # Admin dashboard layout
 │   └── PublicLayout.vue   # Public website layout
-├── pages/                 # Page components (renamed from views)
-│   ├── admin/             # Admin pages
-│   │   ├── Dashboard.vue
-│   │   ├── Products.vue
-│   │   └── Orders.vue
-│   └── public/            # Public pages
-│       ├── Home.vue
-│       └── ProductDetail.vue
+├── views/                 # Page components
+│   ├── Dashboard.vue      # Dashboard page
+│   ├── Products.vue       # Product management
+│   ├── Orders.vue         # Order management
+│   ├── Customers.vue      # Customer management
+│   ├── Employees.vue      # Employee management
+│   ├── Discounts.vue      # Discount campaigns
+│   ├── Coupons.vue        # Coupon management
+│   ├── Login.vue          # Authentication
+│   └── NotFound.vue       # 404 page
 ├── services/              # API communication only
 │   ├── api.js            # Base API configuration
 │   ├── productService.js # Product-related API calls
@@ -1088,6 +1101,527 @@ export const productService = {
 - **Clear error messages** and debugging information
 - **Comprehensive testing** for confidence in changes
 - **Good documentation** and examples
+
+## 🎨 TailwindCSS Implementation Guidelines (Future Use)
+
+### Installation & Configuration
+```bash
+# Install TailwindCSS
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+
+# Install TailwindCSS Forms & Typography
+npm install -D @tailwindcss/forms @tailwindcss/typography
+```
+
+### TailwindCSS Configuration
+```javascript
+// tailwind.config.js
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{vue,js,jsx}"
+  ],
+  theme: {
+    extend: {
+      colors: {
+        // GearUp brand colors
+        'primary': {
+          50: '#f0fdf4',
+          100: '#dcfce7',
+          200: '#bbf7d0',
+          300: '#86efac',
+          400: '#4ade80',
+          500: '#22c55e',
+          600: '#16a34a',
+          700: '#15803d',
+          800: '#166534',
+          900: '#14532d',
+        },
+        'gray': {
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          400: '#94a3b8',
+          500: '#64748b',
+          600: '#475569',
+          700: '#334155',
+          800: '#1e293b',
+          900: '#0f172a',
+        }
+      },
+      fontFamily: {
+        'sans': ['Inter', 'system-ui', 'sans-serif'],
+      },
+      spacing: {
+        '18': '4.5rem',
+        '88': '22rem',
+      }
+    },
+  },
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/typography'),
+  ],
+}
+```
+
+### ✅ TailwindCSS STRICT RULES
+
+#### 1. Class Organization (MANDATORY ORDER)
+```vue
+<template>
+  <!-- ✅ CORRECT: Classes in specific order -->
+  <div class="
+    <!-- 1. Layout -->
+    flex items-center justify-between
+    
+    <!-- 2. Spacing -->
+    p-4 m-2
+    
+    <!-- 3. Sizing -->
+    w-full h-64
+    
+    <!-- 4. Typography -->
+    text-sm font-medium
+    
+    <!-- 5. Colors -->
+    bg-white text-gray-900
+    
+    <!-- 6. Borders -->
+    border border-gray-200 rounded-lg
+    
+    <!-- 7. Effects -->
+    shadow-sm hover:shadow-md
+    
+    <!-- 8. Transitions -->
+    transition-all duration-200
+    
+    <!-- 9. Responsive -->
+    md:p-6 lg:p-8
+  ">
+    Content
+  </div>
+  
+  <!-- ❌ WRONG: Random class order -->
+  <div class="shadow-sm p-4 flex bg-white rounded-lg text-sm w-full">
+    Content
+  </div>
+</template>
+```
+
+#### 2. Component Utility Classes (NO CUSTOM CSS)
+```vue
+<!-- ❌ NEVER write custom CSS when Tailwind has the utility -->
+<style scoped>
+.custom-button {
+  padding: 0.5rem 1rem;
+  background-color: #22c55e;
+  color: white;
+  border-radius: 0.5rem;
+}
+</style>
+
+<!-- ✅ Use Tailwind utilities -->
+<button class="px-4 py-2 bg-primary-500 text-white rounded-lg">
+  Click Me
+</button>
+```
+
+#### 3. Responsive Design Pattern
+```vue
+<template>
+  <!-- Mobile-first approach (REQUIRED) -->
+  <div class="
+    grid grid-cols-1 gap-4 p-4
+    sm:grid-cols-2 sm:gap-6 sm:p-6
+    md:grid-cols-3
+    lg:grid-cols-4 lg:gap-8 lg:p-8
+    xl:grid-cols-5
+    2xl:grid-cols-6
+  ">
+    <!-- Content -->
+  </div>
+</template>
+```
+
+#### 4. State-based Styling (Use Vue Bindings)
+```vue
+<script setup>
+const isActive = ref(false)
+const isError = ref(false)
+</script>
+
+<template>
+  <!-- ✅ Dynamic classes with Vue -->
+  <button 
+    :class="[
+      'px-4 py-2 rounded-lg transition-colors',
+      isActive ? 'bg-primary-500 text-white' : 'bg-gray-100 text-gray-700',
+      isError && 'border-2 border-red-500',
+      'hover:opacity-90'
+    ]"
+  >
+    Dynamic Button
+  </button>
+  
+  <!-- ❌ AVOID: Inline ternary in template -->
+  <button :class="`px-4 py-2 ${isActive ? 'bg-primary-500' : 'bg-gray-100'}`">
+    Bad Example
+  </button>
+</template>
+```
+
+#### 5. Reusable Component Classes
+```javascript
+// utils/tailwindClasses.js
+export const buttonClasses = {
+  base: 'inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2',
+  sizes: {
+    sm: 'px-3 py-1.5 text-sm',
+    md: 'px-4 py-2 text-base',
+    lg: 'px-6 py-3 text-lg'
+  },
+  variants: {
+    primary: 'bg-primary-500 text-white hover:bg-primary-600 focus:ring-primary-500',
+    secondary: 'bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-gray-500',
+    danger: 'bg-red-500 text-white hover:bg-red-600 focus:ring-red-500',
+    ghost: 'bg-transparent hover:bg-gray-100 focus:ring-gray-500'
+  }
+}
+
+// Use in component
+import { buttonClasses } from '@/utils/tailwindClasses'
+
+const getButtonClass = (size = 'md', variant = 'primary') => {
+  return [
+    buttonClasses.base,
+    buttonClasses.sizes[size],
+    buttonClasses.variants[variant]
+  ].join(' ')
+}
+```
+
+#### 6. Form Styling Pattern
+```vue
+<template>
+  <form class="space-y-6">
+    <!-- Text Input -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        Product Name
+      </label>
+      <input 
+        type="text"
+        class="
+          w-full px-3 py-2 
+          border border-gray-300 rounded-lg
+          focus:ring-2 focus:ring-primary-500 focus:border-transparent
+          placeholder-gray-400
+          disabled:bg-gray-50 disabled:text-gray-500
+        "
+        placeholder="Enter product name"
+      >
+      <p v-if="errors.name" class="mt-1 text-sm text-red-600">
+        {{ errors.name }}
+      </p>
+    </div>
+    
+    <!-- Select -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        Category
+      </label>
+      <select class="
+        w-full px-3 py-2
+        border border-gray-300 rounded-lg
+        focus:ring-2 focus:ring-primary-500 focus:border-transparent
+      ">
+        <option>Select category</option>
+        <option>Shoes</option>
+        <option>Accessories</option>
+      </select>
+    </div>
+  </form>
+</template>
+```
+
+#### 7. Table Styling Pattern
+```vue
+<template>
+  <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+    <table class="min-w-full divide-y divide-gray-300">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Name
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Price
+          </th>
+          <th class="relative px-6 py-3">
+            <span class="sr-only">Edit</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <tr v-for="item in items" :key="item.id" class="hover:bg-gray-50">
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            {{ item.name }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {{ item.price }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+            <button class="text-primary-600 hover:text-primary-900">
+              Edit
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</template>
+```
+
+#### 8. Card Component Pattern
+```vue
+<template>
+  <div class="bg-white overflow-hidden shadow-sm rounded-lg hover:shadow-md transition-shadow">
+    <!-- Card Header -->
+    <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+      <h3 class="text-lg font-semibold text-gray-900">
+        Card Title
+      </h3>
+    </div>
+    
+    <!-- Card Body -->
+    <div class="px-6 py-4">
+      <p class="text-gray-600">
+        Card content goes here
+      </p>
+    </div>
+    
+    <!-- Card Footer -->
+    <div class="px-6 py-3 bg-gray-50 border-t border-gray-200">
+      <div class="flex items-center justify-between">
+        <span class="text-sm text-gray-500">Updated 2 hours ago</span>
+        <button class="text-sm text-primary-600 hover:text-primary-500 font-medium">
+          View Details
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
+```
+
+### ❌ TailwindCSS ANTI-PATTERNS TO AVOID
+
+```vue
+<!-- ❌ DON'T: Use arbitrary values excessively -->
+<div class="w-[423px] h-[67px] mt-[13px]"></div>
+
+<!-- ✅ DO: Use standard spacing scale -->
+<div class="w-96 h-16 mt-3"></div>
+
+<!-- ❌ DON'T: Mix Tailwind with inline styles -->
+<div class="p-4" style="background-color: #22c55e;"></div>
+
+<!-- ✅ DO: Use only Tailwind -->
+<div class="p-4 bg-primary-500"></div>
+
+<!-- ❌ DON'T: Create deeply nested selectors -->
+<style>
+.container .wrapper .item .content { /* Bad */ }
+</style>
+
+<!-- ✅ DO: Use Tailwind utilities directly -->
+<div class="space-y-4"></div>
+
+<!-- ❌ DON'T: Use !important -->
+<div class="!bg-red-500"></div>
+
+<!-- ✅ DO: Fix specificity issues properly -->
+<div class="bg-red-500"></div>
+```
+
+### Tailwind Component Abstraction
+```vue
+<!-- BaseButton.vue -->
+<script setup>
+defineProps({
+  variant: {
+    type: String,
+    default: 'primary',
+    validator: (v) => ['primary', 'secondary', 'danger', 'ghost'].includes(v)
+  },
+  size: {
+    type: String,
+    default: 'md',
+    validator: (v) => ['sm', 'md', 'lg'].includes(v)
+  },
+  loading: Boolean,
+  disabled: Boolean
+})
+</script>
+
+<template>
+  <button
+    :disabled="disabled || loading"
+    :class="[
+      // Base styles
+      'inline-flex items-center justify-center font-medium rounded-lg',
+      'transition-all duration-200',
+      'focus:outline-none focus:ring-2 focus:ring-offset-2',
+      'disabled:opacity-50 disabled:cursor-not-allowed',
+      
+      // Size variants
+      size === 'sm' && 'px-3 py-1.5 text-sm',
+      size === 'md' && 'px-4 py-2 text-base',
+      size === 'lg' && 'px-6 py-3 text-lg',
+      
+      // Color variants
+      variant === 'primary' && 'bg-primary-500 text-white hover:bg-primary-600 focus:ring-primary-500',
+      variant === 'secondary' && 'bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-gray-500',
+      variant === 'danger' && 'bg-red-500 text-white hover:bg-red-600 focus:ring-red-500',
+      variant === 'ghost' && 'bg-transparent hover:bg-gray-100 focus:ring-gray-500'
+    ]"
+  >
+    <span v-if="loading" class="mr-2">
+      <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+      </svg>
+    </span>
+    <slot />
+  </button>
+</template>
+```
+
+## 🔐 Security Best Practices
+
+### Input Validation & Sanitization
+```javascript
+// composables/useValidation.js
+export function useValidation() {
+  const sanitizeInput = (input) => {
+    // Remove HTML tags and scripts
+    return input.replace(/<[^>]*>?/gm, '').trim()
+  }
+  
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+  
+  const validatePhone = (phone) => {
+    const phoneRegex = /^(\+84|0)[3-9][0-9]{8}$/ // Vietnam phone format
+    return phoneRegex.test(phone)
+  }
+  
+  const validatePrice = (price) => {
+    return !isNaN(price) && price > 0 && price < 1000000000
+  }
+  
+  return {
+    sanitizeInput,
+    validateEmail,
+    validatePhone,
+    validatePrice
+  }
+}
+```
+
+### Authentication & Authorization
+```javascript
+// Guards for protected routes
+const requireAuth = (to, from, next) => {
+  const authStore = useAuthStore()
+  
+  if (!authStore.isAuthenticated) {
+    next('/login')
+    return
+  }
+  
+  // Check role-based access
+  if (to.meta.requiredRole && authStore.user.role !== to.meta.requiredRole) {
+    next('/unauthorized')
+    return
+  }
+  
+  next()
+}
+
+// Token management
+const tokenManager = {
+  setToken: (token) => {
+    // Use httpOnly cookies in production
+    if (import.meta.env.PROD) {
+      // Server should set httpOnly cookie
+    } else {
+      localStorage.setItem('token', token)
+    }
+  },
+  
+  getToken: () => {
+    return localStorage.getItem('token')
+  },
+  
+  removeToken: () => {
+    localStorage.removeItem('token')
+  }
+}
+```
+
+### XSS Prevention
+```vue
+<template>
+  <!-- ❌ NEVER use v-html with user input -->
+  <div v-html="userInput"></div>
+  
+  <!-- ✅ Use text interpolation or v-text -->
+  <div>{{ sanitizedUserInput }}</div>
+  <div v-text="sanitizedUserInput"></div>
+</template>
+
+<script setup>
+import { computed } from 'vue'
+import { useValidation } from '@/composables/useValidation'
+
+const { sanitizeInput } = useValidation()
+
+const sanitizedUserInput = computed(() => 
+  sanitizeInput(props.userInput)
+)
+</script>
+```
+
+### Environment Variables Security
+```javascript
+// ❌ NEVER commit sensitive data
+// .env (should be in .gitignore)
+VITE_API_KEY=your-secret-key
+VITE_DB_PASSWORD=secret-password
+
+// ✅ Use placeholders in committed files
+// .env.example (safe to commit)
+VITE_API_KEY=your-api-key-here
+VITE_API_BASE_URL=http://localhost:8080/api
+```
+
+### CORS Configuration
+```javascript
+// services/api.js
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+  withCredentials: true, // Send cookies with requests
+  headers: {
+    'Content-Type': 'application/json',
+    'X-Requested-With': 'XMLHttpRequest' // CSRF protection
+  }
+})
+```
 
 ## 📚 Additional Resources
 
