@@ -12,7 +12,6 @@ import Discounts from '@/views/Discounts.vue'
 import Coupons from '@/views/Coupons.vue'
 import Login from '@/views/Login.vue'
 import NotFound from '@/views/NotFound.vue'
-import ResponsiveTest from '@/views/ResponsiveTest.vue'
 
 const routes = [
   // Public routes (no layout)
@@ -92,15 +91,6 @@ const routes = [
         meta: {
           title: 'GearUp - Phiếu giảm giá',
           icon: '🎫'
-        }
-      },
-      {
-        path: 'responsive-test',
-        name: 'ResponsiveTest',
-        component: ResponsiveTest,
-        meta: {
-          title: 'GearUp - Responsive Test',
-          icon: '📱'
         }
       }
     ]

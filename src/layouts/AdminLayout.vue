@@ -1,16 +1,12 @@
 <template>
   <div class="admin-layout">
     <!-- Mobile Overlay -->
-    <div 
-      class="mobile-overlay" 
-      :class="{ active: mobileMenuOpen }"
-      @click="closeMobileMenu"
-    ></div>
-    
+    <div class="mobile-overlay" :class="{ active: mobileMenuOpen }" @click="closeMobileMenu"></div>
+
     <!-- Sidebar -->
-    <aside class="sidebar" :class="{ 
-      'sidebar-collapsed': sidebarCollapsed && !isMobile, 
-      'sidebar-open': mobileMenuOpen && isMobile 
+    <aside class="sidebar" :class="{
+      'sidebar-collapsed': sidebarCollapsed && !isMobile,
+      'sidebar-open': mobileMenuOpen && isMobile
     }">
       <div class="sidebar-header">
         <div class="logo-container">
@@ -18,15 +14,11 @@
             <GearUpLogo variant="small" />
           </div>
         </div>
-        <button 
-          class="sidebar-toggle"
-          @click="toggleSidebar"
-          v-if="!isMobile"
-        >
+        <button class="sidebar-toggle" @click="toggleSidebar" v-if="!isMobile">
           <i class="icon">☰</i>
         </button>
       </div>
-      
+
       <nav class="sidebar-nav">
         <ul class="nav-menu">
           <li>
@@ -49,7 +41,7 @@
           </li>
           <li>
             <router-link to="/customers" class="nav-link" exact>
-                <i class="nav-icon">👥</i>
+              <i class="nav-icon">👥</i>
               <span v-if="!sidebarCollapsed" class="nav-text">Quản lý Khách hàng</span>
             </router-link>
           </li>
@@ -74,17 +66,13 @@
         </ul>
       </nav>
     </aside>
-    
+
     <!-- Main Content -->
     <main class="main-content">
       <!-- Top Header -->
       <header class="top-header">
         <div class="header-left">
-          <button 
-            class="mobile-menu-toggle"
-            @click="toggleMobileMenu"
-            v-if="isMobile"
-          >
+          <button class="mobile-menu-toggle" @click="toggleMobileMenu" v-if="isMobile">
             <i class="icon">☰</i>
           </button>
           <div class="breadcrumb">
@@ -93,14 +81,14 @@
             <span class="breadcrumb-current">{{ pageTitle }}</span>
           </div>
         </div>
-        
+
         <div class="header-right">
           <div class="header-actions">
             <button class="btn btn-outline notifications-btn">
               <i class="icon">🔔</i>
               <span class="notification-badge">3</span>
             </button>
-            
+
             <div class="user-menu">
               <div class="user-info">
                 <div class="user-avatar">
@@ -119,7 +107,7 @@
           </div>
         </div>
       </header>
-      
+
       <!-- Page Content -->
       <div class="page-content">
         <div class="page-header">
@@ -129,7 +117,7 @@
           </h1>
           <p class="page-subtitle">{{ pageSubtitle }}</p>
         </div>
-        
+
         <div class="content-area">
           <router-view />
         </div>
@@ -173,7 +161,7 @@ const pageTitle = computed(() => {
   if (route.meta?.title) {
     return route.meta.title.replace('GearUp - ', '')
   }
-  
+
   // Fallback to static mapping for backwards compatibility
   const titles = {
     '/': 'Thống kê & Báo cáo',
@@ -205,7 +193,7 @@ const pageIcon = computed(() => {
   if (route.meta?.icon) {
     return route.meta.icon
   }
-  
+
   // Fallback to static mapping
   const icons = {
     '/': '📊',
@@ -633,7 +621,7 @@ const logout = () => {
   .page-content {
     padding: 1.5rem;
   }
-  
+
   .top-header {
     padding: 1rem 1.5rem;
   }
@@ -642,20 +630,21 @@ const logout = () => {
 /* Desktop to tablet transition - keep logo visible but compress sidebar */
 @media (max-width: 1024px) {
   .sidebar {
-    width: 240px; /* Keep reasonable width instead of collapsing too much */
+    width: 240px;
+    /* Keep reasonable width instead of collapsing too much */
   }
-  
+
   .page-title {
     font-size: 1.75rem;
     gap: 0.5rem;
   }
-  
+
   .page-icon {
     font-size: 1.875rem;
     min-width: 2rem;
     height: 2rem;
   }
-  
+
   .breadcrumb {
     font-size: 0.8125rem;
   }
@@ -666,25 +655,25 @@ const logout = () => {
   .sidebar {
     width: 72px;
   }
-  
+
   .sidebar .nav-text {
     display: none;
   }
-  
+
   .logo-wrapper {
     opacity: 0;
     transform: scale(0.8);
     width: 0;
     overflow: hidden;
   }
-  
+
   .sidebar-header {
     padding: 1rem 0.75rem;
     justify-content: center;
     flex-direction: column;
     gap: 0.5rem;
   }
-  
+
   .sidebar-toggle {
     position: static;
     margin: 0 auto;
@@ -695,7 +684,7 @@ const logout = () => {
   .admin-layout {
     position: relative;
   }
-  
+
   .sidebar {
     position: fixed;
     left: -100%;
@@ -706,26 +695,26 @@ const logout = () => {
     transition: left 0.3s ease;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   }
-  
+
   .sidebar.sidebar-open {
     left: 0;
   }
-  
+
   /* Reset sidebar collapsed state on mobile */
   .sidebar-collapsed {
     width: 280px;
     left: -100%;
   }
-  
+
   .sidebar-collapsed.sidebar-open {
     left: 0;
   }
-  
+
   /* Show all navigation elements on mobile */
   .sidebar .nav-text {
     display: block !important;
   }
-  
+
   /* Restore logo visibility on mobile */
   .logo-wrapper {
     opacity: 1 !important;
@@ -733,7 +722,7 @@ const logout = () => {
     width: auto !important;
     overflow: visible !important;
   }
-  
+
   /* Reset sidebar header layout for mobile */
   .sidebar-header {
     padding: 1.5rem !important;
@@ -741,23 +730,23 @@ const logout = () => {
     flex-direction: row !important;
     gap: 0.75rem !important;
   }
-  
+
   .main-content {
     margin-left: 0;
     width: 100%;
   }
-  
+
   .top-header {
     padding: 1rem;
     position: relative;
   }
-  
+
   .header-left {
     display: flex;
     align-items: center;
     gap: 1rem;
   }
-  
+
   .mobile-menu-toggle {
     display: flex;
     align-items: center;
@@ -770,52 +759,52 @@ const logout = () => {
     font-size: 1.25rem;
     color: var(--gray-600);
   }
-  
+
   .page-content {
     padding: 1rem;
   }
-  
+
   .page-title {
     font-size: 1.5rem;
     gap: 0.5rem;
   }
-  
+
   .page-icon {
     font-size: 1.625rem;
     min-width: 1.75rem;
     height: 1.75rem;
   }
-  
+
   .page-subtitle {
     font-size: 0.875rem;
   }
-  
+
   .user-details {
     display: none;
   }
-  
+
   .header-actions {
     gap: 0.5rem;
   }
-  
+
   .breadcrumb {
     flex: 1;
     margin-left: 0.5rem;
   }
-  
+
   .notifications-btn {
     padding: 0.5rem;
   }
-  
+
   .logout-btn {
     padding: 0.5rem;
     font-size: 0.75rem;
   }
-  
+
   .logout-btn .icon {
     margin-right: 0;
   }
-  
+
   .logout-btn span:not(.icon) {
     display: none;
   }
@@ -825,30 +814,30 @@ const logout = () => {
   .page-header {
     margin-bottom: 1rem;
   }
-  
+
   .page-title {
     font-size: 1.25rem;
     gap: 0.375rem;
   }
-  
+
   .page-icon {
     font-size: 1.375rem;
     min-width: 1.5rem;
     height: 1.5rem;
     flex-shrink: 0;
   }
-  
+
   .breadcrumb-current {
     max-width: 150px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  
+
   .header-actions {
     gap: 0.25rem;
   }
-  
+
   .user-avatar {
     width: 2rem;
     height: 2rem;
@@ -861,17 +850,17 @@ const logout = () => {
   .page-content {
     padding: 0.75rem;
   }
-  
+
   .top-header {
     padding: 0.75rem;
   }
-  
+
   .page-title {
     font-size: 1.125rem;
     gap: 0.25rem;
     flex-wrap: wrap;
   }
-  
+
   .page-icon {
     font-size: 1.25rem;
     min-width: 1.25rem;
@@ -880,39 +869,39 @@ const logout = () => {
     flex-shrink: 0;
     border-radius: 8px;
   }
-  
+
   .breadcrumb {
     font-size: 0.75rem;
     margin-left: 0.25rem;
   }
-  
+
   .breadcrumb-current {
     max-width: 120px;
   }
-  
+
   .header-actions {
     gap: 0.125rem;
   }
-  
+
   .notifications-btn {
     padding: 0.375rem;
   }
-  
+
   .user-avatar {
     width: 1.75rem;
     height: 1.75rem;
     font-size: 0.625rem;
   }
-  
+
   .logout-btn {
     padding: 0.375rem;
   }
-  
+
   .mobile-menu-toggle {
     padding: 0.375rem;
     font-size: 1.125rem;
   }
-  
+
   /* Prevent icon stretching in the sidebar */
   .nav-icon {
     font-size: 1.125rem !important;
@@ -920,13 +909,13 @@ const logout = () => {
     text-align: center;
     flex-shrink: 0;
   }
-  
+
   /* Ensure sidebar navigation doesn't have excessive padding */
   .nav-link {
     padding: 0.75rem 1rem;
     min-height: 44px;
   }
-  
+
   .sidebar-header {
     padding: 1rem !important;
     min-height: 70px;
@@ -947,7 +936,7 @@ const logout = () => {
     visibility: hidden;
     transition: all 0.3s ease;
   }
-  
+
   .mobile-overlay.active {
     opacity: 1;
     visibility: visible;
