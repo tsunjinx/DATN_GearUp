@@ -1,6 +1,6 @@
 /**
- * 🎭 useButtonAnimations Composable
- * Provides consistent button animation methods across all views
+ * 🎭 useButtonAnimations Composable - Simple Version
+ * Provides simple, clean button animation methods across all views
  */
 
 import { nextTick } from 'vue'
@@ -8,7 +8,7 @@ import { nextTick } from 'vue'
 export function useButtonAnimations() {
   
   /**
-   * Triggers success animation on a button
+   * Triggers simple success animation on a button
    * @param {HTMLElement|Event} buttonOrEvent - Button element or click event
    */
   const triggerSuccess = (buttonOrEvent) => {
@@ -17,12 +17,12 @@ export function useButtonAnimations() {
       button.classList.add('success-state')
       setTimeout(() => {
         button.classList.remove('success-state')
-      }, 600)
+      }, 500)
     }
   }
 
   /**
-   * Triggers error animation on a button
+   * Triggers simple error animation on a button
    * @param {HTMLElement|Event} buttonOrEvent - Button element or click event
    */
   const triggerError = (buttonOrEvent) => {
@@ -31,12 +31,12 @@ export function useButtonAnimations() {
       button.classList.add('error-state')
       setTimeout(() => {
         button.classList.remove('error-state')
-      }, 500)
+      }, 300)
     }
   }
 
   /**
-   * Adds loading state to a button
+   * Adds simple loading state to a button
    * @param {HTMLElement|Event} buttonOrEvent - Button element or click event
    */
   const setLoading = (buttonOrEvent) => {
@@ -44,11 +44,15 @@ export function useButtonAnimations() {
     if (button) {
       button.classList.add('loading')
       button.disabled = true
+      // Store original text
+      if (!button.dataset.originalText) {
+        button.dataset.originalText = button.textContent
+      }
     }
   }
 
   /**
-   * Removes loading state from a button
+   * Removes simple loading state from a button
    * @param {HTMLElement|Event} buttonOrEvent - Button element or click event
    */
   const removeLoading = (buttonOrEvent) => {
@@ -56,18 +60,21 @@ export function useButtonAnimations() {
     if (button) {
       button.classList.remove('loading')
       button.disabled = false
+      // Restore original text if stored
+      if (button.dataset.originalText) {
+        button.textContent = button.dataset.originalText
+      }
     }
   }
 
   /**
-   * Simulates async operation with loading, then success/error
+   * Simple async operation with loading, then success/error
    * @param {HTMLElement|Event} buttonOrEvent - Button element or click event
    * @param {Function} asyncOperation - Async function to execute
    * @param {Object} options - Configuration options
    */
   const withLoadingAnimation = async (buttonOrEvent, asyncOperation, options = {}) => {
     const {
-      loadingDuration = null,
       showSuccess = true,
       showError = true,
       onSuccess = null,
@@ -109,7 +116,7 @@ export function useButtonAnimations() {
   }
 
   /**
-   * Adds staggered fade-in animations to a collection of buttons
+   * Adds simple fade-in animations to buttons
    * @param {string} containerSelector - CSS selector for container
    * @param {number} delay - Delay between animations (ms)
    */
@@ -127,16 +134,6 @@ export function useButtonAnimations() {
   }
 
   /**
-   * Adds hover pulse effect to buttons matching selector
-   * @param {string} selector - CSS selector for buttons
-   */
-  const addPulseEffect = (selector) => {
-    document.querySelectorAll(selector).forEach(button => {
-      button.classList.add('pulse-effect')
-    })
-  }
-
-  /**
    * Removes all animation classes from a button
    * @param {HTMLElement|Event} buttonOrEvent - Button element or click event
    */
@@ -147,11 +144,14 @@ export function useButtonAnimations() {
         'loading',
         'success-state',
         'error-state',
-        'fade-in',
-        'pulse-effect'
+        'fade-in'
       )
       button.disabled = false
       button.style.animationDelay = ''
+      // Clear stored text
+      if (button.dataset.originalText) {
+        delete button.dataset.originalText
+      }
     }
   }
 
@@ -179,10 +179,10 @@ export function useButtonAnimations() {
   }
 
   /**
-   * Creates a debounced button click handler with animations
+   * Creates a simple debounced button click handler
    * @param {Function} handler - Original click handler
    * @param {number} delay - Debounce delay in ms
-   * @returns {Function} Debounced handler with animations
+   * @returns {Function} Debounced handler
    */
   const createAnimatedHandler = (handler, delay = 300) => {
     let timeoutId = null
@@ -197,14 +197,9 @@ export function useButtonAnimations() {
       
       timeoutId = setTimeout(async () => {
         try {
-          setLoading(button)
           await handler(event)
-          removeLoading(button)
-          triggerSuccess(button)
         } catch (error) {
-          removeLoading(button)
-          triggerError(button)
-          throw error
+          console.error('Button handler error:', error)
         }
       }, delay)
     }
@@ -221,7 +216,6 @@ export function useButtonAnimations() {
     // Advanced operations
     withLoadingAnimation,
     staggeredFadeIn,
-    addPulseEffect,
     createAnimatedHandler,
     
     // Utilities

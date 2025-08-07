@@ -1470,8 +1470,7 @@ const handleClickOutside = (event) => {
   border: 2px solid white;
   box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
   z-index: 1;
-  animation: badgeEntrance 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), 
-             badgePulse 3s infinite 0.5s;
+  animation: badgeEntrance 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), badgePulse 2s infinite 1s;
   transform-origin: center;
 }
 
@@ -2703,12 +2702,19 @@ const handleClickOutside = (event) => {
 .content-area {
   /* Removed min-height to prevent infinite scrolling */
   width: 100%;
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 0;
 }
 
 /* Responsive Design */
 @media (max-width: 1200px) {
   .page-content {
     padding: 1.5rem;
+  }
+
+  .content-area {
+    padding: 0;
   }
 
   .top-header {

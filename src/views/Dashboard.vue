@@ -163,7 +163,7 @@ const customerStore = useCustomerStore()
 const orderStore = useOrderStore()
 
 // Button animations composable
-const { triggerSuccess, triggerError, withLoadingAnimation, staggeredFadeIn } = useButtonAnimations()
+const { withLoadingAnimation, staggeredFadeIn } = useButtonAnimations()
 
 // Chart data
 const selectedYear = ref(new Date().getFullYear())
@@ -297,9 +297,16 @@ const exportData = async (event) => {
   })
 }
 
-const viewAnalytics = (event) => {
-  triggerSuccess(event)
-  console.log('Opening analytics view...')
+const viewAnalytics = async (event) => {
+  await withLoadingAnimation(event, async () => {
+    // Simulate analytics loading
+    await new Promise(resolve => setTimeout(resolve, 1200))
+    console.log('Opening analytics view...')
+    return 'Analytics loaded successfully!'
+  }, {
+    onSuccess: (result) => console.log(result),
+    onError: (error) => console.error('Analytics failed:', error)
+  })
 }
 
 onMounted(() => {
@@ -366,18 +373,33 @@ onMounted(() => {
   flex-wrap: wrap;
 }
 
+/* Simplified Button Animations */
 .header-actions .btn {
   border: 2px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   background: rgba(255, 255, 255, 0.1);
   color: white;
   font-weight: var(--font-weight-semibold);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0) scale(1);
 }
 
 .header-actions .btn:hover {
   background: rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.4);
-  transform: translateY(-2px) scale(1.05);
+  transform: translateY(-2px) scale(1.02);
+}
+
+.header-actions .btn:active {
+  transform: translateY(0) scale(0.98);
+  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Apply same hover effect as "xuất báo cáo" to "phân tích" button */
+.header-actions .btn.btn-info:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px) scale(1.02);
 }
 
 .stats-grid {
@@ -1419,20 +1441,6 @@ onMounted(() => {
   }
 }
 
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.05);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
 .fade-in {
   animation: fadeInUp 0.6s ease-out both;
 }
@@ -1457,18 +1465,6 @@ onMounted(() => {
   animation: spin 0.8s linear infinite;
 }
 
-.btn.success-state {
-  animation: pulse 0.6s ease-out;
-  background-color: var(--success-500) !important;
-  border-color: var(--success-600) !important;
-}
-
-.btn.error-state {
-  animation: pulse 0.5s ease-out;
-  background-color: var(--error-500) !important;
-  border-color: var(--error-600) !important;
-}
-
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -1479,13 +1475,13 @@ onMounted(() => {
   }
 }
 
-/* Smooth button transitions */
+/* Consistent button transitions */
 .header-actions .btn {
-  transition: all 0.3s ease;
-  transform: translateY(0);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0) scale(1);
 }
 
 .header-actions .btn:hover {
-  transform: translateY(-2px) scale(1.05);
+  transform: translateY(-2px) scale(1.02);
 }
 </style>

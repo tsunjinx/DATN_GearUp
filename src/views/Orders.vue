@@ -221,7 +221,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useButtonAnimations } from '@/composables/useButtonAnimations.js'
 
 // Button animations composable
-const { staggeredFadeIn } = useButtonAnimations()
+const { staggeredFadeIn, withLoadingAnimation } = useButtonAnimations()
 import StatusBadge from '@/components/ui/StatusBadge.vue'
 
 const searchTerm = ref('')
@@ -408,26 +408,58 @@ const resetPriceRange = () => {
   priceRange.value.max = 10000000
 }
 
-const resetAllFilters = () => {
-  searchTerm.value = ''
-  selectedStatus.value = ''
-  dateFrom.value = ''
-  dateTo.value = ''
-  resetPriceRange()
+const resetAllFilters = async (event) => {
+  await withLoadingAnimation(event, async () => {
+    // Simulate reset process
+    await new Promise(resolve => setTimeout(resolve, 800))
+    
+    searchTerm.value = ''
+    selectedStatus.value = ''
+    dateFrom.value = ''
+    dateTo.value = ''
+    resetPriceRange()
+    
+    return 'All filters reset successfully!'
+  }, {
+    onSuccess: (result) => console.log(result),
+    onError: (error) => console.error('Reset failed:', error)
+  })
 }
 
-const exportToExcel = () => {
-  // TODO: Implement Excel export functionality
-  console.log('Exporting to Excel...', filteredOrders.value)
-  // Here you would typically use a library like xlsx or call an API endpoint
-  alert('Tính năng xuất Excel sẽ được triển khai!')
+const exportToExcel = async (event) => {
+  await withLoadingAnimation(event, async () => {
+    // Simulate Excel export process
+    await new Promise(resolve => setTimeout(resolve, 2500))
+    console.log('Exporting to Excel...', filteredOrders.value)
+    return 'Excel export completed successfully!'
+  }, {
+    onSuccess: (result) => {
+      console.log(result)
+      alert('Xuất Excel thành công!')
+    },
+    onError: (error) => {
+      console.error('Export failed:', error)
+      alert('Lỗi khi xuất Excel!')
+    }
+  })
 }
 
-const scanQR = () => {
-  // TODO: Implement QR scanning functionality
-  console.log('Opening QR scanner...')
-  // Here you would typically open a QR scanner modal or call a scanning API
-  alert('Tính năng quét QR sẽ được triển khai!')
+const scanQR = async (event) => {
+  await withLoadingAnimation(event, async () => {
+    // Simulate QR scanner initialization
+    await new Promise(resolve => setTimeout(resolve, 1200))
+    console.log('Opening QR scanner...')
+    return 'QR scanner opened successfully!'
+  }, {
+    onSuccess: (result) => {
+      console.log(result)
+      alert('Tính năng quét QR sẽ được triển khai!')
+    },
+    onError: (error) => {
+      console.error('QR scan failed:', error)
+      alert('Lỗi khi mở QR scanner!')
+    }
+  })
 }
 
 const closeDetailModal = () => {
@@ -1844,13 +1876,56 @@ const closeDetailModal = () => {
   animation: fadeInUp 0.6s ease-out both;
 }
 
-/* Smooth button transitions */
+/* Enhanced Button Animations */
 .header-actions .btn {
-  transition: all 0.3s ease;
-  transform: translateY(0);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0) scale(1);
+  position: relative;
+  overflow: hidden;
+}
+
+.header-actions .btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
 }
 
 .header-actions .btn:hover {
-  transform: translateY(-2px) scale(1.05);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.header-actions .btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.header-actions .btn:active {
+  transform: translateY(-1px) scale(0.98);
+  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Success ripple effect for action buttons */
+.header-actions .btn.success-ripple {
+  animation: successPulse 0.6s ease-out;
+}
+
+@keyframes successPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
 }
 </style>

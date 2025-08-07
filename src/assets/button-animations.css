@@ -1,219 +1,39 @@
 /* ========================================
-   🚀 GearUp Button Animations & Effects
-   Modern, Consistent Button Animations for All Views
+   🚀 GearUp Simple Button Animations
+   Clean, Simple Button Animations for All Views
 ======================================== */
 
 /* Base Button Animation Foundation */
 .btn {
   position: relative;
   overflow: hidden;
-  transform: translateZ(0);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  backface-visibility: hidden;
-  -webkit-transform: translateZ(0);
-  -webkit-backface-visibility: hidden;
+  transition: all 0.2s ease;
+  cursor: pointer;
 }
 
-/* Hover Animations */
+/* Simple Hover Animation */
 .btn:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Simple Click Animation */
 .btn:active {
-  transform: translateY(0) scale(0.98);
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition-duration: 0.1s;
 }
 
-/* Ripple Effect Animation */
-.btn::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.3);
-  transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
-  z-index: 1;
-}
-
-.btn:active::before {
-  width: 300px;
-  height: 300px;
-  transition: 0s;
-}
-
-/* Button Icon Animations */
-.btn .icon,
-.btn .btn-icon,
-.btn-icon {
-  display: inline-block;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.btn:hover .icon,
-.btn:hover .btn-icon,
-.btn:hover .btn-icon {
-  transform: scale(1.1) rotate(5deg);
-}
-
-/* Specific Button Type Animations */
-
-/* Primary Button Glow Effect */
-.btn-primary {
-  box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.4);
-  animation: pulse-primary 2s infinite;
-}
-
-.btn-primary:hover {
-  animation: none;
-  box-shadow: 0 0 0 8px rgba(52, 152, 219, 0.1),
-              0 8px 25px rgba(52, 152, 219, 0.3);
-}
-
-@keyframes pulse-primary {
-  0% {
-    box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 4px rgba(52, 152, 219, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(52, 152, 219, 0);
-  }
-}
-
-/* Success Button Animation */
-.btn-success {
-  position: relative;
-}
-
-.btn-success::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transition: left 0.5s;
-}
-
-.btn-success:hover::after {
-  left: 100%;
-}
-
-/* Secondary Button Bounce */
-.btn-secondary:hover {
-  animation: bounce-secondary 0.6s;
-}
-
-@keyframes bounce-secondary {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(-2px);
-  }
-  40% {
-    transform: translateY(-4px);
-  }
-  60% {
-    transform: translateY(-2px);
-  }
-}
-
-/* Info Button Wobble */
-.btn-info:hover {
-  animation: wobble-info 0.6s;
-}
-
-@keyframes wobble-info {
-  0% { transform: translateX(0%); }
-  15% { transform: translateX(-10px) rotate(-2deg); }
-  30% { transform: translateX(8px) rotate(2deg); }
-  45% { transform: translateX(-6px) rotate(-1deg); }
-  60% { transform: translateX(4px) rotate(1deg); }
-  75% { transform: translateX(-2px); }
-  100% { transform: translateX(0%); }
-}
-
-/* Warning Button Shake */
-.btn-warning:hover {
-  animation: shake-warning 0.5s;
-}
-
-@keyframes shake-warning {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-3px); }
-  75% { transform: translateX(3px); }
-}
-
-/* Danger Button Pulse */
-.btn-danger {
-  animation: pulse-danger 2s infinite;
-}
-
-.btn-danger:hover {
-  animation: none;
-  box-shadow: 0 0 0 8px rgba(231, 76, 60, 0.1),
-              0 8px 25px rgba(231, 76, 60, 0.3);
-}
-
-@keyframes pulse-danger {
-  0% {
-    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 4px rgba(231, 76, 60, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
-  }
-}
-
-/* Outline Button Border Animation */
-.btn-outline {
-  border: 2px solid currentColor;
-  position: relative;
-  background: transparent;
-}
-
-.btn-outline::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 0;
-  height: 100%;
-  background: currentColor;
-  transition: width 0.3s ease;
-  z-index: -1;
-}
-
-.btn-outline:hover::before {
-  width: 100%;
-}
-
-.btn-outline:hover {
-  color: white;
-  transform: translateY(-2px) scale(1.02);
-}
-
-/* Small Button Animations */
-.btn-sm {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.btn-sm:hover {
-  transform: translateY(-1px) scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* Loading State Animation */
+/* Simple Loading State Animation */
 .btn.loading {
   pointer-events: none;
+  opacity: 0.7;
+  position: relative;
   color: transparent !important;
+}
+
+.btn.loading * {
+  opacity: 0 !important;
 }
 
 .btn.loading::after {
@@ -223,63 +43,84 @@
   left: 50%;
   width: 16px;
   height: 16px;
+  margin: -8px 0 0 -8px;
   border: 2px solid transparent;
-  border-top: 2px solid currentColor;
+  border-top: 2px solid rgba(255, 255, 255, 0.8);
   border-radius: 50%;
-  transform: translate(-50%, -50%);
   animation: spin 1s linear infinite;
+  opacity: 1 !important;
+}
+
+/* Spinner color variants for different button types */
+.btn-primary.loading::after,
+.btn-success.loading::after,
+.btn-danger.loading::after,
+.btn-warning.loading::after,
+.btn-info.loading::after {
+  border-top-color: rgba(255, 255, 255, 0.9);
+}
+
+.btn-secondary.loading::after,
+.btn-outline.loading::after,
+.btn[style*="background"].loading::after {
+  border-top-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Light colored buttons need darker spinner */
+.btn-light.loading::after,
+.btn[style*="background-color: #f"]:not([style*="background-color: #f0"]):not([style*="background-color: #f1"]):not([style*="background-color: #f2"]):not([style*="background-color: #f3"]):not([style*="background-color: #f4"]):not([style*="background-color: #f5"]).loading::after {
+  border-top-color: rgba(0, 0, 0, 0.7);
 }
 
 @keyframes spin {
-  0% { transform: translate(-50%, -50%) rotate(0deg); }
-  100% { transform: translate(-50%, -50%) rotate(360deg); }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-/* Button Group Animations */
-.header-actions .btn {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* Simple Success Animation */
+.btn.success-state {
+  background-color: #22c55e !important;
+  transform: scale(1.05);
+  transition: all 0.3s ease;
 }
 
-.header-actions .btn:nth-child(1) {
-  animation-delay: 0.1s;
+/* Simple Error Animation */
+.btn.error-state {
+  background-color: #ef4444 !important;
+  animation: shake 0.3s ease-in-out;
 }
 
-.header-actions .btn:nth-child(2) {
-  animation-delay: 0.2s;
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
 }
 
-.header-actions .btn:nth-child(3) {
-  animation-delay: 0.3s;
+/* Remove all complex animations */
+.btn-primary,
+.btn-success,
+.btn-secondary,
+.btn-info,
+.btn-warning,
+.btn-danger {
+  animation: none !important;
+  box-shadow: none;
 }
 
-.header-actions .btn:nth-child(4) {
-  animation-delay: 0.4s;
+.btn-primary:hover,
+.btn-success:hover,
+.btn-secondary:hover,
+.btn-info:hover,
+.btn-warning:hover,
+.btn-danger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  animation: none !important;
 }
 
-/* Page Load Animation for Buttons */
-.btn.fade-in {
-  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
-}
-
-@keyframes fadeInUp {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Interactive Button States */
-.btn:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-}
-
+/* Disabled State */
 .btn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
   transform: none !important;
   box-shadow: none !important;
@@ -291,182 +132,51 @@
   box-shadow: none !important;
 }
 
-/* Advanced Hover Effects for Specific Elements */
-
-/* Table Action Buttons */
-.action-buttons .btn {
-  transform: scale(0.9);
-  opacity: 0.8;
-  transition: all 0.2s ease;
+/* Focus State */
+.btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.3);
 }
 
-.action-buttons:hover .btn,
-tr:hover .action-buttons .btn {
-  transform: scale(1);
-  opacity: 1;
-}
-
-/* Status Select Animation */
-.status-select {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.status-select:hover {
+/* Small Button Variations */
+.btn-sm:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.status-select:focus {
-  transform: translateY(-1px) scale(1.02);
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+/* Outline Button Variations */
+.btn-outline:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Card Hover Animations */
-.stat-card,
-.chart-card,
-.card {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.stat-card:hover,
-.chart-card:hover,
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
-}
-
-/* Filter Reset Button Special Animation */
-.price-reset-btn {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.price-reset-btn:hover {
-  transform: rotate(180deg) scale(1.1);
-}
-
-/* Success State Animation */
-.btn.success-state {
-  animation: success-bounce 0.6s;
-}
-
-@keyframes success-bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-10px);
-  }
-  60% {
-    transform: translateY(-5px);
-  }
-}
-
-/* Error State Animation */
-.btn.error-state {
-  animation: error-shake 0.5s;
-}
-
-@keyframes error-shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
-}
-
-/* Mobile Touch Optimizations */
-@media (hover: none) and (pointer: coarse) {
-  .btn:hover {
-    transform: none;
-    box-shadow: none;
-  }
-  
-  .btn:active {
-    transform: scale(0.95);
-    transition-duration: 0.1s;
-  }
-  
-  .btn::before {
-    display: none;
-  }
-}
-
-/* Reduced Motion Support */
+/* Remove all complex keyframe animations */
 @media (prefers-reduced-motion: reduce) {
   .btn,
   .btn::before,
-  .btn::after,
-  .btn .icon,
-  .btn .btn-icon {
+  .btn::after {
     animation: none !important;
     transition-duration: 0.1s !important;
   }
-  
-  .btn:hover {
-    transform: none !important;
+}
+
+/* Remove ripple effects and complex pseudo-elements */
+.btn::before {
+  display: none;
+}
+
+/* Simple fade-in for page load */
+.btn.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
   }
-}
-
-/* Dark Mode Button Adjustments */
-@media (prefers-color-scheme: dark) {
-  .btn::before {
-    background: rgba(255, 255, 255, 0.2);
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  .btn:focus {
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.4);
-  }
-}
-
-/* High Contrast Mode */
-@media (prefers-contrast: high) {
-  .btn {
-    border: 2px solid currentColor;
-  }
-  
-  .btn:hover {
-    border-width: 3px;
-  }
-}
-
-/* Button Icon Specific Animations */
-.btn .icon[data-icon="add"]::before,
-.btn .btn-icon[data-icon="add"]::before {
-  content: '➕';
-  transition: transform 0.3s ease;
-}
-
-.btn:hover .icon[data-icon="add"]::before,
-.btn:hover .btn-icon[data-icon="add"]::before {
-  transform: rotate(90deg);
-}
-
-/* Export Button Animation */
-.btn:has(.icon:contains("📊")),
-.btn:has(.btn-icon:contains("📊")) {
-  position: relative;
-}
-
-.btn:has(.icon:contains("📊"))::after,
-.btn:has(.btn-icon:contains("📊"))::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  transition: left 0.6s;
-}
-
-.btn:hover:has(.icon:contains("📊"))::after,
-.btn:hover:has(.btn-icon:contains("📊"))::after {
-  left: 100%;
-}
-
-/* Performance Optimizations */
-.btn {
-  will-change: transform, box-shadow;
-}
-
-.btn:hover {
-  will-change: auto;
 }

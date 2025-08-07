@@ -8,11 +8,11 @@
           Quản Lý Sản Phẩm
         </h1>
         <div class="header-actions">
-          <button class="btn btn-success" @click="showAddModal = true">
+          <button class="btn btn-success" @click="openAddModal">
             <i class="btn-icon">➕</i>
             Thêm Sản Phẩm
           </button>
-          <button class="btn btn-outline btn-white">
+          <button class="btn btn-outline btn-white" @click="exportToExcel">
             <i class="btn-icon">📤</i>
             Xuất Excel
           </button>
@@ -407,7 +407,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useButtonAnimations } from '@/composables/useButtonAnimations.js'
 
 // Button animations composable
-const { staggeredFadeIn } = useButtonAnimations()
+const { staggeredFadeIn, withLoadingAnimation } = useButtonAnimations()
 
 const searchTerm = ref('')
 const selectedCategory = ref('')
@@ -663,12 +663,47 @@ const truncateText = (text, length) => {
   return text.length > length ? text.substring(0, length) + '...' : text
 }
 
-const resetFilters = () => {
-  searchTerm.value = ''
-  selectedCategory.value = ''
-  selectedBrand.value = ''
-  selectedStatus.value = ''
-  priceRange.value = { min: null, max: null }
+const resetFilters = async (event) => {
+  await withLoadingAnimation(event, async () => {
+    // Simulate reset process
+    await new Promise(resolve => setTimeout(resolve, 800))
+    
+    searchTerm.value = ''
+    selectedCategory.value = ''
+    selectedBrand.value = ''
+    selectedStatus.value = ''
+    priceRange.value = { min: null, max: null }
+    
+    return 'Filters reset successfully!'
+  }, {
+    onSuccess: (result) => console.log(result),
+    onError: (error) => console.error('Reset failed:', error)
+  })
+}
+
+// Enhanced header action methods with animations
+const openAddModal = async (event) => {
+  await withLoadingAnimation(event, async () => {
+    // Simulate modal preparation
+    await new Promise(resolve => setTimeout(resolve, 600))
+    showAddModal.value = true
+    return 'Add modal opened!'
+  }, {
+    onSuccess: (result) => console.log(result),
+    onError: (error) => console.error('Open modal failed:', error)
+  })
+}
+
+const exportToExcel = async (event) => {
+  await withLoadingAnimation(event, async () => {
+    // Simulate Excel export process
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    console.log('Exporting products to Excel...')
+    return 'Excel export completed successfully!'
+  }, {
+    onSuccess: (result) => console.log(result),
+    onError: (error) => console.error('Export failed:', error)
+  })
 }
 
 const viewProduct = (product) => {
@@ -1548,13 +1583,56 @@ onMounted(() => {
   animation: fadeInUp 0.6s ease-out both;
 }
 
-/* Smooth button transitions */
+/* Enhanced Button Animations */
 .header-actions .btn {
-  transition: all 0.3s ease;
-  transform: translateY(0);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0) scale(1);
+  position: relative;
+  overflow: hidden;
+}
+
+.header-actions .btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
 }
 
 .header-actions .btn:hover {
-  transform: translateY(-2px) scale(1.05);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.header-actions .btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.header-actions .btn:active {
+  transform: translateY(-1px) scale(0.98);
+  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Success ripple effect for action buttons */
+.header-actions .btn.success-ripple {
+  animation: successPulse 0.6s ease-out;
+}
+
+@keyframes successPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
 }
 </style>

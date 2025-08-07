@@ -8,7 +8,7 @@
           Quản lý Nhân viên
         </h1>
         <div class="header-actions">
-          <button class="btn btn-success" @click="showAddModal = true">
+          <button class="btn btn-success" @click="openAddModal">
             <span class="icon">➕</span>
             Thêm nhân viên
           </button>
@@ -141,7 +141,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useButtonAnimations } from '@/composables/useButtonAnimations.js'
 
 // Button animations composable
-const { staggeredFadeIn } = useButtonAnimations()
+const { staggeredFadeIn, withLoadingAnimation } = useButtonAnimations()
 import StatusBadge from '@/components/ui/StatusBadge.vue'
 
 const searchTerm = ref('')
@@ -154,6 +154,19 @@ const isMobile = ref(false)
 // Check if device is mobile
 const checkMobile = () => {
   isMobile.value = window.innerWidth <= 768
+}
+
+// Enhanced header action methods with animations
+const openAddModal = async (event) => {
+  await withLoadingAnimation(event, async () => {
+    // Simulate modal preparation
+    await new Promise(resolve => setTimeout(resolve, 600))
+    showAddModal.value = true
+    return 'Add employee modal opened!'
+  }, {
+    onSuccess: (result) => console.log(result),
+    onError: (error) => console.error('Open modal failed:', error)
+  })
 }
 
 onMounted(() => {
@@ -992,12 +1005,56 @@ const closeModal = () => {
 }
 
 /* Smooth button transitions */
+/* Enhanced Button Animations */
 .page-header .btn {
-  transition: all 0.3s ease;
-  transform: translateY(0);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0) scale(1);
+  position: relative;
+  overflow: hidden;
+}
+
+.page-header .btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
 }
 
 .page-header .btn:hover {
-  transform: translateY(-2px) scale(1.05);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.page-header .btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.page-header .btn:active {
+  transform: translateY(-1px) scale(0.98);
+  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Success ripple effect for action buttons */
+.page-header .btn.success-ripple {
+  animation: successPulse 0.6s ease-out;
+}
+
+@keyframes successPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
 }
 </style>
