@@ -114,6 +114,20 @@ body {
   flex-shrink: 0;
 }
 
+/* Page Icon Styling for Images */
+.page-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 0.375rem;
+  object-fit: contain;
+  transition: all 0.3s ease;
+}
+
+.page-title:hover .page-icon {
+  filter: drop-shadow(0 0 6px rgba(34, 197, 94, 0.5));
+  transform: scale(1.05);
+}
+
 /* Emoji specific controls to prevent expansion */
 .nav-icon,
 .page-icon {

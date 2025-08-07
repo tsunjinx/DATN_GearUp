@@ -3,7 +3,10 @@
     <!-- Dashboard Header with Action Buttons -->
     <div class="dashboard-header">
       <div class="header-content">
-        <h1 class="dashboard-title">📊Tổng Quan</h1>
+        <h1 class="dashboard-title">
+          <img class="dashboard-icon" src="@/assets/dashboard.svg" alt="Dashboard" />
+          Tổng Quan
+        </h1>
         <div class="header-actions">
           <button class="btn btn-primary" @click="refreshData">
             <span class="icon">🔄</span>
@@ -340,6 +343,20 @@ onMounted(() => {
   font-weight: var(--font-weight-bold);
   color: white;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dashboard-icon {
+  width: 32px;
+  height: 32px;
+  transition: all 0.3s ease;
+}
+
+.dashboard-title:hover .dashboard-icon {
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.8));
+  transform: scale(1.1);
 }
 
 .header-actions {

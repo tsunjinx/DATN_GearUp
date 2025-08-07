@@ -1,21 +1,18 @@
 <template>
   <div class="products-page">
-    <!-- Page Header -->
-    <div class="page-header fade-in" style="animation-delay: 0.1s">
+    <!-- Products Header with Action Buttons -->
+    <div class="products-header">
       <div class="header-content">
-        <div class="header-info">
-          <h2 class="page-title">
-            <i class="page-icon">📦</i>
-            Quản Lý Sản Phẩm
-          </h2>
-          <p class="page-description">Quản lý toàn bộ sản phẩm trong hệ thống</p>
-        </div>
+        <h1 class="products-title">
+          <img class="products-icon" src="@/assets/products.svg" alt="Products" />
+          Quản Lý Sản Phẩm
+        </h1>
         <div class="header-actions">
           <button class="btn btn-success" @click="showAddModal = true">
             <i class="btn-icon">➕</i>
             Thêm Sản Phẩm
           </button>
-          <button class="btn btn-outline">
+          <button class="btn btn-outline btn-white">
             <i class="btn-icon">📤</i>
             Xuất Excel
           </button>
@@ -740,6 +737,57 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+}
+
+/* Products Header */
+.products-header {
+  margin-bottom: var(--spacing-3xl);
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl) var(--spacing-3xl);
+  color: var(--white);
+  box-shadow: var(--shadow-lg);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-xl);
+}
+
+.products-title {
+  margin: 0;
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.products-icon {
+  width: 32px;
+  height: 32px;
+  transition: all 0.3s ease;
+}
+
+.products-title:hover .products-icon {
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.8));
+  transform: scale(1.1);
+}
+
+.btn-white {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-white:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 /* Page Header */

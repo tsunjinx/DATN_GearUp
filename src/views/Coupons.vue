@@ -1,18 +1,19 @@
 <template>
   <div class="coupons-page">
-    <!-- Header Section -->
-    <div class="page-header fade-in" style="animation-delay: 0.1s">
+    <!-- Coupons Header with Action Buttons -->
+    <div class="coupons-header">
       <div class="header-content">
-        <h1 class="page-title">
-          <i class="title-icon">🎫</i>
+        <h1 class="coupons-title">
+          <img class="coupons-icon" src="@/assets/coupons.png" alt="Coupons" />
           Quản lý Phiếu giảm giá
         </h1>
-        <p class="page-subtitle">Tạo và quản lý các phiếu giảm giá cho khách hàng</p>
+        <div class="header-actions">
+          <button class="btn btn-success" @click="showAddModal = true">
+            <i class="btn-icon">➕</i>
+            Tạo phiếu giảm giá
+          </button>
+        </div>
       </div>
-      <button class="btn btn-primary" @click="showAddModal = true">
-        <i class="btn-icon">➕</i>
-        Tạo phiếu giảm giá
-      </button>
     </div>
 
     <!-- Filters Section -->
@@ -545,6 +546,46 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Coupons Header */
+.coupons-header {
+  margin-bottom: var(--spacing-3xl);
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl) var(--spacing-3xl);
+  color: var(--white);
+  box-shadow: var(--shadow-lg);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-xl);
+}
+
+.coupons-title {
+  margin: 0;
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.coupons-icon {
+  width: 32px;
+  height: 32px;
+  transition: all 0.3s ease;
+}
+
+.coupons-title:hover .coupons-icon {
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.8));
+  transform: scale(1.1);
+}
+
 /* Modern Green Theme Styles */
 .coupons-page {
   max-width: 1200px;

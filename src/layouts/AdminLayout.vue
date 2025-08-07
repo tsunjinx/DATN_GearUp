@@ -21,43 +21,43 @@
         <ul class="nav-menu">
           <li>
             <router-link to="/" class="nav-link" exact @click="closeMobileMenu">
-              <i class="nav-icon">📊</i>
+              <img class="nav-icon" src="@/assets/dashboard.svg" alt="Dashboard" />
               <span v-if="showNavText" class="nav-text">Thống kê & Báo cáo</span>
             </router-link>
           </li>
           <li>
             <router-link to="/products" class="nav-link" exact @click="closeMobileMenu">
-              <i class="nav-icon">👟</i>
+              <img class="nav-icon" src="@/assets/products.svg" alt="Products" />
               <span v-if="showNavText" class="nav-text">Quản lý Sản phẩm</span>
             </router-link>
           </li>
           <li>
             <router-link to="/orders" class="nav-link" exact @click="closeMobileMenu">
-              <i class="nav-icon">🧾</i>
+              <img class="nav-icon" src="@/assets/orders.png" alt="Orders" />
               <span v-if="showNavText" class="nav-text">Quản lý Hóa đơn</span>
             </router-link>
           </li>
           <li>
             <router-link to="/customers" class="nav-link" exact @click="closeMobileMenu">
-              <i class="nav-icon">👥</i>
+              <img class="nav-icon" src="@/assets/customers.png" alt="Customers" />
               <span v-if="showNavText" class="nav-text">Quản lý Khách hàng</span>
             </router-link>
           </li>
           <li>
             <router-link to="/employees" class="nav-link" exact @click="closeMobileMenu">
-              <i class="nav-icon">👨‍💼</i>
+              <img class="nav-icon" src="@/assets/employees.png" alt="Employees" />
               <span v-if="showNavText" class="nav-text">Quản lý Nhân viên</span>
             </router-link>
           </li>
           <li>
             <router-link to="/discounts" class="nav-link" exact @click="closeMobileMenu">
-              <i class="nav-icon">🏷️</i>
+              <img class="nav-icon" src="@/assets/discounts.png" alt="Discounts" />
               <span v-if="showNavText" class="nav-text">Đợt giảm giá</span>
             </router-link>
           </li>
           <li>
             <router-link to="/coupons" class="nav-link" exact @click="closeMobileMenu">
-              <i class="nav-icon">🎫</i>
+              <img class="nav-icon" src="@/assets/coupons.png" alt="Coupons" />
               <span v-if="showNavText" class="nav-text">Phiếu giảm giá</span>
             </router-link>
           </li>
@@ -1258,6 +1258,10 @@ const handleClickOutside = (event) => {
   color: var(--primary-700);
 }
 
+.nav-link:hover .nav-icon {
+  filter: brightness(0) saturate(100%) invert(18%) sepia(85%) saturate(2736%) hue-rotate(177deg) brightness(91%) contrast(96%);
+}
+
 .nav-link.router-link-exact-active {
   background: var(--primary-100);
   color: var(--primary-700);
@@ -1267,10 +1271,16 @@ const handleClickOutside = (event) => {
 }
 
 .nav-icon {
-  font-size: 1.25rem;
-  margin-right: 0.75rem;
   width: 24px;
-  text-align: center;
+  height: 24px;
+  margin-right: 0.75rem;
+  object-fit: contain;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover .nav-icon {
+  filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.6));
+  transform: scale(1.1);
 }
 
 .nav-text {

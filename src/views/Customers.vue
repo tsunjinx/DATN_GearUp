@@ -1,11 +1,19 @@
 <template>
   <div class="customers-page">
-    <div class="page-header fade-in" style="animation-delay: 0.1s">
-      <h2>Quản lý Khách hàng</h2>
-      <button class="btn btn-primary" @click="showAddModal = true">
-        <span class="icon">➕</span>
-        Thêm khách hàng
-      </button>
+    <!-- Customers Header with Action Buttons -->
+    <div class="customers-header">
+      <div class="header-content">
+        <h1 class="customers-title">
+          <img class="customers-icon" src="@/assets/customers.png" alt="Customers" />
+          Quản lý Khách hàng
+        </h1>
+        <div class="header-actions">
+          <button class="btn btn-success" @click="showAddModal = true">
+            <span class="icon">➕</span>
+            Thêm khách hàng
+          </button>
+        </div>
+      </div>
     </div>
 
     <div class="filters fade-in" style="animation-delay: 0.3s">
@@ -238,6 +246,46 @@ const closeModal = () => {
 </script>
 
 <style scoped>
+/* Customers Header */
+.customers-header {
+  margin-bottom: var(--spacing-3xl);
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl) var(--spacing-3xl);
+  color: var(--white);
+  box-shadow: var(--shadow-lg);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-xl);
+}
+
+.customers-title {
+  margin: 0;
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.customers-icon {
+  width: 32px;
+  height: 32px;
+  transition: all 0.3s ease;
+}
+
+.customers-title:hover .customers-icon {
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.8));
+  transform: scale(1.1);
+}
+
 /* Reuse styles from Products.vue with some modifications */
 .customers-page {
   max-width: 1200px;

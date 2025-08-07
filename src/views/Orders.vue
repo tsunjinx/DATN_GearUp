@@ -1,24 +1,26 @@
 <template>
   <div class="orders-page">
-    <div class="page-header fade-in" style="animation-delay: 0.1s">
-      <h2>Quản lý Hóa đơn</h2>
-      <div class="header-actions">
-        <button class="btn btn-secondary" @click="resetAllFilters">
-          <span class="icon">🔄</span>
-          Đặt lại bộ lọc
-        </button>
-        <button class="btn btn-success" @click="exportToExcel">
-          <span class="icon">📊</span>
-          Xuất Excel
-        </button>
-        <button class="btn btn-info" @click="scanQR">
-          <span class="icon">📱</span>
-          Quét QR
-        </button>
-        <button class="btn btn-primary" @click="showAddModal = true">
-          <span class="icon">➕</span>
-          Tạo hóa đơn
-        </button>
+    <!-- Orders Header with Action Buttons -->
+    <div class="orders-header">
+      <div class="header-content">
+        <h1 class="orders-title">
+          <img class="orders-icon" src="@/assets/orders.png" alt="Orders" />
+          Quản lý Hóa đơn
+        </h1>
+        <div class="header-actions">
+          <button class="btn btn-secondary btn-white" @click="resetAllFilters">
+            <span class="icon">🔄</span>
+            Đặt lại bộ lọc
+          </button>
+          <button class="btn btn-success" @click="exportToExcel">
+            <span class="icon">📊</span>
+            Xuất Excel
+          </button>
+          <button class="btn btn-info btn-white" @click="scanQR">
+            <span class="icon">📱</span>
+            Quét QR
+          </button>
+        </div>
       </div>
     </div>
 
@@ -435,6 +437,57 @@ const closeDetailModal = () => {
 </script>
 
 <style scoped>
+/* Orders Header */
+.orders-header {
+  margin-bottom: var(--spacing-3xl);
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl) var(--spacing-3xl);
+  color: var(--white);
+  box-shadow: var(--shadow-lg);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-xl);
+}
+
+.orders-title {
+  margin: 0;
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.orders-icon {
+  width: 32px;
+  height: 32px;
+  transition: all 0.3s ease;
+}
+
+.orders-title:hover .orders-icon {
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.8));
+  transform: scale(1.1);
+}
+
+.btn-white {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-white:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
 .orders-page {
   max-width: var(--container-max-width);
 }

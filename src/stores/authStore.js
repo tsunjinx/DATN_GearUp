@@ -11,9 +11,10 @@ export const useAuthStore = defineStore('auth', {
   getters: {
     isAuthenticated: (state) => !!state.token,
     isAdmin: (state) => state.user?.role === 'admin',
-    username: (state) => state.user?.username || 'Người dùng',
-    displayName: (state) => state.user?.name || state.user?.username || 'Người dùng'
+    username: (state) => state.user?.username || 'Admin',
+    displayName: (state) => state.user?.name || state.user?.username || 'Quản Trị Viên'
   },
+  
   
   actions: {
     async login(credentials) {
