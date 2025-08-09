@@ -23,7 +23,7 @@ jobs:
         run: npm ci --no-audit --no-fund
 
       - name: Lint
-        run: npx eslint . --ext .vue,.js,.jsx,.ts,.tsx --config .eslintrc.ci.mjs
+        run: npx eslint . --ext .vue,.js,.jsx,.ts,.tsx --config .eslintrc.ci.json
 
       - name: Format check
         run: npm run format:check
