@@ -9,25 +9,15 @@
           Quản lý Biến thể Sản phẩm
         </h1>
         <div class="header-actions">
-          <Button 
-            variant="secondary" 
-            @click="refreshData"
-            :loading="loading"
-          >
+          <Button variant="secondary" :loading="loading" @click="refreshData">
             <span class="icon">🔄</span>
             Làm mới
           </Button>
-          <Button 
-            variant="success" 
-            @click="openCreateVariantModal"
-          >
+          <Button variant="success" @click="openCreateVariantModal">
             <span class="icon">➕</span>
             Tạo biến thể
           </Button>
-          <Button 
-            variant="primary" 
-            @click="openBulkUpdateModal"
-          >
+          <Button variant="primary" @click="openBulkUpdateModal">
             <span class="icon">📊</span>
             Cập nhật hàng loạt
           </Button>
@@ -74,15 +64,10 @@
     <div class="filters-section">
       <div class="filters-row">
         <div class="search-box">
-          <input 
-            v-model="searchQuery"
-            type="text" 
-            placeholder="Tìm kiếm biến thể..."
-            class="search-input"
-          >
+          <input v-model="searchQuery" type="text" placeholder="Tìm kiếm biến thể..." class="search-input" />
           <span class="search-icon">🔍</span>
         </div>
-        
+
         <select v-model="selectedProduct" class="filter-select">
           <option value="">Tất cả sản phẩm</option>
           <option v-for="product in products" :key="product.id" :value="product.id">
@@ -97,12 +82,7 @@
           <option value="out-of-stock">Hết hàng</option>
         </select>
 
-        <Button 
-          variant="outline" 
-          @click="clearFilters"
-        >
-          Xóa bộ lọc
-        </Button>
+        <Button variant="outline" @click="clearFilters"> Xóa bộ lọc </Button>
       </div>
     </div>
 
@@ -113,12 +93,7 @@
           <thead>
             <tr>
               <th>
-                <input 
-                  type="checkbox" 
-                  v-model="selectAll"
-                  @change="toggleSelectAll"
-                  class="checkbox"
-                >
+                <input v-model="selectAll" type="checkbox" class="checkbox" @change="toggleSelectAll" />
               </th>
               <th>Mã biến thể</th>
               <th>Tên sản phẩm</th>
@@ -134,27 +109,23 @@
           <tbody>
             <tr v-for="variant in filteredVariants" :key="variant.id" class="variant-row">
               <td>
-                <input 
-                  type="checkbox" 
-                  v-model="selectedVariants"
-                  :value="variant.id"
-                  class="checkbox"
-                >
+                <input v-model="selectedVariants" type="checkbox" :value="variant.id" class="checkbox" />
               </td>
               <td>
-                <div class="variant-code">{{ variant.ma_san_pham }}</div>
+                <div class="variant-code">
+                  {{ variant.ma_san_pham }}
+                </div>
               </td>
               <td>
                 <div class="product-info">
-                  <div class="product-name">{{ variant.ten_san_pham }}</div>
+                  <div class="product-name">
+                    {{ variant.ten_san_pham }}
+                  </div>
                 </div>
               </td>
               <td>
                 <div class="color-info">
-                  <div 
-                    class="color-swatch"
-                    :style="{ backgroundColor: getColorCode(variant.id_mau_sac) }"
-                  ></div>
+                  <div class="color-swatch" :style="{ backgroundColor: getColorCode(variant.id_mau_sac) }" />
                   <span>{{ getColorName(variant.id_mau_sac) }}</span>
                 </div>
               </td>
@@ -169,45 +140,21 @@
               </td>
               <td>
                 <div class="stock-info">
-                  <span 
-                    class="stock-count"
-                    :class="getStockClass(variant.stock)"
-                  >
+                  <span class="stock-count" :class="getStockClass(variant.stock)">
                     {{ variant.stock }}
                   </span>
                 </div>
               </td>
               <td>
-                <span 
-                  class="status-badge"
-                  :class="getStockStatus(variant.stock)"
-                >
+                <span class="status-badge" :class="getStockStatus(variant.stock)">
                   {{ getStockStatusText(variant.stock) }}
                 </span>
               </td>
               <td>
                 <div class="actions">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    @click="editVariant(variant)"
-                  >
-                    Sửa
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    @click="viewVariantDetails(variant)"
-                  >
-                    Chi tiết
-                  </Button>
-                  <Button 
-                    variant="danger" 
-                    size="sm"
-                    @click="deleteVariant(variant.id)"
-                  >
-                    Xóa
-                  </Button>
+                  <Button variant="outline" size="sm" @click="editVariant(variant)"> Sửa </Button>
+                  <Button variant="outline" size="sm" @click="viewVariantDetails(variant)"> Chi tiết </Button>
+                  <Button variant="danger" size="sm" @click="deleteVariant(variant.id)"> Xóa </Button>
                 </div>
               </td>
             </tr>
@@ -220,50 +167,26 @@
         <div class="empty-icon">📦</div>
         <h3>Không có biến thể nào</h3>
         <p>Chưa có biến thể sản phẩm nào được tạo</p>
-        <Button variant="primary" @click="openCreateVariantModal">
-          Tạo biến thể đầu tiên
-        </Button>
+        <Button variant="primary" @click="openCreateVariantModal"> Tạo biến thể đầu tiên </Button>
       </div>
     </div>
 
     <!-- Pagination -->
     <div v-if="totalPages > 1" class="pagination">
-      <Button 
-        variant="outline" 
-        :disabled="currentPage === 1"
-        @click="goToPage(currentPage - 1)"
-      >
-        Trước
-      </Button>
-      
-      <span class="page-info">
-        Trang {{ currentPage }} / {{ totalPages }}
-      </span>
-      
-      <Button 
-        variant="outline" 
-        :disabled="currentPage === totalPages"
-        @click="goToPage(currentPage + 1)"
-      >
-        Sau
-      </Button>
+      <Button variant="outline" :disabled="currentPage === 1" @click="goToPage(currentPage - 1)"> Trước </Button>
+
+      <span class="page-info"> Trang {{ currentPage }} / {{ totalPages }} </span>
+
+      <Button variant="outline" :disabled="currentPage === totalPages" @click="goToPage(currentPage + 1)"> Sau </Button>
     </div>
 
     <!-- Bulk Actions Bar -->
     <div v-if="selectedVariants.length > 0" class="bulk-actions-bar">
-      <div class="selected-count">
-        Đã chọn {{ selectedVariants.length }} biến thể
-      </div>
+      <div class="selected-count">Đã chọn {{ selectedVariants.length }} biến thể</div>
       <div class="bulk-actions">
-        <Button variant="outline" @click="bulkUpdateStock">
-          Cập nhật tồn kho
-        </Button>
-        <Button variant="outline" @click="bulkUpdatePrice">
-          Cập nhật giá
-        </Button>
-        <Button variant="danger" @click="bulkDeleteVariants">
-          Xóa đã chọn
-        </Button>
+        <Button variant="outline" @click="bulkUpdateStock"> Cập nhật tồn kho </Button>
+        <Button variant="outline" @click="bulkUpdatePrice"> Cập nhật giá </Button>
+        <Button variant="danger" @click="bulkDeleteVariants"> Xóa đã chọn </Button>
       </div>
     </div>
   </div>
@@ -302,11 +225,11 @@ const products = computed(() => productStore.products || [])
 // Filtered variants
 const filteredVariants = computed(() => {
   let filtered = variantStore.searchVariants(searchQuery.value)
-  
+
   if (selectedProduct.value) {
     filtered = filtered.filter(v => v.id_sản_phẩm === parseInt(selectedProduct.value))
   }
-  
+
   if (stockFilter.value) {
     switch (stockFilter.value) {
       case 'in-stock':
@@ -320,7 +243,7 @@ const filteredVariants = computed(() => {
         break
     }
   }
-  
+
   // Pagination
   const start = (currentPage.value - 1) * itemsPerPage.value
   const end = start + itemsPerPage.value
@@ -334,46 +257,46 @@ const totalPages = computed(() => {
 })
 
 // Helper functions
-const formatCurrency = (amount) => {
+const formatCurrency = amount => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
     currency: 'VND'
   }).format(amount || 0)
 }
 
-const getColorName = (colorId) => {
+const getColorName = colorId => {
   const color = attributeStore.getAllColors.find(c => c.id === colorId)
   return color?.ten_mau_sac || 'N/A'
 }
 
-const getColorCode = (colorId) => {
+const getColorCode = colorId => {
   const color = attributeStore.getAllColors.find(c => c.id === colorId)
   return color?.ma_mau_sac || '#cccccc'
 }
 
-const getSizeName = (sizeId) => {
+const getSizeName = sizeId => {
   const size = attributeStore.getAllSizes.find(s => s.id === sizeId)
   return size?.ten_kich_thuoc || 'N/A'
 }
 
-const getMaterialName = (materialId) => {
+const getMaterialName = materialId => {
   const material = attributeStore.getAllMaterials.find(m => m.id === materialId)
   return material?.ten_chat_lieu || 'N/A'
 }
 
-const getStockClass = (stock) => {
+const getStockClass = stock => {
   if (stock === 0) return 'out-of-stock'
   if (stock <= 10) return 'low-stock'
   return 'in-stock'
 }
 
-const getStockStatus = (stock) => {
+const getStockStatus = stock => {
   if (stock === 0) return 'out-of-stock'
   if (stock <= 10) return 'low-stock'
   return 'in-stock'
 }
 
-const getStockStatusText = (stock) => {
+const getStockStatusText = stock => {
   if (stock === 0) return 'Hết hàng'
   if (stock <= 10) return 'Sắp hết'
   return 'Còn hàng'
@@ -381,11 +304,7 @@ const getStockStatusText = (stock) => {
 
 // Actions
 const refreshData = async () => {
-  await Promise.all([
-    variantStore.fetchVariants(),
-    attributeStore.fetchAllAttributes(),
-    productStore.fetchProducts()
-  ])
+  await Promise.all([variantStore.fetchVariants(), attributeStore.fetchAllAttributes(), productStore.fetchProducts()])
 }
 
 const clearFilters = () => {
@@ -395,7 +314,7 @@ const clearFilters = () => {
   currentPage.value = 1
 }
 
-const goToPage = (page) => {
+const goToPage = page => {
   currentPage.value = page
 }
 
@@ -417,17 +336,17 @@ const openBulkUpdateModal = () => {
   console.log('Open bulk update modal')
 }
 
-const editVariant = (variant) => {
+const editVariant = variant => {
   // TODO: Implement edit variant modal
   console.log('Edit variant:', variant)
 }
 
-const viewVariantDetails = (variant) => {
+const viewVariantDetails = variant => {
   // TODO: Implement variant details modal
   console.log('View variant details:', variant)
 }
 
-const deleteVariant = async (variantId) => {
+const deleteVariant = async variantId => {
   if (confirm('Bạn có chắc chắn muốn xóa biến thể này?')) {
     try {
       await variantStore.deleteVariant(variantId)
@@ -450,9 +369,7 @@ const bulkUpdatePrice = () => {
 const bulkDeleteVariants = async () => {
   if (confirm(`Bạn có chắc chắn muốn xóa ${selectedVariants.value.length} biến thể đã chọn?`)) {
     try {
-      await Promise.all(
-        selectedVariants.value.map(id => variantStore.deleteVariant(id))
-      )
+      await Promise.all(selectedVariants.value.map(id => variantStore.deleteVariant(id)))
       selectedVariants.value = []
       selectAll.value = false
     } catch (error) {
@@ -762,20 +679,19 @@ onMounted(() => {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .search-box {
     min-width: auto;
   }
-  
+
   .header-content {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .bulk-actions-bar {
     flex-direction: column;
     gap: var(--spacing-sm);
   }
 }
 </style>
-

@@ -30,8 +30,12 @@
           <div class="search-section">
             <div class="search-box">
               <i class="search-icon">🔍</i>
-              <input v-model="searchTerm" type="text" placeholder="Tìm kiếm theo tên, email, số điện thoại..."
-                class="search-input" />
+              <input
+                v-model="searchTerm"
+                type="text"
+                placeholder="Tìm kiếm theo tên, email, số điện thoại..."
+                class="search-input"
+              />
             </div>
           </div>
 
@@ -115,7 +119,7 @@
               </button>
             </div>
           </div>
-          
+
           <div class="action-group">
             <label class="action-label">📧 Giao tiếp</label>
             <div class="action-buttons-row">
@@ -164,12 +168,8 @@
             </td>
             <td>
               <div class="action-buttons">
-                <button class="btn btn-sm btn-outline" @click="editCustomer(customer)">
-                  Sửa
-                </button>
-                <button class="btn btn-sm btn-danger" @click="deleteCustomer(customer.id)">
-                  Xóa
-                </button>
+                <button class="btn btn-sm btn-outline" @click="editCustomer(customer)">Sửa</button>
+                <button class="btn btn-sm btn-danger" @click="deleteCustomer(customer.id)">Xóa</button>
               </div>
             </td>
           </tr>
@@ -211,9 +211,7 @@
               </select>
             </div>
             <div class="form-actions">
-              <button type="button" class="btn btn-secondary" @click="closeModal">
-                Hủy
-              </button>
+              <button type="button" class="btn btn-secondary" @click="closeModal">Hủy</button>
               <button type="submit" class="btn btn-primary">
                 {{ showAddModal ? 'Thêm' : 'Cập nhật' }}
               </button>
@@ -251,16 +249,20 @@ const checkMobile = () => {
 }
 
 // Enhanced header action methods with animations
-const openAddModal = async (event) => {
-  await withLoadingAnimation(event, async () => {
-    // Simulate modal preparation
-    await new Promise(resolve => setTimeout(resolve, 600))
-    showAddModal.value = true
-    return 'Add customer modal opened!'
-  }, {
-    onSuccess: (result) => console.log(result),
-    onError: (error) => console.error('Open modal failed:', error)
-  })
+const openAddModal = async event => {
+  await withLoadingAnimation(
+    event,
+    async () => {
+      // Simulate modal preparation
+      await new Promise(resolve => setTimeout(resolve, 600))
+      showAddModal.value = true
+      return 'Add customer modal opened!'
+    },
+    {
+      onSuccess: result => console.log(result),
+      onError: error => console.error('Open modal failed:', error)
+    }
+  )
 }
 
 onMounted(() => {
@@ -347,11 +349,12 @@ const filteredCustomers = computed(() => {
   // Text search filter
   if (searchTerm.value) {
     const search = searchTerm.value.toLowerCase()
-    filtered = filtered.filter(customer =>
-      customer.fullName.toLowerCase().includes(search) ||
-      customer.email.toLowerCase().includes(search) ||
-      customer.phone.includes(search) ||
-      customer.address.toLowerCase().includes(search)
+    filtered = filtered.filter(
+      customer =>
+        customer.fullName.toLowerCase().includes(search) ||
+        customer.email.toLowerCase().includes(search) ||
+        customer.phone.includes(search) ||
+        customer.address.toLowerCase().includes(search)
     )
   }
 
@@ -384,21 +387,19 @@ const filteredCustomers = computed(() => {
   return filtered
 })
 
-const formatDate = (date) => {
+const formatDate = date => {
   return new Intl.DateTimeFormat('vi-VN').format(new Date(date))
 }
 
 // Enhanced statistics - as requested by team
-const activeCustomersCount = computed(() => 
-  sampleCustomers.value.filter(customer => customer.status === 'active').length
+const activeCustomersCount = computed(
+  () => sampleCustomers.value.filter(customer => customer.status === 'active').length
 )
 
 const newCustomersThisMonth = computed(() => {
   const thisMonth = new Date()
   const startOfMonth = new Date(thisMonth.getFullYear(), thisMonth.getMonth(), 1)
-  return sampleCustomers.value.filter(customer => 
-    new Date(customer.createdAt) >= startOfMonth
-  ).length
+  return sampleCustomers.value.filter(customer => new Date(customer.createdAt) >= startOfMonth).length
 })
 
 // Reset filters function
@@ -458,7 +459,7 @@ const generateCustomerReport = async () => {
   }
 }
 
-const getStatusText = (status) => {
+const getStatusText = status => {
   const statusMap = {
     active: 'Hoạt động',
     inactive: 'Không hoạt động',
@@ -467,13 +468,13 @@ const getStatusText = (status) => {
   return statusMap[status] || status
 }
 
-const editCustomer = (customer) => {
+const editCustomer = customer => {
   editingCustomer.value = customer
   customerForm.value = { ...customer }
   showEditModal.value = true
 }
 
-const deleteCustomer = (id) => {
+const deleteCustomer = id => {
   if (confirm('Bạn có chắc chắn muốn xóa khách hàng này?')) {
     sampleCustomers.value = sampleCustomers.value.filter(c => c.id !== id)
   }
@@ -846,7 +847,6 @@ const closeModal = () => {
 }
 
 @media (max-width: 1200px) {
-
   .table th,
   .table td {
     padding: 12px 10px;
@@ -1172,7 +1172,9 @@ const closeModal = () => {
   background: rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
+  transition:
+    width 0.6s,
+    height 0.6s;
 }
 
 .page-header .btn:hover {
@@ -1424,48 +1426,48 @@ const closeModal = () => {
   .filter-controls {
     grid-template-columns: 1fr;
   }
-  
+
   .date-range {
     flex-direction: column;
     gap: var(--spacing-sm);
   }
-  
+
   .date-input {
     max-width: 100%;
     width: 100%;
   }
-  
+
   .date-separator {
     display: none; /* Hide separator on mobile since dates are stacked */
   }
-  
+
   .action-buttons {
     flex-direction: column;
     gap: var(--spacing-lg);
   }
-  
+
   .action-group {
     min-width: auto;
   }
-  
+
   .action-buttons-row {
     justify-content: center;
   }
-  
+
   .action-buttons-row .btn {
     flex: 1;
     min-width: 120px;
   }
-  
+
   .summary-stats {
     flex-direction: column;
     gap: var(--spacing-sm);
   }
-  
+
   .search-box {
     max-width: 100%;
   }
-  
+
   .filters-section .card-body {
     padding: 16px;
   }
@@ -1475,11 +1477,11 @@ const closeModal = () => {
   .date-range {
     gap: var(--spacing-xs);
   }
-  
+
   .filter-group {
     gap: var(--spacing-xs);
   }
-  
+
   .filters-section .card-body {
     padding: 12px;
   }

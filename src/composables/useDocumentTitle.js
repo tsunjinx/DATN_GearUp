@@ -10,7 +10,7 @@ export function useDocumentTitle(defaultTitle = 'GearUp - Quản lý cửa hàng
   // Update document title when title ref changes
   watch(
     title,
-    (newTitle) => {
+    newTitle => {
       document.title = newTitle
     },
     { immediate: true }
@@ -20,7 +20,7 @@ export function useDocumentTitle(defaultTitle = 'GearUp - Quản lý cửa hàng
    * Set a new title
    * @param {string} newTitle - The new title to set
    */
-  const setTitle = (newTitle) => {
+  const setTitle = newTitle => {
     title.value = newTitle
   }
 
@@ -35,7 +35,7 @@ export function useDocumentTitle(defaultTitle = 'GearUp - Quản lý cửa hàng
    * Set title with prefix (e.g., "GearUp - Page Name")
    * @param {string} pageName - The page name to append to GearUp prefix
    */
-  const setPageTitle = (pageName) => {
+  const setPageTitle = pageName => {
     title.value = `GearUp - ${pageName}`
   }
 

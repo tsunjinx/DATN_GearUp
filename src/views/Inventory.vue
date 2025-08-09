@@ -21,11 +21,13 @@
       <template #header>
         <div class="flex justify-between items-center">
           <div class="font-semibold">Sản phẩm sắp hết hàng</div>
-          <FormControl as="input" placeholder="Tìm theo tên hoặc mã" v-model="query" />
+          <FormControl v-model="query" as="input" placeholder="Tìm theo tên hoặc mã" />
         </div>
       </template>
-      <div v-if="loading" class="text-center"><span class="loading-spinner"></span> Đang tải...</div>
-      <div v-else-if="error" class="text-error text-center">{{ error }}</div>
+      <div v-if="loading" class="text-center"><span class="loading-spinner" /> Đang tải...</div>
+      <div v-else-if="error" class="text-error text-center">
+        {{ error }}
+      </div>
       <div v-else>
         <Table>
           <template #head>
@@ -38,10 +40,14 @@
           <tr v-for="item in filtered" :key="item.id">
             <td>#{{ item.code }}</td>
             <td>{{ item.name }}</td>
-            <td><Badge :variant="item.stock === 0 ? 'error' : 'warning'">{{ item.stock }}</Badge></td>
+            <td>
+              <Badge :variant="item.stock === 0 ? 'error' : 'warning'">
+                {{ item.stock }}
+              </Badge>
+            </td>
             <td>{{ item.threshold }}</td>
             <td>
-              <Button size="sm" variant="primary" @click="adjust(item)">Điều chỉnh</Button>
+              <Button size="sm" variant="primary" @click="adjust(item)"> Điều chỉnh </Button>
             </td>
           </tr>
         </Table>
@@ -55,9 +61,9 @@
             <button class="close" @click="closeModal">×</button>
           </div>
           <div class="modal-body">
-            <FormControl label="Số lượng điều chỉnh (+/-)" type="number" v-model="delta" />
+            <FormControl v-model="delta" label="Số lượng điều chỉnh (+/-)" type="number" />
             <div class="mt-2">
-              <Button :disabled="saving" @click="applyAdjust">Lưu</Button>
+              <Button :disabled="saving" @click="applyAdjust"> Lưu </Button>
             </div>
           </div>
         </div>
@@ -83,7 +89,9 @@ const saving = ref(false)
 const { loading, error, execute } = useApi()
 
 const fetchLowStock = async () => {
-  await execute(({ cancelToken }) => productService.getProducts({ lowStock: true, q: query.value || undefined }, { cancelToken }))
+  await execute(({ cancelToken }) =>
+    productService.getProducts({ lowStock: true, q: query.value || undefined }, { cancelToken })
+  )
 }
 
 const debouncedFetch = debounce(fetchLowStock, 400)
@@ -93,13 +101,15 @@ const filtered = computed(() => items.value)
 
 const refresh = () => fetchLowStock()
 
-const adjust = (item) => {
+const adjust = item => {
   selected.value = item
   delta.value = 0
   showModal.value = true
 }
 
-const closeModal = () => { showModal.value = false }
+const closeModal = () => {
+  showModal.value = false
+}
 
 const applyAdjust = async () => {
   if (!selected.value || !Number.isFinite(+delta.value)) return
@@ -119,7 +129,10 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.inventory-page { display: grid; gap: 1rem; }
+.inventory-page {
+  display: grid;
+  gap: 1rem;
+}
 
 /* Inventory Header */
 .inventory-header {
@@ -174,12 +187,38 @@ onMounted(async () => {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: grid; place-items: center; }
-.modal { background: #fff; border-radius: 8px; width: 420px; max-width: calc(100vw - 24px); }
-.modal-header { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid var(--border); }
-.modal-body { padding: 16px; }
-.close { background: transparent; border: none; font-size: 20px; cursor: pointer; }
-.mt-2 { margin-top: 0.5rem; }
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: grid;
+  place-items: center;
+}
+.modal {
+  background: #fff;
+  border-radius: 8px;
+  width: 420px;
+  max-width: calc(100vw - 24px);
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.modal-body {
+  padding: 16px;
+}
+.close {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+.mt-2 {
+  margin-top: 0.5rem;
+}
 
 /* Fade-in Animation */
 .fade-in {
@@ -214,5 +253,3 @@ onMounted(async () => {
   transform: translateY(0) scale(0.98);
 }
 </style>
-
-

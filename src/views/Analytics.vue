@@ -19,30 +19,38 @@
 
     <div class="grid fade-in" style="animation-delay: 0.3s">
       <Card class="stat-card" style="animation-delay: 0.4s">
-        <template #header>Doanh thu hôm nay</template>
-        <div class="stat">{{ formatCurrency(kpis.revenueToday) }}</div>
+        <template #header> Doanh thu hôm nay </template>
+        <div class="stat">
+          {{ formatCurrency(kpis.revenueToday) }}
+        </div>
       </Card>
       <Card class="stat-card" style="animation-delay: 0.5s">
-        <template #header>Đơn hàng hôm nay</template>
-        <div class="stat">{{ kpis.ordersToday }}</div>
+        <template #header> Đơn hàng hôm nay </template>
+        <div class="stat">
+          {{ kpis.ordersToday }}
+        </div>
       </Card>
       <Card class="stat-card" style="animation-delay: 0.6s">
-        <template #header>Hàng sắp hết</template>
-        <div class="stat">{{ kpis.lowStock }}</div>
+        <template #header> Hàng sắp hết </template>
+        <div class="stat">
+          {{ kpis.lowStock }}
+        </div>
       </Card>
     </div>
 
     <Card class="fade-in" style="animation-delay: 0.7s">
-      <template #header>Doanh thu 7 ngày qua</template>
+      <template #header> Doanh thu 7 ngày qua </template>
       <div class="chart" role="img" aria-label="Biểu đồ cột doanh thu 7 ngày qua">
-        <div class="bar" 
-             v-for="(v,i) in last7Days" 
-             :key="i" 
-             :style="{ 
-               height: `${scale(v)}%`,
-               '--bar-index': i,
-               animationDelay: `${i * 0.1 + 0.8}s`
-             }">
+        <div
+          v-for="(v, i) in last7Days"
+          :key="i"
+          class="bar"
+          :style="{
+            height: `${scale(v)}%`,
+            '--bar-index': i,
+            animationDelay: `${i * 0.1 + 0.8}s`
+          }"
+        >
           <span class="bar-label">{{ shortDay(i) }}</span>
           <span class="bar-value">{{ formatCurrency(v) }}</span>
         </div>
@@ -57,7 +65,7 @@ import { Button, Card } from '@/components/ui'
 
 const kpis = ref({ revenueToday: 0, ordersToday: 0, lowStock: 0 })
 
-const formatCurrency = (val) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val)
+const formatCurrency = val => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val)
 
 const exportCsv = () => {
   const rows = [
@@ -79,12 +87,15 @@ const exportCsv = () => {
 // Dữ liệu biểu đồ (mock): doanh thu 7 ngày (từ trái sang phải là các ngày gần nhất)
 const last7Days = ref([12000000, 8000000, 15000000, 6000000, 9000000, 11000000, 14000000])
 const max = () => Math.max(1, ...last7Days.value)
-const scale = (v) => Math.round((v / max()) * 100)
-const shortDay = (i) => ['T2','T3','T4','T5','T6','T7','CN'][i]
+const scale = v => Math.round((v / max()) * 100)
+const shortDay = i => ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'][i]
 </script>
 
 <style scoped>
-.analytics-page { display: grid; gap: 1rem; }
+.analytics-page {
+  display: grid;
+  gap: 1rem;
+}
 
 /* Analytics Header */
 .analytics-header {
@@ -139,12 +150,51 @@ const shortDay = (i) => ['T2','T3','T4','T5','T6','T7','CN'][i]
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
-.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
-.stat { font-size: 1.5rem; font-weight: 700; }
-.chart { display:flex; align-items:flex-end; gap: 8px; height: 240px; padding: 8px; background: var(--gray-50); border: 1px solid var(--border); border-radius: var(--radius-md) }
-.bar { position: relative; flex: 1; min-width: 24px; background: linear-gradient(180deg, var(--primary-400), var(--primary-600)); border-radius: 6px; display:flex; align-items:flex-end; justify-content:center }
-.bar-label { position: absolute; bottom: -22px; font-size: 12px; color: var(--gray-600) }
-.bar-value { position: absolute; top: -22px; background: #fff; color: var(--gray-700); font-size: 10px; padding: 2px 4px; border: 1px solid var(--border); border-radius: 4px }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+.stat {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 240px;
+  padding: 8px;
+  background: var(--gray-50);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.bar {
+  position: relative;
+  flex: 1;
+  min-width: 24px;
+  background: linear-gradient(180deg, var(--primary-400), var(--primary-600));
+  border-radius: 6px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.bar-label {
+  position: absolute;
+  bottom: -22px;
+  font-size: 12px;
+  color: var(--gray-600);
+}
+.bar-value {
+  position: absolute;
+  top: -22px;
+  background: #fff;
+  color: var(--gray-700);
+  font-size: 10px;
+  padding: 2px 4px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
 
 /* Fade-in Animation */
 .fade-in {
@@ -206,5 +256,3 @@ const shortDay = (i) => ['T2','T3','T4','T5','T6','T7','CN'][i]
   }
 }
 </style>
-
-

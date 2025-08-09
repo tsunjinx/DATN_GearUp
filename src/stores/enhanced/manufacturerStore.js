@@ -10,21 +10,15 @@ export const useManufacturerStore = defineStore('manufacturer', () => {
   const error = ref(null)
 
   // Getters
-  const getAllManufacturers = computed(() => 
-    manufacturers.value.filter(item => !item.deleted)
-  )
-  
-  const getAllOrigins = computed(() => 
-    origins.value.filter(item => !item.deleted)
+  const getAllManufacturers = computed(() => manufacturers.value.filter(item => !item.deleted))
+
+  const getAllOrigins = computed(() => origins.value.filter(item => !item.deleted))
+
+  const getManufacturerById = computed(
+    () => id => manufacturers.value.find(m => m.id === id && !m.deleted)
   )
 
-  const getManufacturerById = computed(() => (id) => 
-    manufacturers.value.find(m => m.id === id && !m.deleted)
-  )
-
-  const getOriginById = computed(() => (id) => 
-    origins.value.find(o => o.id === id && !o.deleted)
-  )
+  const getOriginById = computed(() => id => origins.value.find(o => o.id === id && !o.deleted))
 
   // Statistics
   const totalManufacturers = computed(() => getAllManufacturers.value.length)
@@ -36,7 +30,7 @@ export const useManufacturerStore = defineStore('manufacturer', () => {
     try {
       const response = await fetch('/api/admin/manufacturers')
       if (!response.ok) throw new Error('Failed to fetch manufacturers')
-      
+
       const data = await response.json()
       manufacturers.value = data.data || []
     } catch (err) {
@@ -52,7 +46,7 @@ export const useManufacturerStore = defineStore('manufacturer', () => {
     try {
       const response = await fetch('/api/admin/origins')
       if (!response.ok) throw new Error('Failed to fetch origins')
-      
+
       const data = await response.json()
       origins.value = data.data || []
     } catch (err) {
@@ -64,13 +58,10 @@ export const useManufacturerStore = defineStore('manufacturer', () => {
   }
 
   const fetchAll = async () => {
-    await Promise.all([
-      fetchManufacturers(),
-      fetchOrigins()
-    ])
+    await Promise.all([fetchManufacturers(), fetchOrigins()])
   }
 
-  const createManufacturer = async (manufacturerData) => {
+  const createManufacturer = async manufacturerData => {
     loading.value = true
     try {
       const response = await fetch('/api/admin/manufacturers', {
@@ -86,10 +77,10 @@ export const useManufacturerStore = defineStore('manufacturer', () => {
       })
 
       if (!response.ok) throw new Error('Failed to create manufacturer')
-      
+
       const newManufacturer = await response.json()
       manufacturers.value.push(newManufacturer.data)
-      
+
       return newManufacturer.data
     } catch (err) {
       error.value = 'Failed to create manufacturer'
@@ -99,7 +90,7 @@ export const useManufacturerStore = defineStore('manufacturer', () => {
     }
   }
 
-  const createOrigin = async (originData) => {
+  const createOrigin = async originData => {
     loading.value = true
     try {
       const response = await fetch('/api/admin/origins', {
@@ -114,10 +105,10 @@ export const useManufacturerStore = defineStore('manufacturer', () => {
       })
 
       if (!response.ok) throw new Error('Failed to create origin')
-      
+
       const newOrigin = await response.json()
       origins.value.push(newOrigin.data)
-      
+
       return newOrigin.data
     } catch (err) {
       error.value = 'Failed to create origin'
@@ -139,13 +130,13 @@ export const useManufacturerStore = defineStore('manufacturer', () => {
       })
 
       if (!response.ok) throw new Error('Failed to update manufacturer')
-      
+
       const updatedManufacturer = await response.json()
       const index = manufacturers.value.findIndex(m => m.id === id)
       if (index !== -1) {
         manufacturers.value[index] = updatedManufacturer.data
       }
-      
+
       return updatedManufacturer.data
     } catch (err) {
       error.value = 'Failed to update manufacturer'
@@ -167,13 +158,13 @@ export const useManufacturerStore = defineStore('manufacturer', () => {
       })
 
       if (!response.ok) throw new Error('Failed to update origin')
-      
+
       const updatedOrigin = await response.json()
       const index = origins.value.findIndex(o => o.id === id)
       if (index !== -1) {
         origins.value[index] = updatedOrigin.data
       }
-      
+
       return updatedOrigin.data
     } catch (err) {
       error.value = 'Failed to update origin'
@@ -183,7 +174,7 @@ export const useManufacturerStore = defineStore('manufacturer', () => {
     }
   }
 
-  const deleteManufacturer = async (id) => {
+  const deleteManufacturer = async id => {
     loading.value = true
     try {
       const response = await fetch(`/api/admin/manufacturers/${id}`, {
@@ -191,7 +182,7 @@ export const useManufacturerStore = defineStore('manufacturer', () => {
       })
 
       if (!response.ok) throw new Error('Failed to delete manufacturer')
-      
+
       // Soft delete
       const index = manufacturers.value.findIndex(m => m.id === id)
       if (index !== -1) {
@@ -205,7 +196,7 @@ export const useManufacturerStore = defineStore('manufacturer', () => {
     }
   }
 
-  const deleteOrigin = async (id) => {
+  const deleteOrigin = async id => {
     loading.value = true
     try {
       const response = await fetch(`/api/admin/origins/${id}`, {
@@ -213,7 +204,7 @@ export const useManufacturerStore = defineStore('manufacturer', () => {
       })
 
       if (!response.ok) throw new Error('Failed to delete origin')
-      
+
       // Soft delete
       const index = origins.value.findIndex(o => o.id === id)
       if (index !== -1) {
@@ -228,21 +219,22 @@ export const useManufacturerStore = defineStore('manufacturer', () => {
   }
 
   // Search functionality
-  const searchManufacturers = computed(() => (query) => {
+  const searchManufacturers = computed(() => query => {
     if (!query) return getAllManufacturers.value
-    
+
     const searchTerm = query.toLowerCase()
-    return getAllManufacturers.value.filter(manufacturer => 
-      manufacturer.ten_nha_san_xuat.toLowerCase().includes(searchTerm) ||
-      manufacturer.ma_nha_san_xuat.toLowerCase().includes(searchTerm)
+    return getAllManufacturers.value.filter(
+      manufacturer =>
+        manufacturer.ten_nha_san_xuat.toLowerCase().includes(searchTerm) ||
+        manufacturer.ma_nha_san_xuat.toLowerCase().includes(searchTerm)
     )
   })
 
-  const searchOrigins = computed(() => (query) => {
+  const searchOrigins = computed(() => query => {
     if (!query) return getAllOrigins.value
-    
+
     const searchTerm = query.toLowerCase()
-    return getAllOrigins.value.filter(origin => 
+    return getAllOrigins.value.filter(origin =>
       origin.ten_xuat_xu.toLowerCase().includes(searchTerm)
     )
   })
@@ -253,7 +245,7 @@ export const useManufacturerStore = defineStore('manufacturer', () => {
     origins,
     loading,
     error,
-    
+
     // Getters
     getAllManufacturers,
     getAllOrigins,
@@ -263,7 +255,7 @@ export const useManufacturerStore = defineStore('manufacturer', () => {
     totalOrigins,
     searchManufacturers,
     searchOrigins,
-    
+
     // Actions
     fetchManufacturers,
     fetchOrigins,
@@ -276,4 +268,3 @@ export const useManufacturerStore = defineStore('manufacturer', () => {
     deleteOrigin
   }
 })
-

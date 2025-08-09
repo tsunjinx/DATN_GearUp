@@ -8,24 +8,23 @@ export const useAuthStore = defineStore('auth', {
     loading: false,
     error: null
   }),
-  
+
   getters: {
-    isAuthenticated: (state) => !!state.token,
-    isAdmin: (state) => state.user?.role === 'admin',
-    username: (state) => state.user?.username || 'Admin',
-    displayName: (state) => state.user?.name || state.user?.username || 'Quản Trị Viên'
+    isAuthenticated: state => !!state.token,
+    isAdmin: state => state.user?.role === 'admin',
+    username: state => state.user?.username || 'Admin',
+    displayName: state => state.user?.name || state.user?.username || 'Quản Trị Viên'
   },
-  
-  
+
   actions: {
     async login(credentials) {
       this.loading = true
       this.error = null
-      
+
       try {
         // Giả lập API call
         await new Promise(resolve => setTimeout(resolve, 1000))
-        
+
         // Kiểm tra thông tin đăng nhập (demo)
         if (credentials.username === 'admin' && credentials.password === 'admin') {
           // Lưu token vào localStorage
@@ -35,18 +34,18 @@ export const useAuthStore = defineStore('auth', {
           localStorage.setItem('refreshToken', refreshToken)
           this.token = authToken
           this.refreshToken = refreshToken
-          
+
           this.user = {
             id: 1,
             username: credentials.username,
             name: 'Admin',
             role: 'admin'
           }
-          
+
           if (credentials.remember) {
             localStorage.setItem('remember', 'true')
           }
-          
+
           return true
         } else {
           throw new Error('Sai tên đăng nhập hoặc mật khẩu')
@@ -58,7 +57,7 @@ export const useAuthStore = defineStore('auth', {
         this.loading = false
       }
     },
-    
+
     logout() {
       localStorage.removeItem('token')
       localStorage.removeItem('refreshToken')
@@ -67,14 +66,14 @@ export const useAuthStore = defineStore('auth', {
       this.refreshToken = null
       this.user = null
     },
-    
+
     async checkAuth() {
       if (!this.token) return false
-      
+
       try {
         // Giả lập kiểm tra token với API
         await new Promise(resolve => setTimeout(resolve, 300))
-        
+
         // Trong thực tế, sẽ gọi API để kiểm tra token
         this.user = {
           id: 1,
@@ -82,7 +81,7 @@ export const useAuthStore = defineStore('auth', {
           name: 'Admin',
           role: 'admin'
         }
-        
+
         return true
       } catch (err) {
         this.token = null

@@ -3,20 +3,13 @@
   <div class="page-header">
     <h1>{{ pageTitle }}</h1>
     <div class="actions">
-      <button class="btn btn-primary" @click="openCreateModal">
-        Thêm mới
-      </button>
+      <button class="btn btn-primary" @click="openCreateModal">Thêm mới</button>
     </div>
   </div>
 
   <!-- 2. Filters -->
   <div class="filters">
-    <input
-      v-model="searchTerm"
-      type="text"
-      placeholder="Tìm kiếm..."
-      class="search-input"
-    />
+    <input v-model="searchTerm" type="text" placeholder="Tìm kiếm..." class="search-input" />
     <select v-model="selectedCategory" class="filter-select">
       <option value="">Tất cả danh mục</option>
       <option v-for="category in categories" :key="category.id" :value="category.id">
@@ -26,9 +19,7 @@
   </div>
 
   <!-- 3. Loading State -->
-  <div v-if="loading" class="loading">
-    Đang tải...
-  </div>
+  <div v-if="loading" class="loading">Đang tải...</div>
 
   <!-- 4. Error State -->
   <div v-else-if="error" class="error">
@@ -38,10 +29,8 @@
 
   <!-- 5. Main Content -->
   <div v-else class="main-content">
-    <div v-if="filteredItems.length === 0" class="empty-state">
-      Không có dữ liệu
-    </div>
-    
+    <div v-if="filteredItems.length === 0" class="empty-state">Không có dữ liệu</div>
+
     <div v-else class="items-grid">
       <div v-for="item in filteredItems" :key="item.id" class="item-card">
         <h3>{{ item.name }}</h3>
@@ -114,28 +103,23 @@ const modalTitle = computed(() => {
 
 const filteredItems = computed(() => {
   let items = state.value.items
-  
+
   if (filters.value.searchTerm) {
-    items = items.filter(item =>
-      item.name.toLowerCase().includes(filters.value.searchTerm.toLowerCase())
-    )
+    items = items.filter(item => item.name.toLowerCase().includes(filters.value.searchTerm.toLowerCase()))
   }
-  
+
   if (filters.value.selectedCategory) {
     items = items.filter(item => item.categoryId === filters.value.selectedCategory)
   }
-  
+
   return items
 })
 
 // 6. Methods - max 7 functions, single responsibility
 const loadData = async () => {
   await execute(async () => {
-    const [items, categories] = await Promise.all([
-      productService.getAll(),
-      productService.getCategories()
-    ])
-    
+    const [items, categories] = await Promise.all([productService.getAll(), productService.getCategories()])
+
     state.value.items = items.data
     state.value.categories = categories.data
   })
@@ -147,7 +131,7 @@ const openCreateModal = () => {
   reset()
 }
 
-const editItem = (item) => {
+const editItem = item => {
   state.value.editingItem = item
   state.value.showModal = true
   Object.assign(formData.value, item)
@@ -161,23 +145,23 @@ const closeModal = () => {
 
 const saveItem = async () => {
   if (!validate()) return
-  
+
   await execute(async () => {
     if (state.value.editingItem) {
       await productService.update(state.value.editingItem.id, formData.value)
     } else {
       await productService.create(formData.value)
     }
-    
+
     await loadData()
     closeModal()
     emit('update')
   })
 }
 
-const deleteItem = async (id) => {
+const deleteItem = async id => {
   if (!confirm('Bạn có chắc chắn muốn xóa?')) return
-  
+
   await execute(async () => {
     await productService.delete(id)
     await loadData()

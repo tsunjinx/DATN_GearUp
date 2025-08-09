@@ -10,7 +10,7 @@ defineProps({
   variant: {
     type: String,
     default: 'secondary',
-    validator: (v) => ['secondary', 'success', 'warning', 'error', 'info', 'primary'].includes(v)
+    validator: v => ['secondary', 'success', 'warning', 'error', 'info', 'primary'].includes(v)
   }
 })
 </script>
@@ -26,12 +26,28 @@ defineProps({
   line-height: 1;
 }
 
-.gu-badge--secondary { background: var(--gray-100); color: var(--gray-700); }
-.gu-badge--success { background: var(--primary-100); color: var(--primary-800); }
-.gu-badge--warning { background: #fef3c7; color: #92400e; }
-.gu-badge--error { background: #fecaca; color: #991b1b; }
-.gu-badge--info { background: #dbeafe; color: #1d4ed8; }
-.gu-badge--primary { background: var(--primary-100); color: var(--primary-800); }
+.gu-badge--secondary {
+  background: var(--gray-100);
+  color: var(--gray-700);
+}
+.gu-badge--success {
+  background: var(--primary-100);
+  color: var(--primary-800);
+}
+.gu-badge--warning {
+  background: #fef3c7;
+  color: #92400e;
+}
+.gu-badge--error {
+  background: #fecaca;
+  color: #991b1b;
+}
+.gu-badge--info {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+.gu-badge--primary {
+  background: var(--primary-100);
+  color: var(--primary-800);
+}
 </style>
-
-

@@ -9,7 +9,7 @@
   --viewport-height: 100vh;
   --container-max-width: 1400px;
   --content-max-width: 1320px;
-  
+
   /* === BASE UNITS === */
   --base-unit: 4px;
   --spacing-xs: calc(var(--base-unit) * 1); /* 4px */
@@ -21,15 +21,15 @@
   --spacing-3xl: calc(var(--base-unit) * 8); /* 32px */
 
   /* === TYPOGRAPHY SCALE === */
-  --font-size-xs: 0.75rem;    /* 12px */
-  --font-size-sm: 0.875rem;   /* 14px */
-  --font-size-base: 1rem;     /* 16px */
-  --font-size-lg: 1.125rem;   /* 18px */
-  --font-size-xl: 1.25rem;    /* 20px */
-  --font-size-2xl: 1.5rem;    /* 24px */
-  --font-size-3xl: 1.875rem;  /* 30px */
-  --font-size-4xl: 2.25rem;   /* 36px */
-  --font-size-5xl: 3rem;      /* 48px */
+  --font-size-xs: 0.75rem; /* 12px */
+  --font-size-sm: 0.875rem; /* 14px */
+  --font-size-base: 1rem; /* 16px */
+  --font-size-lg: 1.125rem; /* 18px */
+  --font-size-xl: 1.25rem; /* 20px */
+  --font-size-2xl: 1.5rem; /* 24px */
+  --font-size-3xl: 1.875rem; /* 30px */
+  --font-size-4xl: 2.25rem; /* 36px */
+  --font-size-5xl: 3rem; /* 48px */
 
   --font-weight-normal: 400;
   --font-weight-medium: 500;
@@ -41,37 +41,37 @@
   --line-height-relaxed: 1.75;
 
   /* === COLOR SYSTEM === */
-  
+
   /* Design System Colors (maintaining original GearUp brand) */
   --color-primary: #4ade80;
   --color-primary-hover: #22c55e;
   --color-primary-active: #16a34a;
-  --color-primary-on: #FFFFFF;
-  --color-bg: #FAFAFC;
-  --color-surface: #FFFFFF;
-  --color-surface-alt: #F3F4F6;
-  
+  --color-primary-on: #ffffff;
+  --color-bg: #fafafc;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f3f4f6;
+
   /* Neutral Scale */
   --neutral-900: #111111;
-  --neutral-800: #1F1F1F;
-  --neutral-700: #2F2F2F;
-  --neutral-600: #4B4B4B;
-  --neutral-500: #6B6B6B;
-  --neutral-400: #9AA0A6;
-  --neutral-300: #C9CDD2;
-  --neutral-200: #E2E5E9;
-  --neutral-100: #EFF1F5;
-  
+  --neutral-800: #1f1f1f;
+  --neutral-700: #2f2f2f;
+  --neutral-600: #4b4b4b;
+  --neutral-500: #6b6b6b;
+  --neutral-400: #9aa0a6;
+  --neutral-300: #c9cdd2;
+  --neutral-200: #e2e5e9;
+  --neutral-100: #eff1f5;
+
   /* Gray Scale (maintaining compatibility) */
-  --gray-50: #FAFAFC;
-  --gray-100: #EFF1F5;
-  --gray-200: #E2E5E9;
-  --gray-300: #C9CDD2;
-  --gray-400: #9AA0A6;
-  --gray-500: #6B6B6B;
-  --gray-600: #4B4B4B;
-  --gray-700: #2F2F2F;
-  --gray-800: #1F1F1F;
+  --gray-50: #fafafc;
+  --gray-100: #eff1f5;
+  --gray-200: #e2e5e9;
+  --gray-300: #c9cdd2;
+  --gray-400: #9aa0a6;
+  --gray-500: #6b6b6b;
+  --gray-600: #4b4b4b;
+  --gray-700: #2f2f2f;
+  --gray-800: #1f1f1f;
   --gray-900: #111111;
 
   /* Primary (GearUp brand green) */
@@ -85,44 +85,44 @@
   --primary-700: #15803d;
   --primary-800: #166534;
   --primary-900: #14532d;
-  
+
   /* Primary Alpha Colors */
   --primary-600-alpha-50: rgba(37, 99, 235, 0.5);
 
   /* Success Green (from design system) */
-  --success-50: #EDF8F4;
-  --success-100: #D7F0E2;
-  --success-200: #AFE0C7;
-  --success-300: #7CCFA7;
-  --success-400: #4CBF87;
-  --success-500: #2FBF71;
-  --success-600: #26A160;
-  --success-700: #1E8550;
-  --success-800: #176A40;
+  --success-50: #edf8f4;
+  --success-100: #d7f0e2;
+  --success-200: #afe0c7;
+  --success-300: #7ccfa7;
+  --success-400: #4cbf87;
+  --success-500: #2fbf71;
+  --success-600: #26a160;
+  --success-700: #1e8550;
+  --success-800: #176a40;
   --success-900: #115534;
 
   /* Warning (from design system) */
-  --warning-50: #FFF8E6;
-  --warning-100: #FFEFC0;
-  --warning-200: #FFE399;
-  --warning-300: #FFD666;
-  --warning-400: #FFC933;
-  --warning-500: #FFB020;
-  --warning-600: #E69A1A;
-  --warning-700: #CC8414;
-  --warning-800: #B36E0E;
-  --warning-900: #995F0A;
+  --warning-50: #fff8e6;
+  --warning-100: #ffefc0;
+  --warning-200: #ffe399;
+  --warning-300: #ffd666;
+  --warning-400: #ffc933;
+  --warning-500: #ffb020;
+  --warning-600: #e69a1a;
+  --warning-700: #cc8414;
+  --warning-800: #b36e0e;
+  --warning-900: #995f0a;
 
   /* Error/Danger Red (from design system) */
-  --error-50: #FDEBEB;
-  --error-100: #FACBCB;
-  --error-200: #F5A0A0;
-  --error-300: #F07575;
-  --error-400: #EB4A4A;
-  --error-500: #E03131;
-  --error-600: #C82A2A;
-  --error-700: #B02323;
-  --error-800: #981C1C;
+  --error-50: #fdebeb;
+  --error-100: #facbcb;
+  --error-200: #f5a0a0;
+  --error-300: #f07575;
+  --error-400: #eb4a4a;
+  --error-500: #e03131;
+  --error-600: #c82a2a;
+  --error-700: #b02323;
+  --error-800: #981c1c;
   --error-900: #801717;
 
   /* Danger (alias for error) */
@@ -197,8 +197,8 @@
   --warning: var(--warning-500);
   --info: var(--info-500);
   --link: var(--neutral-800);
-  --focus-ring: #1A73E8;
-  --accent-cool: #E4E6F4;
+  --focus-ring: #1a73e8;
+  --accent-cool: #e4e6f4;
 
   /* Border Colors */
   --border: var(--neutral-200);
@@ -207,16 +207,16 @@
 
   /* === SHADOWS (from design system) === */
   --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
-  --shadow-sm: 0 2px 8px rgba(0,0,0,.06);
-  --shadow-md: 0 8px 24px rgba(0,0,0,.10);
-  --shadow-lg: 0 12px 28px rgba(0,0,0,.16);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.16);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  
+
   /* Design System Elevation */
   --elevation-card: var(--shadow-sm);
   --elevation-card-hover: var(--shadow-md);
-  --elevation-nav: 0 1px 0 rgba(0,0,0,.06);
+  --elevation-nav: 0 1px 0 rgba(0, 0, 0, 0.06);
   --elevation-popover: var(--shadow-lg);
 
   /* === BORDER RADIUS (from design system) === */
@@ -246,19 +246,19 @@
   --z-tooltip: 1800;
 
   /* === TRANSITIONS (from design system) === */
-  --transition-fast: 0.12s cubic-bezier(0.2, 0.0, 0.2, 1);
-  --transition-base: 0.18s cubic-bezier(0.2, 0.0, 0.2, 1);
-  --transition-slow: 0.26s cubic-bezier(0.2, 0.0, 0.2, 1);
+  --transition-fast: 0.12s cubic-bezier(0.2, 0, 0.2, 1);
+  --transition-base: 0.18s cubic-bezier(0.2, 0, 0.2, 1);
+  --transition-slow: 0.26s cubic-bezier(0.2, 0, 0.2, 1);
   --transition-slower: 0.5s ease-out;
-  
+
   /* Motion tokens */
   --duration-fast: 120ms;
   --duration-base: 180ms;
   --duration-slow: 260ms;
-  --easing: cubic-bezier(0.2, 0.0, 0.2, 1);
+  --easing: cubic-bezier(0.2, 0, 0.2, 1);
 
   /* === COMPONENT SPECIFIC === */
-  
+
   /* Sidebar */
   --sidebar-width: 280px;
   --sidebar-width-collapsed: 80px;
@@ -296,16 +296,16 @@
 /* === RESPONSIVE TYPOGRAPHY === */
 @media (max-width: 768px) {
   :root {
-    --font-size-xs: 0.625rem;   /* 10px */
-    --font-size-sm: 0.75rem;    /* 12px */
+    --font-size-xs: 0.625rem; /* 10px */
+    --font-size-sm: 0.75rem; /* 12px */
     --font-size-base: 0.875rem; /* 14px */
-    --font-size-lg: 1rem;       /* 16px */
-    --font-size-xl: 1.125rem;   /* 18px */
-    --font-size-2xl: 1.25rem;   /* 20px */
-    --font-size-3xl: 1.5rem;    /* 24px */
-    --font-size-4xl: 1.875rem;  /* 30px */
-    --font-size-5xl: 2.25rem;   /* 36px */
-    
+    --font-size-lg: 1rem; /* 16px */
+    --font-size-xl: 1.125rem; /* 18px */
+    --font-size-2xl: 1.25rem; /* 20px */
+    --font-size-3xl: 1.5rem; /* 24px */
+    --font-size-4xl: 1.875rem; /* 30px */
+    --font-size-5xl: 2.25rem; /* 36px */
+
     --content-padding: var(--spacing-lg);
     --card-padding: var(--spacing-lg);
     --header-padding: var(--spacing-lg);
@@ -314,16 +314,16 @@
 
 @media (max-width: 480px) {
   :root {
-    --font-size-xs: 0.625rem;   /* 10px */
-    --font-size-sm: 0.6875rem;  /* 11px */
-    --font-size-base: 0.75rem;  /* 12px */
-    --font-size-lg: 0.875rem;   /* 14px */
-    --font-size-xl: 1rem;       /* 16px */
-    --font-size-2xl: 1.125rem;  /* 18px */
-    --font-size-3xl: 1.25rem;   /* 20px */
-    --font-size-4xl: 1.5rem;    /* 24px */
-    --font-size-5xl: 1.875rem;  /* 30px */
-    
+    --font-size-xs: 0.625rem; /* 10px */
+    --font-size-sm: 0.6875rem; /* 11px */
+    --font-size-base: 0.75rem; /* 12px */
+    --font-size-lg: 0.875rem; /* 14px */
+    --font-size-xl: 1rem; /* 16px */
+    --font-size-2xl: 1.125rem; /* 18px */
+    --font-size-3xl: 1.25rem; /* 20px */
+    --font-size-4xl: 1.5rem; /* 24px */
+    --font-size-5xl: 1.875rem; /* 30px */
+
     --content-padding: var(--spacing-md);
     --card-padding: var(--spacing-md);
     --header-padding: var(--spacing-md);
@@ -334,33 +334,69 @@
 @media (min-width: 1600px) {
   :root {
     --content-padding: calc(var(--spacing-3xl) * 1.5); /* 48px */
-    --card-padding: calc(var(--spacing-2xl) * 1.25);   /* 30px */
+    --card-padding: calc(var(--spacing-2xl) * 1.25); /* 30px */
   }
 }
 
 /* === UTILITY CLASSES === */
-.text-primary { color: var(--text-primary); }
-.text-secondary { color: var(--text-secondary); }
-.text-muted { color: var(--text-muted); }
-.text-inverse { color: var(--text-inverse); }
+.text-primary {
+  color: var(--text-primary);
+}
+.text-secondary {
+  color: var(--text-secondary);
+}
+.text-muted {
+  color: var(--text-muted);
+}
+.text-inverse {
+  color: var(--text-inverse);
+}
 
-.bg-surface { background-color: var(--surface); }
-.bg-background { background-color: var(--background); }
+.bg-surface {
+  background-color: var(--surface);
+}
+.bg-background {
+  background-color: var(--background);
+}
 
-.border { border: var(--form-input-border); }
-.border-light { border: 1px solid var(--border-light); }
-.border-strong { border: 1px solid var(--border-strong); }
+.border {
+  border: var(--form-input-border);
+}
+.border-light {
+  border: 1px solid var(--border-light);
+}
+.border-strong {
+  border: 1px solid var(--border-strong);
+}
 
-.shadow-sm { box-shadow: var(--shadow-sm); }
-.shadow-md { box-shadow: var(--shadow-md); }
-.shadow-lg { box-shadow: var(--shadow-lg); }
-.shadow-xl { box-shadow: var(--shadow-xl); }
+.shadow-sm {
+  box-shadow: var(--shadow-sm);
+}
+.shadow-md {
+  box-shadow: var(--shadow-md);
+}
+.shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+.shadow-xl {
+  box-shadow: var(--shadow-xl);
+}
 
-.rounded-sm { border-radius: var(--radius-sm); }
-.rounded { border-radius: var(--radius-md); }
-.rounded-lg { border-radius: var(--radius-lg); }
-.rounded-xl { border-radius: var(--radius-xl); }
-.rounded-full { border-radius: var(--radius-full); }
+.rounded-sm {
+  border-radius: var(--radius-sm);
+}
+.rounded {
+  border-radius: var(--radius-md);
+}
+.rounded-lg {
+  border-radius: var(--radius-lg);
+}
+.rounded-xl {
+  border-radius: var(--radius-xl);
+}
+.rounded-full {
+  border-radius: var(--radius-full);
+}
 
 /* === FORCED LIGHT MODE (OVERRIDE SYSTEM PREFERENCES) === */
 /* Ensure consistent light mode appearance regardless of system settings */

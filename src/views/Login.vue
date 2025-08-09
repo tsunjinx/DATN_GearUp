@@ -7,8 +7,7 @@
           <div class="logo-container">
             <GearUpLogo variant="large" />
           </div>
-          <div class="features-list">
-          </div>
+          <div class="features-list" />
         </div>
       </div>
 
@@ -19,14 +18,24 @@
             <h2>Đăng nhập hệ thống</h2>
           </div>
 
-          <form @submit.prevent="handleLogin" class="login-form"
-            :class="{ 'form-loading': loading, 'form-error': error, 'form-success': loginSuccess }" ref="loginFormRef">
+          <form
+            ref="loginFormRef"
+            class="login-form"
+            :class="{ 'form-loading': loading, 'form-error': error, 'form-success': loginSuccess }"
+            @submit.prevent="handleLogin"
+          >
             <div class="form-group">
               <label for="username">Tên đăng nhập</label>
               <div class="input-wrapper">
                 <i class="input-icon">👤</i>
-                <input id="username" type="text" v-model="form.username" class="form-control"
-                  placeholder="Nhập tên đăng nhập" required />
+                <input
+                  id="username"
+                  v-model="form.username"
+                  type="text"
+                  class="form-control"
+                  placeholder="Nhập tên đăng nhập"
+                  required
+                />
               </div>
             </div>
 
@@ -34,15 +43,21 @@
               <label for="password">Mật khẩu</label>
               <div class="input-wrapper">
                 <i class="input-icon">🔒</i>
-                <input id="password" type="password" v-model="form.password" class="form-control"
-                  placeholder="Nhập mật khẩu" required />
+                <input
+                  id="password"
+                  v-model="form.password"
+                  type="password"
+                  class="form-control"
+                  placeholder="Nhập mật khẩu"
+                  required
+                />
               </div>
             </div>
 
             <div class="form-options">
               <label class="checkbox-container">
-                <input type="checkbox" v-model="form.remember" />
-                <span class="checkmark"></span>
+                <input v-model="form.remember" type="checkbox" />
+                <span class="checkmark" />
                 <span class="checkbox-text">Ghi nhớ đăng nhập</span>
               </label>
 
@@ -54,9 +69,12 @@
               {{ error }}
             </div>
 
-            <button type="submit" class="btn btn-primary btn-login" :disabled="loading || loginSuccess"
-              :class="{ 'loading': loading && !loginSuccess, 'success': loginSuccess }">
-
+            <button
+              type="submit"
+              class="btn btn-primary btn-login"
+              :disabled="loading || loginSuccess"
+              :class="{ loading: loading && !loginSuccess, success: loginSuccess }"
+            >
               <div class="button-content">
                 <!-- Success State -->
                 <span v-if="loginSuccess" class="success-icon">✓</span>
@@ -65,7 +83,7 @@
                 <i v-else class="login-icon">🚀</i>
 
                 <span class="button-text">
-                  {{ loginSuccess ? 'Đăng nhập thành công' : (loading ? 'Đang đăng nhập...' : 'Đăng nhập') }}
+                  {{ loginSuccess ? 'Đăng nhập thành công' : loading ? 'Đang đăng nhập...' : 'Đăng nhập' }}
                 </span>
               </div>
             </button>
@@ -101,7 +119,6 @@ const form = ref({
 })
 
 const handleLogin = async () => {
-  
   const success = await authStore.login({
     username: form.value.username,
     password: form.value.password,
@@ -296,7 +313,6 @@ const handleLogin = async () => {
 }
 
 @keyframes shake {
-
   0%,
   100% {
     transform: translateX(0);
@@ -379,7 +395,7 @@ const handleLogin = async () => {
   user-select: none;
 }
 
-.checkbox-container input[type="checkbox"] {
+.checkbox-container input[type='checkbox'] {
   margin-right: 0.5rem;
   width: 1rem;
   height: 1rem;
@@ -453,7 +469,9 @@ const handleLogin = async () => {
 
 .btn-login.success {
   background: linear-gradient(45deg, #10b981, #059669) !important;
-  animation: successPulse 0.6s ease-out, successGlow 2s ease-in-out 0.6s infinite;
+  animation:
+    successPulse 0.6s ease-out,
+    successGlow 2s ease-in-out 0.6s infinite;
   cursor: not-allowed;
   transform: none !important;
 }
@@ -572,7 +590,6 @@ const handleLogin = async () => {
 }
 
 @keyframes successGlow {
-
   0%,
   100% {
     box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
@@ -584,7 +601,6 @@ const handleLogin = async () => {
 }
 
 @keyframes loadingPulse {
-
   0%,
   100% {
     background: linear-gradient(45deg, var(--primary-500), var(--primary-600));
@@ -625,7 +641,9 @@ const handleLogin = async () => {
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.3);
   transform: translate(-50%, -50%);
-  transition: width 0.6s ease, height 0.6s ease;
+  transition:
+    width 0.6s ease,
+    height 0.6s ease;
 }
 
 .btn-login:active::before {
@@ -832,8 +850,7 @@ const handleLogin = async () => {
 }
 
 /* High DPI displays */
-@media (-webkit-min-device-pixel-ratio: 2),
-(min-resolution: 192dpi) {
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   .login-branding::before {
     background-size: 100% 100%;
   }

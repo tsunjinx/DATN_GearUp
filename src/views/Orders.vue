@@ -51,8 +51,12 @@
         <div class="price-range-section">
           <div class="price-range-header">
             <span class="price-label">Khoảng giá</span>
-            <button type="button" class="price-reset-btn" @click="resetPriceRange"
-              v-if="priceRange.min > 0 || priceRange.max < 10000000">
+            <button
+              v-if="priceRange.min > 0 || priceRange.max < 10000000"
+              type="button"
+              class="price-reset-btn"
+              @click="resetPriceRange"
+            >
               Reset
             </button>
           </div>
@@ -61,26 +65,50 @@
           <div class="price-inputs-container">
             <div class="price-input-group">
               <label class="input-label">Từ</label>
-              <input v-model.number="priceRange.min" type="number" placeholder="0" class="price-input-modern"
-                @input="updatePriceRange" />
+              <input
+                v-model.number="priceRange.min"
+                type="number"
+                placeholder="0"
+                class="price-input-modern"
+                @input="updatePriceRange"
+              />
             </div>
             <div class="price-separator-modern">-</div>
             <div class="price-input-group">
               <label class="input-label">Đến</label>
-              <input v-model.number="priceRange.max" type="number" placeholder="10,000,000" class="price-input-modern"
-                @input="updatePriceRange" />
+              <input
+                v-model.number="priceRange.max"
+                type="number"
+                placeholder="10,000,000"
+                class="price-input-modern"
+                @input="updatePriceRange"
+              />
             </div>
           </div>
 
           <!-- Price Range Slider -->
           <div class="price-slider-section">
             <div class="slider-track-container">
-              <div class="slider-track"></div>
-              <div class="slider-range" :style="sliderRangeStyle"></div>
-              <input v-model.number="priceRange.min" type="range" :min="0" :max="10000000" :step="100000"
-                class="slider-input slider-min" @input="updatePriceRange" />
-              <input v-model.number="priceRange.max" type="range" :min="0" :max="10000000" :step="100000"
-                class="slider-input slider-max" @input="updatePriceRange" />
+              <div class="slider-track" />
+              <div class="slider-range" :style="sliderRangeStyle" />
+              <input
+                v-model.number="priceRange.min"
+                type="range"
+                :min="0"
+                :max="10000000"
+                :step="100000"
+                class="slider-input slider-min"
+                @input="updatePriceRange"
+              />
+              <input
+                v-model.number="priceRange.max"
+                type="range"
+                :min="0"
+                :max="10000000"
+                :step="100000"
+                class="slider-input slider-max"
+                @input="updatePriceRange"
+              />
             </div>
             <div class="price-display">
               <span class="price-min">{{ formatCurrency(priceRange.min) }}</span>
@@ -105,29 +133,63 @@
 
     <!-- States: loading / error / empty -->
     <div v-if="loading" class="table-container fade-in" style="animation-delay: 0.45s">
-      <div class="table"><div class="text-center" style="padding:16px"><span class="loading-spinner"></span> Đang tải hóa đơn...</div></div>
+      <div class="table">
+        <div class="text-center" style="padding: 16px"><span class="loading-spinner" /> Đang tải hóa đơn...</div>
+      </div>
     </div>
     <div v-else-if="error" class="table-container fade-in" style="animation-delay: 0.45s">
-      <div class="table"><div class="text-center text-error" style="padding:16px">{{ error }}</div></div>
+      <div class="table">
+        <div class="text-center text-error" style="padding: 16px">
+          {{ error }}
+        </div>
+      </div>
     </div>
     <div v-else-if="filteredOrders.length === 0" class="table-container fade-in" style="animation-delay: 0.45s">
-      <div class="table"><div class="text-center text-gray" style="padding:16px">Không có hóa đơn phù hợp</div></div>
+      <div class="table">
+        <div class="text-center text-gray" style="padding: 16px">Không có hóa đơn phù hợp</div>
+      </div>
     </div>
-    
+
     <!-- Bulk actions -->
     <div v-else class="table-container fade-in" style="animation-delay: 0.5s">
-      <div class="page-header" style="padding: 12px 12px 0;">
+      <div class="page-header" style="padding: 12px 12px 0">
         <div class="header-actions">
-          <button class="btn btn-sm btn-outline" :disabled="selectedIds.length===0" @click="bulkUpdateStatus('confirmed')">Xác nhận</button>
-          <button class="btn btn-sm btn-outline" :disabled="selectedIds.length===0" @click="bulkUpdateStatus('shipping')">Giao hàng</button>
-          <button class="btn btn-sm btn-outline" :disabled="selectedIds.length===0" @click="bulkUpdateStatus('completed')">Hoàn thành</button>
-          <button class="btn btn-sm btn-outline" :disabled="selectedIds.length===0" @click="bulkUpdateStatus('cancelled')">Hủy</button>
+          <button
+            class="btn btn-sm btn-outline"
+            :disabled="selectedIds.length === 0"
+            @click="bulkUpdateStatus('confirmed')"
+          >
+            Xác nhận
+          </button>
+          <button
+            class="btn btn-sm btn-outline"
+            :disabled="selectedIds.length === 0"
+            @click="bulkUpdateStatus('shipping')"
+          >
+            Giao hàng
+          </button>
+          <button
+            class="btn btn-sm btn-outline"
+            :disabled="selectedIds.length === 0"
+            @click="bulkUpdateStatus('completed')"
+          >
+            Hoàn thành
+          </button>
+          <button
+            class="btn btn-sm btn-outline"
+            :disabled="selectedIds.length === 0"
+            @click="bulkUpdateStatus('cancelled')"
+          >
+            Hủy
+          </button>
         </div>
       </div>
       <table class="table">
         <thead>
           <tr>
-            <th><input type="checkbox" class="checkbox" :checked="allSelected" @change="toggleAll($event)"/></th>
+            <th>
+              <input type="checkbox" class="checkbox" :checked="allSelected" @change="toggleAll($event)" />
+            </th>
             <th>Mã đơn hàng</th>
             <th>Khách hàng</th>
             <th>Sản phẩm</th>
@@ -139,7 +201,9 @@
         </thead>
         <tbody>
           <tr v-for="order in filteredOrders" :key="order.id">
-            <td><input type="checkbox" class="checkbox" :value="order.id" v-model="selectedIds"/></td>
+            <td>
+              <input v-model="selectedIds" type="checkbox" class="checkbox" :value="order.id" />
+            </td>
             <td>#{{ order.id }}</td>
             <td>
               <div class="customer-info">
@@ -154,21 +218,22 @@
                 </div>
               </div>
             </td>
-            <td class="price">{{ formatCurrency(order.total) }}</td>
+            <td class="price">
+              {{ formatCurrency(order.total) }}
+            </td>
             <td>
               <StatusBadge :status="order.status" :size="isMobile ? 'small' : 'normal'" />
             </td>
             <td>{{ formatDate(order.createdAt) }}</td>
             <td>
               <div class="action-buttons">
-                <button class="btn btn-sm btn-outline" @click="viewOrder(order)">
-                  Xem
-                </button>
-                <button class="btn btn-sm btn-outline" @click="printInvoice(order)">
-                  In
-                </button>
-                <select v-if="order.status !== 'completed' && order.status !== 'cancelled'"
-                  @change="updateStatus(order.id, $event.target.value)" class="status-select">
+                <button class="btn btn-sm btn-outline" @click="viewOrder(order)">Xem</button>
+                <button class="btn btn-sm btn-outline" @click="printInvoice(order)">In</button>
+                <select
+                  v-if="order.status !== 'completed' && order.status !== 'cancelled'"
+                  class="status-select"
+                  @change="updateStatus(order.id, $event.target.value)"
+                >
                   <option value="">Cập nhật</option>
                   <option value="confirmed">Xác nhận</option>
                   <option value="shipping">Giao hàng</option>
@@ -219,8 +284,12 @@
                 </tbody>
                 <tfoot>
                   <tr>
-                    <td colspan="3"><strong>Tổng cộng:</strong></td>
-                    <td><strong>{{ formatCurrency(selectedOrder.total) }}</strong></td>
+                    <td colspan="3">
+                      <strong>Tổng cộng:</strong>
+                    </td>
+                    <td>
+                      <strong>{{ formatCurrency(selectedOrder.total) }}</strong>
+                    </td>
                   </tr>
                 </tfoot>
               </table>
@@ -228,7 +297,8 @@
 
             <div class="detail-section">
               <h4>Thông tin đơn hàng</h4>
-              <p><strong>Trạng thái:</strong>
+              <p>
+                <strong>Trạng thái:</strong>
                 <span class="status-badge" :class="selectedOrder.status">
                   {{ getStatusText(selectedOrder.status) }}
                 </span>
@@ -271,8 +341,10 @@ const priceRange = ref({
 
 // Selection
 const selectedIds = ref([])
-const allSelected = computed(() => filteredOrders.value.length > 0 && filteredOrders.value.every(o => selectedIds.value.includes(o.id)))
-const toggleAll = (e) => {
+const allSelected = computed(
+  () => filteredOrders.value.length > 0 && filteredOrders.value.every(o => selectedIds.value.includes(o.id))
+)
+const toggleAll = e => {
   if (e.target.checked) {
     selectedIds.value = filteredOrders.value.map(o => o.id)
   } else {
@@ -303,7 +375,9 @@ const fetchOrders = async () => {
 }
 const debouncedFetch = debounce(fetchOrders, 400)
 
-watch([searchTerm, selectedStatus, dateFrom, dateTo, () => priceRange.value.min, () => priceRange.value.max], () => debouncedFetch())
+watch([searchTerm, selectedStatus, dateFrom, dateTo, () => priceRange.value.min, () => priceRange.value.max], () =>
+  debouncedFetch()
+)
 
 onMounted(() => {
   checkMobile()
@@ -339,9 +413,7 @@ const sampleOrders = ref([
     customerName: 'Trần Thị B',
     customerPhone: '0902345678',
     customerAddress: 'TP.HCM',
-    items: [
-      { id: 3, productName: 'Puma RS-X', quantity: 2, price: 1800000 }
-    ],
+    items: [{ id: 3, productName: 'Puma RS-X', quantity: 2, price: 1800000 }],
     total: 3600000,
     status: 'shipping',
     createdAt: new Date('2024-08-02'),
@@ -352,9 +424,7 @@ const sampleOrders = ref([
     customerName: 'Lê Văn C',
     customerPhone: '0903456789',
     customerAddress: 'Đà Nẵng',
-    items: [
-      { id: 4, productName: 'Nike Air Force 1', quantity: 1, price: 2200000 }
-    ],
+    items: [{ id: 4, productName: 'Nike Air Force 1', quantity: 1, price: 2200000 }],
     total: 2200000,
     status: 'completed',
     createdAt: new Date('2024-07-30'),
@@ -366,10 +436,11 @@ const filteredOrders = computed(() => {
   let orders = sampleOrders.value
 
   if (searchTerm.value) {
-    orders = orders.filter(order =>
-      order.id.toString().includes(searchTerm.value) ||
-      order.customerName.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
-      order.customerPhone.includes(searchTerm.value)
+    orders = orders.filter(
+      order =>
+        order.id.toString().includes(searchTerm.value) ||
+        order.customerName.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
+        order.customerPhone.includes(searchTerm.value)
     )
   }
 
@@ -378,21 +449,15 @@ const filteredOrders = computed(() => {
   }
 
   if (dateFrom.value) {
-    orders = orders.filter(order =>
-      new Date(order.createdAt) >= new Date(dateFrom.value)
-    )
+    orders = orders.filter(order => new Date(order.createdAt) >= new Date(dateFrom.value))
   }
 
   if (dateTo.value) {
-    orders = orders.filter(order =>
-      new Date(order.createdAt) <= new Date(dateTo.value)
-    )
+    orders = orders.filter(order => new Date(order.createdAt) <= new Date(dateTo.value))
   }
 
   // Price range filter
-  orders = orders.filter(order =>
-    order.total >= priceRange.value.min && order.total <= priceRange.value.max
-  )
+  orders = orders.filter(order => order.total >= priceRange.value.min && order.total <= priceRange.value.max)
 
   return orders
 })
@@ -415,14 +480,14 @@ const sliderRangeStyle = computed(() => {
   }
 })
 
-const formatCurrency = (amount) => {
+const formatCurrency = amount => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
     currency: 'VND'
   }).format(amount)
 }
 
-const formatDate = (date) => {
+const formatDate = date => {
   return new Intl.DateTimeFormat('vi-VN', {
     year: 'numeric',
     month: '2-digit',
@@ -432,7 +497,7 @@ const formatDate = (date) => {
   }).format(new Date(date))
 }
 
-const getStatusText = (status) => {
+const getStatusText = status => {
   const statusMap = {
     pending: 'Chờ xử lý',
     confirmed: 'Đã xác nhận',
@@ -443,7 +508,7 @@ const getStatusText = (status) => {
   return statusMap[status] || status
 }
 
-const viewOrder = (order) => {
+const viewOrder = order => {
   selectedOrder.value = order
   showDetailModal.value = true
 }
@@ -457,10 +522,10 @@ const updateStatus = (orderId, newStatus) => {
   }
 }
 
-const bulkUpdateStatus = async (newStatus) => {
+const bulkUpdateStatus = async newStatus => {
   if (!newStatus || selectedIds.value.length === 0) return
   // Optimistic update
-  sampleOrders.value = sampleOrders.value.map(o => selectedIds.value.includes(o.id) ? { ...o, status: newStatus } : o)
+  sampleOrders.value = sampleOrders.value.map(o => (selectedIds.value.includes(o.id) ? { ...o, status: newStatus } : o))
   try {
     await Promise.all(selectedIds.value.map(id => orderService.updateOrderStatus(id, newStatus)))
   } catch (e) {
@@ -472,15 +537,19 @@ const bulkUpdateStatus = async (newStatus) => {
   }
 }
 
-const printInvoice = (order) => {
+const printInvoice = order => {
   const win = window.open('', '_blank')
   if (!win) return
-  const itemsRows = order.items.map(i => `<tr>
+  const itemsRows = order.items
+    .map(
+      i => `<tr>
       <td>${i.productName}</td>
       <td style="text-align:center">${i.quantity}</td>
       <td style="text-align:right">${formatCurrency(i.price)}</td>
       <td style="text-align:right">${formatCurrency(i.quantity * i.price)}</td>
-    </tr>`).join('')
+    </tr>`
+    )
+    .join('')
   const html = `<!doctype html>
   <html lang="vi">
   <head>
@@ -562,58 +631,70 @@ const resetPriceRange = () => {
   priceRange.value.max = 10000000
 }
 
-const resetAllFilters = async (event) => {
-  await withLoadingAnimation(event, async () => {
-    // Simulate reset process
-    await new Promise(resolve => setTimeout(resolve, 800))
-    
-    searchTerm.value = ''
-    selectedStatus.value = ''
-    dateFrom.value = ''
-    dateTo.value = ''
-    resetPriceRange()
-    
-    return 'All filters reset successfully!'
-  }, {
-    onSuccess: (result) => console.log(result),
-    onError: (error) => console.error('Reset failed:', error)
-  })
+const resetAllFilters = async event => {
+  await withLoadingAnimation(
+    event,
+    async () => {
+      // Simulate reset process
+      await new Promise(resolve => setTimeout(resolve, 800))
+
+      searchTerm.value = ''
+      selectedStatus.value = ''
+      dateFrom.value = ''
+      dateTo.value = ''
+      resetPriceRange()
+
+      return 'All filters reset successfully!'
+    },
+    {
+      onSuccess: result => console.log(result),
+      onError: error => console.error('Reset failed:', error)
+    }
+  )
 }
 
-const exportToExcel = async (event) => {
-  await withLoadingAnimation(event, async () => {
-    // Simulate Excel export process
-    await new Promise(resolve => setTimeout(resolve, 2500))
-    console.log('Exporting to Excel...', filteredOrders.value)
-    return 'Excel export completed successfully!'
-  }, {
-    onSuccess: (result) => {
-      console.log(result)
-      alert('Xuất Excel thành công!')
+const exportToExcel = async event => {
+  await withLoadingAnimation(
+    event,
+    async () => {
+      // Simulate Excel export process
+      await new Promise(resolve => setTimeout(resolve, 2500))
+      console.log('Exporting to Excel...', filteredOrders.value)
+      return 'Excel export completed successfully!'
     },
-    onError: (error) => {
-      console.error('Export failed:', error)
-      alert('Lỗi khi xuất Excel!')
+    {
+      onSuccess: result => {
+        console.log(result)
+        alert('Xuất Excel thành công!')
+      },
+      onError: error => {
+        console.error('Export failed:', error)
+        alert('Lỗi khi xuất Excel!')
+      }
     }
-  })
+  )
 }
 
-const scanQR = async (event) => {
-  await withLoadingAnimation(event, async () => {
-    // Simulate QR scanner initialization
-    await new Promise(resolve => setTimeout(resolve, 1200))
-    console.log('Opening QR scanner...')
-    return 'QR scanner opened successfully!'
-  }, {
-    onSuccess: (result) => {
-      console.log(result)
-      alert('Tính năng quét QR sẽ được triển khai!')
+const scanQR = async event => {
+  await withLoadingAnimation(
+    event,
+    async () => {
+      // Simulate QR scanner initialization
+      await new Promise(resolve => setTimeout(resolve, 1200))
+      console.log('Opening QR scanner...')
+      return 'QR scanner opened successfully!'
     },
-    onError: (error) => {
-      console.error('QR scan failed:', error)
-      alert('Lỗi khi mở QR scanner!')
+    {
+      onSuccess: result => {
+        console.log(result)
+        alert('Tính năng quét QR sẽ được triển khai!')
+      },
+      onError: error => {
+        console.error('QR scan failed:', error)
+        alert('Lỗi khi mở QR scanner!')
+      }
     }
-  })
+  )
 }
 
 const closeDetailModal = () => {
@@ -1355,7 +1436,6 @@ const closeDetailModal = () => {
 }
 
 @media (max-width: 1200px) {
-
   .table th,
   .table td {
     padding: 12px 8px;
@@ -2048,7 +2128,9 @@ const closeDetailModal = () => {
   background: rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
+  transition:
+    width 0.6s,
+    height 0.6s;
 }
 
 .header-actions .btn:hover {

@@ -6,12 +6,11 @@
 import { nextTick } from 'vue'
 
 export function useButtonAnimations() {
-  
   /**
    * Triggers simple success animation on a button
    * @param {HTMLElement|Event} buttonOrEvent - Button element or click event
    */
-  const triggerSuccess = (buttonOrEvent) => {
+  const triggerSuccess = buttonOrEvent => {
     const button = getButtonElement(buttonOrEvent)
     if (button) {
       button.classList.add('success-state')
@@ -25,7 +24,7 @@ export function useButtonAnimations() {
    * Triggers simple error animation on a button
    * @param {HTMLElement|Event} buttonOrEvent - Button element or click event
    */
-  const triggerError = (buttonOrEvent) => {
+  const triggerError = buttonOrEvent => {
     const button = getButtonElement(buttonOrEvent)
     if (button) {
       button.classList.add('error-state')
@@ -39,7 +38,7 @@ export function useButtonAnimations() {
    * Adds simple loading state to a button
    * @param {HTMLElement|Event} buttonOrEvent - Button element or click event
    */
-  const setLoading = (buttonOrEvent) => {
+  const setLoading = buttonOrEvent => {
     const button = getButtonElement(buttonOrEvent)
     if (button) {
       button.classList.add('loading')
@@ -55,7 +54,7 @@ export function useButtonAnimations() {
    * Removes simple loading state from a button
    * @param {HTMLElement|Event} buttonOrEvent - Button element or click event
    */
-  const removeLoading = (buttonOrEvent) => {
+  const removeLoading = buttonOrEvent => {
     const button = getButtonElement(buttonOrEvent)
     if (button) {
       button.classList.remove('loading')
@@ -74,12 +73,7 @@ export function useButtonAnimations() {
    * @param {Object} options - Configuration options
    */
   const withLoadingAnimation = async (buttonOrEvent, asyncOperation, options = {}) => {
-    const {
-      showSuccess = true,
-      showError = true,
-      onSuccess = null,
-      onError = null
-    } = options
+    const { showSuccess = true, showError = true, onSuccess = null, onError = null } = options
 
     const button = getButtonElement(buttonOrEvent)
     if (!button) return
@@ -88,29 +82,29 @@ export function useButtonAnimations() {
 
     try {
       const result = await asyncOperation()
-      
+
       removeLoading(button)
-      
+
       if (showSuccess) {
         triggerSuccess(button)
       }
-      
+
       if (onSuccess) {
         onSuccess(result)
       }
-      
+
       return result
     } catch (error) {
       removeLoading(button)
-      
+
       if (showError) {
         triggerError(button)
       }
-      
+
       if (onError) {
         onError(error)
       }
-      
+
       throw error
     }
   }
@@ -122,7 +116,7 @@ export function useButtonAnimations() {
    */
   const staggeredFadeIn = async (containerSelector, delay = 100) => {
     await nextTick()
-    
+
     const container = document.querySelector(containerSelector)
     if (!container) return
 
@@ -137,15 +131,10 @@ export function useButtonAnimations() {
    * Removes all animation classes from a button
    * @param {HTMLElement|Event} buttonOrEvent - Button element or click event
    */
-  const clearAnimations = (buttonOrEvent) => {
+  const clearAnimations = buttonOrEvent => {
     const button = getButtonElement(buttonOrEvent)
     if (button) {
-      button.classList.remove(
-        'loading',
-        'success-state',
-        'error-state',
-        'fade-in'
-      )
+      button.classList.remove('loading', 'success-state', 'error-state', 'fade-in')
       button.disabled = false
       button.style.animationDelay = ''
       // Clear stored text
@@ -157,24 +146,24 @@ export function useButtonAnimations() {
 
   /**
    * Helper function to extract button element from event or element
-   * @param {HTMLElement|Event} buttonOrEvent 
+   * @param {HTMLElement|Event} buttonOrEvent
    * @returns {HTMLElement|null}
    */
-  const getButtonElement = (buttonOrEvent) => {
+  const getButtonElement = buttonOrEvent => {
     if (!buttonOrEvent) return null
-    
+
     // If it's an event, get the target button
     if (buttonOrEvent.target) {
       return buttonOrEvent.target.closest('.btn')
     }
-    
+
     // If it's already an element
     if (buttonOrEvent.nodeType === Node.ELEMENT_NODE) {
-      return buttonOrEvent.classList.contains('btn') 
-        ? buttonOrEvent 
+      return buttonOrEvent.classList.contains('btn')
+        ? buttonOrEvent
         : buttonOrEvent.querySelector('.btn')
     }
-    
+
     return null
   }
 
@@ -186,15 +175,15 @@ export function useButtonAnimations() {
    */
   const createAnimatedHandler = (handler, delay = 300) => {
     let timeoutId = null
-    
-    return async (event) => {
+
+    return async event => {
       if (timeoutId) {
         clearTimeout(timeoutId)
       }
-      
+
       const button = getButtonElement(event)
       if (!button || button.disabled) return
-      
+
       timeoutId = setTimeout(async () => {
         try {
           await handler(event)
@@ -212,12 +201,12 @@ export function useButtonAnimations() {
     setLoading,
     removeLoading,
     clearAnimations,
-    
+
     // Advanced operations
     withLoadingAnimation,
     staggeredFadeIn,
     createAnimatedHandler,
-    
+
     // Utilities
     getButtonElement
   }
@@ -225,17 +214,17 @@ export function useButtonAnimations() {
 
 /**
  * Example usage in components:
- * 
+ *
  * ```javascript
  * import { useButtonAnimations } from '@/composables/useButtonAnimations'
- * 
+ *
  * const { triggerSuccess, withLoadingAnimation, staggeredFadeIn } = useButtonAnimations()
- * 
+ *
  * // Simple success animation
  * const handleSuccess = (event) => {
  *   triggerSuccess(event)
  * }
- * 
+ *
  * // Async operation with loading
  * const handleAsyncAction = async (event) => {
  *   await withLoadingAnimation(event, async () => {
@@ -243,7 +232,7 @@ export function useButtonAnimations() {
  *     return await apiCall()
  *   })
  * }
- * 
+ *
  * // On component mount
  * onMounted(() => {
  *   staggeredFadeIn('.header-actions', 150)

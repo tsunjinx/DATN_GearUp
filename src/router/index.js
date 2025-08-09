@@ -39,7 +39,7 @@ const routes = [
     path: '/admin/login',
     name: 'AdminLogin',
     component: Login,
-    meta: { 
+    meta: {
       requiresGuest: true,
       title: 'GearUp - Đăng nhập quản trị'
     }
@@ -49,13 +49,48 @@ const routes = [
     path: '/shop',
     component: CustomerLayout,
     children: [
-      { path: '', name: 'ShopHome', component: ShopHome, meta: { title: 'GearUp - Cửa hàng', icon: '🛍️' } },
-      { path: 'catalog', name: 'ShopCatalog', component: ShopCatalog, meta: { title: 'GearUp - Danh mục', icon: '🗂️' } },
-      { path: 'details/:id', name: 'ShopDetails', component: ShopDetails, meta: { title: 'GearUp - Chi tiết sản phẩm', icon: '👟' } },
-      { path: 'cart', name: 'ShopCart', component: ShopCart, meta: { title: 'GearUp - Giỏ hàng', icon: '🛒' } },
-      { path: 'checkout', name: 'ShopCheckout', component: ShopCheckout, meta: { title: 'GearUp - Thanh toán', icon: '💳' } },
-      { path: 'account', name: 'ShopAccount', component: ShopAccount, meta: { title: 'GearUp - Tài khoản', icon: '👤' } },
-      { path: 'wishlist', name: 'ShopWishlist', component: ShopWishlist, meta: { title: 'GearUp - Yêu thích', icon: '❤️' } }
+      {
+        path: '',
+        name: 'ShopHome',
+        component: ShopHome,
+        meta: { title: 'GearUp - Cửa hàng', icon: '🛍️' }
+      },
+      {
+        path: 'catalog',
+        name: 'ShopCatalog',
+        component: ShopCatalog,
+        meta: { title: 'GearUp - Danh mục', icon: '🗂️' }
+      },
+      {
+        path: 'details/:id',
+        name: 'ShopDetails',
+        component: ShopDetails,
+        meta: { title: 'GearUp - Chi tiết sản phẩm', icon: '👟' }
+      },
+      {
+        path: 'cart',
+        name: 'ShopCart',
+        component: ShopCart,
+        meta: { title: 'GearUp - Giỏ hàng', icon: '🛒' }
+      },
+      {
+        path: 'checkout',
+        name: 'ShopCheckout',
+        component: ShopCheckout,
+        meta: { title: 'GearUp - Thanh toán', icon: '💳' }
+      },
+      {
+        path: 'account',
+        name: 'ShopAccount',
+        component: ShopAccount,
+        meta: { title: 'GearUp - Tài khoản', icon: '👤' }
+      },
+      {
+        path: 'wishlist',
+        name: 'ShopWishlist',
+        component: ShopWishlist,
+        meta: { title: 'GearUp - Yêu thích', icon: '❤️' }
+      }
     ]
   },
   // Admin routes (with AdminLayout) dưới tiền tố /admin
@@ -187,7 +222,7 @@ const routes = [
   }
 ]
 
-const router = createRouter({   
+const router = createRouter({
   history: createWebHistory(),
   routes
 })
@@ -195,20 +230,20 @@ const router = createRouter({
 // Navigation guards with proper authentication
 router.beforeEach(async (to, from, next) => {
   console.log('Route navigation to:', to.path)
-  
+
   // Enable authentication
   const DISABLE_AUTH = false // Authentication is now enabled
-  
+
   if (DISABLE_AUTH) {
     console.log('Authentication disabled for development')
     next()
     return
   }
-  
+
   const authStore = useAuthStore()
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
   const requiresGuest = to.matched.some(record => record.meta.requiresGuest)
-  
+
   // Check authentication status
   if (requiresAuth && !authStore.isAuthenticated) {
     // Try to restore session
@@ -219,19 +254,19 @@ router.beforeEach(async (to, from, next) => {
       return
     }
   }
-  
+
   // Prevent authenticated users from accessing guest-only pages
   if (requiresGuest && authStore.isAuthenticated) {
     console.log('Already authenticated, redirecting to dashboard')
     next('/')
     return
   }
-  
+
   next()
 })
 
 // Update document title after navigation
-router.afterEach((to) => {
+router.afterEach(to => {
   // Keep optional emoji favicon update
   const favicon = document.querySelector('link[rel="icon"]')
   if (favicon && to.meta?.icon) {

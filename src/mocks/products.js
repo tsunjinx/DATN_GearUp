@@ -94,9 +94,16 @@ export const mockProducts = [
   }
 ]
 
-const normalize = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+const normalize = s =>
+  String(s || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
 
-export const applyProductFilters = (list, { q, brand, category, sort, minPrice, maxPrice, inStockOnly } = {}) => {
+export const applyProductFilters = (
+  list,
+  { q, brand, category, sort, minPrice, maxPrice, inStockOnly } = {}
+) => {
   let result = [...list]
   if (q) {
     const query = normalize(q)
@@ -127,7 +134,5 @@ export const applyProductFilters = (list, { q, brand, category, sort, minPrice, 
   return result
 }
 
-export const mockOk = (data) => Promise.resolve({ status: 200, data })
+export const mockOk = data => Promise.resolve({ status: 200, data })
 export const delay = (ms = 300) => new Promise(r => setTimeout(r, ms))
-
-

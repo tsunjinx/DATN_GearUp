@@ -24,5 +24,3 @@ describe('authStore', () => {
     expect(localStorage.getItem('token')).toBeNull()
   })
 })
-
-

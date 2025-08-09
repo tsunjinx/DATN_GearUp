@@ -27,11 +27,21 @@ defineProps({
   box-shadow: var(--card-shadow, var(--shadow-sm));
   overflow: hidden;
 }
-.gu-card--hover:hover { box-shadow: var(--card-hover-shadow, var(--shadow-md)); }
+.gu-card--hover:hover {
+  box-shadow: var(--card-hover-shadow, var(--shadow-md));
+}
 
-.gu-card__header { padding: var(--card-padding, 1.25rem); border-bottom: 1px solid var(--border-light); background: var(--gray-50); }
-.gu-card__body { padding: var(--card-padding, 1.25rem); }
-.gu-card__footer { padding: var(--card-padding, 1.25rem); border-top: 1px solid var(--border-light); background: var(--gray-50); }
+.gu-card__header {
+  padding: var(--card-padding, 1.25rem);
+  border-bottom: 1px solid var(--border-light);
+  background: var(--gray-50);
+}
+.gu-card__body {
+  padding: var(--card-padding, 1.25rem);
+}
+.gu-card__footer {
+  padding: var(--card-padding, 1.25rem);
+  border-top: 1px solid var(--border-light);
+  background: var(--gray-50);
+}
 </style>
-
-

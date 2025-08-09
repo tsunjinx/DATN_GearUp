@@ -5,7 +5,7 @@
       <h1>404</h1>
       <h2>Trang không tồn tại</h2>
       <p>Trang bạn đang tìm kiếm không tồn tại hoặc đã bị di chuyển.</p>
-      <router-link to="/" class="back-home">Trở về trang chủ</router-link>
+      <router-link to="/" class="back-home"> Trở về trang chủ </router-link>
     </div>
   </div>
 </template>
@@ -73,25 +73,25 @@ p {
   .not-found {
     padding: 15px;
   }
-  
+
   .not-found-content {
     max-width: 100%;
     padding: 30px 20px;
   }
-  
+
   h1 {
     font-size: 56px;
   }
-  
+
   h2 {
     font-size: 20px;
   }
-  
+
   p {
     font-size: 14px;
     margin-bottom: 25px;
   }
-  
+
   .back-home {
     padding: 12px 20px;
     font-size: 14px;
@@ -102,25 +102,25 @@ p {
   .not-found {
     padding: 10px;
   }
-  
+
   .not-found-content {
     padding: 25px 15px;
   }
-  
+
   h1 {
     font-size: 48px;
   }
-  
+
   h2 {
     font-size: 18px;
     margin-bottom: 12px;
   }
-  
+
   p {
     font-size: 13px;
     margin-bottom: 20px;
   }
-  
+
   .back-home {
     padding: 10px 18px;
     font-size: 13px;
@@ -133,15 +133,15 @@ p {
   .not-found-content {
     padding: 20px 12px;
   }
-  
+
   h1 {
     font-size: 42px;
   }
-  
+
   h2 {
     font-size: 16px;
   }
-  
+
   p {
     font-size: 12px;
   }
@@ -152,11 +152,11 @@ p {
   .back-home {
     min-height: 44px;
   }
-  
+
   .back-home:hover {
     transform: none;
   }
-  
+
   .back-home:active {
     transform: scale(0.98);
   }

@@ -50,15 +50,15 @@
         <h2 class="section-title">Tại sao chọn GearUp?</h2>
         <p class="section-subtitle">Những lợi ích vượt trội khi mua sắm tại GearUp</p>
       </div>
-      
+
       <div class="features-grid">
         <div class="feature-card">
           <div class="feature-icon delivery">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="1" y="3" width="15" height="13"></rect>
-              <polygon points="16,6 20,6 23,11 23,16 16,16"></polygon>
-              <circle cx="5.5" cy="18.5" r="2.5"></circle>
-              <circle cx="18.5" cy="18.5" r="2.5"></circle>
+              <rect x="1" y="3" width="15" height="13" />
+              <polygon points="16,6 20,6 23,11 23,16 16,16" />
+              <circle cx="5.5" cy="18.5" r="2.5" />
+              <circle cx="18.5" cy="18.5" r="2.5" />
             </svg>
           </div>
           <div class="feature-content">
@@ -67,13 +67,13 @@
             <div class="feature-highlight">Miễn phí từ 800K</div>
           </div>
         </div>
-        
+
         <div class="feature-card">
           <div class="feature-icon return">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="1,4 1,10 7,10"></polyline>
-              <polyline points="23,20 23,14 17,14"></polyline>
-              <path d="m20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+              <polyline points="1,4 1,10 7,10" />
+              <polyline points="23,20 23,14 17,14" />
+              <path d="m20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15" />
             </svg>
           </div>
           <div class="feature-content">
@@ -82,12 +82,12 @@
             <div class="feature-highlight">Đổi trả 7 ngày</div>
           </div>
         </div>
-        
+
         <div class="feature-card">
           <div class="feature-icon payment">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-              <line x1="1" y1="10" x2="23" y2="10"></line>
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+              <line x1="1" y1="10" x2="23" y2="10" />
             </svg>
           </div>
           <div class="feature-content">
@@ -96,11 +96,11 @@
             <div class="feature-highlight">Bảo mật 100%</div>
           </div>
         </div>
-        
+
         <div class="feature-card">
           <div class="feature-icon support">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"></path>
+              <path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z" />
             </svg>
           </div>
           <div class="feature-content">
@@ -128,38 +128,23 @@
       <!-- Filter Bar -->
       <div class="products-filter">
         <div class="filter-tabs">
-          <button 
-            :class="['filter-tab', { active: activeFilter === 'all' }]"
-            @click="activeFilter = 'all'"
-          >
+          <button :class="['filter-tab', { active: activeFilter === 'all' }]" @click="activeFilter = 'all'">
             Tất cả
           </button>
-          <button 
-            :class="['filter-tab', { active: activeFilter === 'nike' }]"
-            @click="activeFilter = 'nike'"
-          >
+          <button :class="['filter-tab', { active: activeFilter === 'nike' }]" @click="activeFilter = 'nike'">
             Nike
           </button>
-          <button 
-            :class="['filter-tab', { active: activeFilter === 'adidas' }]"
-            @click="activeFilter = 'adidas'"
-          >
+          <button :class="['filter-tab', { active: activeFilter === 'adidas' }]" @click="activeFilter = 'adidas'">
             Adidas
           </button>
-          <button 
-            :class="['filter-tab', { active: activeFilter === 'puma' }]"
-            @click="activeFilter = 'puma'"
-          >
+          <button :class="['filter-tab', { active: activeFilter === 'puma' }]" @click="activeFilter = 'puma'">
             Puma
           </button>
-          <button 
-            :class="['filter-tab', { active: activeFilter === 'converse' }]"
-            @click="activeFilter = 'converse'"
-          >
+          <button :class="['filter-tab', { active: activeFilter === 'converse' }]" @click="activeFilter = 'converse'">
             Converse
           </button>
         </div>
-        
+
         <div class="sort-controls">
           <select v-model="sortBy" class="sort-select">
             <option value="newest">Mới nhất</option>
@@ -172,7 +157,7 @@
 
       <!-- Loading State -->
       <div v-if="productsLoading" class="products-loading">
-        <div v-for="n in 8" :key="n" class="product-skeleton"></div>
+        <div v-for="n in 8" :key="n" class="product-skeleton" />
       </div>
 
       <!-- Error State -->
@@ -180,53 +165,46 @@
         <div class="error-icon">⚠️</div>
         <h3>Không thể tải sản phẩm</h3>
         <p>{{ productsError }}</p>
-        <Button @click="fetchProducts">Thử lại</Button>
+        <Button @click="fetchProducts"> Thử lại </Button>
       </div>
 
       <!-- Products Grid -->
       <div v-else-if="filteredProducts.length > 0" class="products-grid">
-        <div 
-          v-for="product in displayProducts" 
-          :key="product.id" 
-          class="product-card"
-          @click="goToProduct(product)"
-        >
+        <div v-for="product in displayProducts" :key="product.id" class="product-card" @click="goToProduct(product)">
           <div class="product-image">
-            <img 
-              :src="product.image || '/placeholder-shoe.jpg'" 
-              :alt="product.name"
-              loading="lazy"
-            />
+            <img :src="product.image || '/placeholder-shoe.jpg'" :alt="product.name" loading="lazy" />
             <div class="product-badges">
               <span v-if="product.isNew" class="badge new">Mới</span>
               <span v-if="product.discount" class="badge sale">-{{ product.discount }}%</span>
               <span v-if="product.stock > 0 && product.stock <= 5" class="badge low-stock">Sắp hết</span>
             </div>
             <div class="product-actions">
-              <button 
-                class="action-btn wishlist" 
+              <button
+                class="action-btn wishlist"
                 :class="{ active: isWished(product.id) }"
-                @click.stop="toggleWishlist(product)"
                 :title="isWished(product.id) ? 'Bỏ khỏi yêu thích' : 'Thêm vào yêu thích'"
+                @click.stop="toggleWishlist(product)"
               >
                 {{ isWished(product.id) ? '❤️' : '🤍' }}
               </button>
-              <button 
-                class="action-btn quick-view" 
-                @click.stop="quickViewProduct(product)"
-                title="Xem nhanh"
-              >
+              <button class="action-btn quick-view" title="Xem nhanh" @click.stop="quickViewProduct(product)">
                 👁️
               </button>
             </div>
           </div>
-          
+
           <div class="product-info">
-            <div class="product-brand">{{ product.brand || 'GearUp' }}</div>
-            <h3 class="product-name">{{ product.name }}</h3>
-            <div class="product-rating" v-if="product.rating">
+            <div class="product-brand">
+              {{ product.brand || 'GearUp' }}
+            </div>
+            <h3 class="product-name">
+              {{ product.name }}
+            </h3>
+            <div v-if="product.rating" class="product-rating">
               <div class="stars">
-                <span v-for="n in 5" :key="n" class="star" :class="{ filled: n <= Math.floor(product.rating) }">⭐</span>
+                <span v-for="n in 5" :key="n" class="star" :class="{ filled: n <= Math.floor(product.rating) }"
+                  >⭐</span
+                >
               </div>
               <span class="rating-text">({{ product.rating }})</span>
             </div>
@@ -242,14 +220,9 @@
               </span>
             </div>
           </div>
-          
+
           <div class="product-footer">
-            <Button 
-              size="sm" 
-              :disabled="product.stock === 0"
-              @click.stop="addToCart(product)"
-              class="add-to-cart-btn"
-            >
+            <Button size="sm" :disabled="product.stock === 0" class="add-to-cart-btn" @click.stop="addToCart(product)">
               <span class="btn-icon">🛒</span>
               {{ product.stock === 0 ? 'Hết hàng' : 'Thêm giỏ hàng' }}
             </Button>
@@ -262,16 +235,12 @@
         <div class="empty-icon">📦</div>
         <h3>Không có sản phẩm nào</h3>
         <p>Hiện tại không có sản phẩm nào phù hợp với bộ lọc của bạn.</p>
-        <Button @click="activeFilter = 'all'">Xem tất cả sản phẩm</Button>
+        <Button @click="activeFilter = 'all'"> Xem tất cả sản phẩm </Button>
       </div>
 
       <!-- Show More Button -->
       <div v-if="filteredProducts.length > displayLimit" class="show-more">
-        <Button 
-          variant="outline" 
-          size="lg"
-          @click="displayLimit += 8"
-        >
+        <Button variant="outline" size="lg" @click="displayLimit += 8">
           Xem thêm sản phẩm
           <span class="btn-icon">⬇️</span>
         </Button>
@@ -285,16 +254,10 @@
           <span class="cta-badge-text">Bắt đầu ngay</span>
         </div>
         <h2 class="cta-title">Sẵn sàng khám phá?</h2>
-        <p class="cta-description">
-          Hãy bắt đầu hành trình tìm kiếm đôi giày hoàn hảo của bạn cùng GearUp.
-        </p>
+        <p class="cta-description">Hãy bắt đầu hành trình tìm kiếm đôi giày hoàn hảo của bạn cùng GearUp.</p>
         <div class="cta-actions">
-          <Button size="lg" @click="$router.push('/shop/catalog')">
-            Khám phá sản phẩm
-          </Button>
-          <Button variant="outline" size="lg" @click="$router.push('/shop/account')">
-            Tạo tài khoản
-          </Button>
+          <Button size="lg" @click="$router.push('/shop/catalog')"> Khám phá sản phẩm </Button>
+          <Button variant="outline" size="lg" @click="$router.push('/shop/account')"> Tạo tài khoản </Button>
         </div>
       </div>
     </section>
@@ -333,12 +296,12 @@ const { loading, error, execute } = useApi()
 const fetchProducts = async () => {
   productsLoading.value = true
   productsError.value = null
-  
+
   try {
-    const response = await execute(({ cancelToken }) => 
+    const response = await execute(({ cancelToken }) =>
       productService.getProducts({ inStockOnly: true }, { cancelToken })
     )
-    
+
     if (response?.data) {
       // Add some sample data if API doesn't return enough products
       products.value = response.data.length > 0 ? response.data : getSampleProducts()
@@ -477,12 +440,12 @@ const getSampleProducts = () => [
 // Computed properties
 const filteredProducts = computed(() => {
   let filtered = products.value.filter(product => product.stock > 0)
-  
+
   // Apply brand filter
   if (activeFilter.value !== 'all') {
     filtered = filtered.filter(product => product.brand === activeFilter.value)
   }
-  
+
   // Apply sorting
   switch (sortBy.value) {
     case 'price-asc':
@@ -503,7 +466,7 @@ const filteredProducts = computed(() => {
       })
       break
   }
-  
+
   return filtered
 })
 
@@ -512,21 +475,21 @@ const displayProducts = computed(() => {
 })
 
 // Utility functions
-const formatCurrency = (amount) => {
+const formatCurrency = amount => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
     currency: 'VND'
   }).format(amount)
 }
 
-const getStockStatus = (stock) => {
+const getStockStatus = stock => {
   if (stock === 0) return 'out-of-stock'
   if (stock <= 5) return 'low-stock'
   if (stock <= 10) return 'medium-stock'
   return 'in-stock'
 }
 
-const getStockText = (stock) => {
+const getStockText = stock => {
   if (stock === 0) return 'Hết hàng'
   if (stock <= 5) return `Chỉ còn ${stock} sản phẩm`
   if (stock <= 10) return 'Số lượng có hạn'
@@ -534,11 +497,11 @@ const getStockText = (stock) => {
 }
 
 // Product interactions
-const goToProduct = (product) => {
+const goToProduct = product => {
   router.push(`/shop/details/${product.id}`)
 }
 
-const addToCart = (product) => {
+const addToCart = product => {
   if (product.stock > 0) {
     cart.add(product, 1)
     // Show toast notification (would need a toast system)
@@ -546,15 +509,15 @@ const addToCart = (product) => {
   }
 }
 
-const isWished = (productId) => {
+const isWished = productId => {
   return wishlist.has(productId)
 }
 
-const toggleWishlist = (product) => {
+const toggleWishlist = product => {
   wishlist.toggle(product)
 }
 
-const quickViewProduct = (product) => {
+const quickViewProduct = product => {
   // This would open a quick view modal
   // For now, just navigate to product details
   goToProduct(product)
@@ -1164,19 +1127,18 @@ onMounted(() => {
   display: block;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    var(--gray-100) 0%,
-    var(--gray-200) 50%,
-    var(--gray-100) 100%
-  );
+  background: linear-gradient(90deg, var(--gray-100) 0%, var(--gray-200) 50%, var(--gray-100) 100%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
 
 @keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 /* Error State */
@@ -1299,20 +1261,20 @@ onMounted(() => {
     gap: 2rem;
     text-align: center;
   }
-  
+
   .features-grid {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 1.5rem;
   }
-  
+
   .products-grid {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
-  
+
   .products-loading {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
-  
+
   .section-actions {
     position: static;
     justify-content: center;
@@ -1325,74 +1287,74 @@ onMounted(() => {
     padding: 2rem 1rem;
     margin-bottom: 3rem;
   }
-  
+
   .hero-title {
     font-size: 2rem;
   }
-  
+
   .hero-actions {
     justify-content: center;
   }
-  
+
   .features-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .feature-card {
     padding: 1.5rem;
   }
-  
+
   .section-title {
     font-size: 1.75rem;
   }
-  
+
   .products-section .section-header {
     text-align: center;
     margin-bottom: 2rem;
   }
-  
+
   .products-filter {
     flex-direction: column;
     gap: 1.5rem;
     padding: 1rem;
   }
-  
+
   .filter-tabs {
     justify-content: center;
     flex-wrap: wrap;
   }
-  
+
   .filter-tab {
     padding: 0.5rem 1rem;
     font-size: 0.8125rem;
   }
-  
+
   .sort-select {
     min-width: 150px;
   }
-  
+
   .products-grid {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1.5rem;
   }
-  
+
   .products-loading {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1.5rem;
   }
-  
+
   .product-skeleton {
     height: 400px;
   }
-  
+
   .cta-section {
     padding: 3rem 1.5rem;
   }
-  
+
   .cta-title {
     font-size: 1.875rem;
   }
-  
+
   .cta-actions {
     flex-direction: column;
     align-items: center;
@@ -1403,46 +1365,46 @@ onMounted(() => {
   .products-filter {
     padding: 0.75rem;
   }
-  
+
   .filter-tabs {
     gap: 0.25rem;
   }
-  
+
   .filter-tab {
     padding: 0.5rem 0.75rem;
     font-size: 0.75rem;
   }
-  
+
   .products-grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 1rem;
   }
-  
+
   .products-loading {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 1rem;
   }
-  
+
   .product-card {
     margin-bottom: 1rem;
   }
-  
+
   .product-info {
     padding: 1rem;
   }
-  
+
   .product-name {
     font-size: 1rem;
   }
-  
+
   .current-price {
     font-size: 1.125rem;
   }
-  
+
   .product-footer {
     padding: 0 1rem 1rem;
   }
-  
+
   .product-skeleton {
     height: 350px;
   }
@@ -1452,60 +1414,60 @@ onMounted(() => {
   .hero {
     padding: 1.5rem 1rem;
   }
-  
+
   .hero-title {
     font-size: 1.75rem;
   }
-  
+
   .hero-description {
     font-size: 1rem;
   }
-  
+
   .section-title {
     font-size: 1.5rem;
   }
-  
+
   .section-subtitle {
     font-size: 1rem;
   }
-  
+
   .products-filter {
     padding: 0.5rem;
   }
-  
+
   .filter-tabs {
     grid-template-columns: repeat(3, 1fr);
     display: grid;
     width: 100%;
     gap: 0.25rem;
   }
-  
+
   .filter-tab {
     padding: 0.5rem 0.25rem;
     text-align: center;
     font-size: 0.7rem;
   }
-  
+
   .sort-controls {
     width: 100%;
   }
-  
+
   .sort-select {
     width: 100%;
     min-width: auto;
     font-size: 0.8125rem;
   }
-  
+
   .products-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
+
   .products-loading {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
+
   .product-actions {
     opacity: 1; /* Always visible on mobile */
     position: static;
@@ -1516,7 +1478,7 @@ onMounted(() => {
     margin-bottom: 1rem;
     z-index: 2;
   }
-  
+
   .action-btn {
     width: 36px;
     height: 36px;
@@ -1524,11 +1486,9 @@ onMounted(() => {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(4px);
   }
-  
+
   .cta-title {
     font-size: 1.625rem;
   }
 }
 </style>
-
-

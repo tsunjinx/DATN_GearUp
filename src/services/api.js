@@ -11,7 +11,7 @@ const api = axios.create({
   timeout: 30000, // 30 seconds timeout
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json',
+    Accept: 'application/json',
     'X-Requested-With': 'XMLHttpRequest' // CSRF protection
   }
 })
@@ -25,29 +25,29 @@ const MAX_RETRY_ATTEMPTS = 3
 const RETRY_DELAY = 1000 // 1 second
 
 // Retry logic for failed requests
-const retryRequest = async (error) => {
+const retryRequest = async error => {
   const config = error.config
-  
+
   // Only retry on network errors or 5xx errors
   if (!config || retryCount >= MAX_RETRY_ATTEMPTS) {
     return Promise.reject(error)
   }
-  
+
   if (!error.response || (error.response.status >= 500 && error.response.status < 600)) {
     retryCount++
-    
+
     // Exponential backoff
     const delay = RETRY_DELAY * Math.pow(2, retryCount - 1)
-    
+
     console.warn(`Retrying request... Attempt ${retryCount}/${MAX_RETRY_ATTEMPTS}`)
-    
-    return new Promise((resolve) => {
+
+    return new Promise(resolve => {
       setTimeout(() => {
         resolve(api.request(config))
       }, delay)
     })
   }
-  
+
   return Promise.reject(error)
 }
 
@@ -55,45 +55,45 @@ const retryRequest = async (error) => {
 let isRefreshing = false
 let refreshSubscribers = []
 
-const onRefreshed = (newToken) => {
-  refreshSubscribers.forEach((callback) => callback(newToken))
+const onRefreshed = newToken => {
+  refreshSubscribers.forEach(callback => callback(newToken))
   refreshSubscribers = []
 }
 
-const addRefreshSubscriber = (callback) => {
+const addRefreshSubscriber = callback => {
   refreshSubscribers.push(callback)
 }
 
 const getAccessToken = () => localStorage.getItem('token')
 const getRefreshToken = () => localStorage.getItem('refreshToken')
 
-const setAccessToken = (token) => {
+const setAccessToken = token => {
   if (token) localStorage.setItem('token', token)
 }
 
 // Request interceptor
 api.interceptors.request.use(
-  (config) => {
+  config => {
     // Reset retry count for new requests
     retryCount = 0
-    
+
     // Add auth token
     const token = getAccessToken()
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
-    
+
     // Transform request data from camelCase to snake_case
     if (config.data && config.headers['Content-Type'] === 'application/json') {
       config.data = transformRequest(config.data)
     }
-    
+
     // Add request timestamp for debugging
     config.metadata = { startTime: new Date() }
-    
+
     return config
   },
-  (error) => {
+  error => {
     logError(error, 'Request Interceptor')
     return Promise.reject(error)
   }
@@ -101,21 +101,23 @@ api.interceptors.request.use(
 
 // Response interceptor
 api.interceptors.response.use(
-  (response) => {
+  response => {
     // Log request duration in development
     if (import.meta.env.DEV && response.config.metadata) {
       const duration = new Date() - response.config.metadata.startTime
-      console.log(`✅ ${response.config.method.toUpperCase()} ${response.config.url} - ${duration}ms`)
+      console.log(
+        `✅ ${response.config.method.toUpperCase()} ${response.config.url} - ${duration}ms`
+      )
     }
-    
+
     // Transform response data from snake_case to camelCase
     if (response.data) {
       response.data = transformResponse(response.data)
     }
-    
+
     return response
   },
-  async (error) => {
+  async error => {
     // Handle 401 Unauthorized with refresh token flow
     const originalRequest = error.config
     if (error.response?.status === 401 && !originalRequest._retry) {
@@ -135,7 +137,7 @@ api.interceptors.response.use(
       if (isRefreshing) {
         // Queue the request until refresh completes
         return new Promise((resolve, reject) => {
-          addRefreshSubscriber((newToken) => {
+          addRefreshSubscriber(newToken => {
             if (!newToken) {
               reject(parseApiError(error))
               return
@@ -176,7 +178,7 @@ api.interceptors.response.use(
         isRefreshing = false
       }
     }
-    
+
     // Try retry logic for network/server errors
     if (!error.response || error.response.status >= 500) {
       try {
@@ -187,7 +189,7 @@ api.interceptors.response.use(
         return Promise.reject(apiError)
       }
     }
-    
+
     // Parse and log other errors
     const apiError = parseApiError(error)
     logError(apiError, error.config?.url)

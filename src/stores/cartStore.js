@@ -8,8 +8,8 @@ export const useCartStore = defineStore('cart', {
     items: []
   }),
   getters: {
-    count: (s) => s.items.reduce((n, i) => n + i.quantity, 0),
-    total: (s) => s.items.reduce((n, i) => n + i.price * i.quantity, 0)
+    count: s => s.items.reduce((n, i) => n + i.quantity, 0),
+    total: s => s.items.reduce((n, i) => n + i.price * i.quantity, 0)
   },
   actions: {
     load() {
@@ -19,12 +19,20 @@ export const useCartStore = defineStore('cart', {
       } catch {}
     },
     persist() {
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(this.items)) } catch {}
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.items))
+      } catch {}
     },
     add(product, quantity = 1) {
       const idx = this.items.findIndex(i => i.id === product.id)
       if (idx === -1) {
-        this.items.push({ id: product.id, name: product.name, price: product.price, image: product.image, quantity })
+        this.items.push({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+          quantity
+        })
       } else {
         this.items[idx].quantity += quantity
       }
@@ -47,5 +55,3 @@ export const useCartStore = defineStore('cart', {
     }
   }
 })
-
-

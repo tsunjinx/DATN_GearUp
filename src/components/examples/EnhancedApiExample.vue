@@ -1,67 +1,61 @@
 <template>
   <div class="api-example">
     <h2>Enhanced API Usage Example</h2>
-    
+
     <!-- Search with Debounce -->
     <section class="search-section">
       <h3>🔍 Debounced Search</h3>
-      <input 
-        v-model="searchQuery" 
-        type="text" 
+      <input
+        v-model="searchQuery"
+        type="text"
         placeholder="Tìm kiếm sản phẩm (tự động sau 500ms)..."
         class="form-control"
-      >
-      
-      <div v-if="isSearching" class="loading">
-        <span class="loading-spinner"></span> Đang tìm kiếm...
-      </div>
-      
+      />
+
+      <div v-if="isSearching" class="loading"><span class="loading-spinner" /> Đang tìm kiếm...</div>
+
       <div v-if="searchError" class="error">
         {{ searchError }}
       </div>
-      
+
       <div v-if="searchResults.length > 0" class="results">
         <div v-for="product in searchResults" :key="product.id" class="result-item">
           {{ product.name }} - {{ formatPrice(product.price) }}
         </div>
       </div>
     </section>
-    
+
     <!-- API with Cancellation -->
     <section class="api-section">
       <h3>📡 API with Request Cancellation</h3>
-      
+
       <div class="button-group">
-        <button @click="loadProducts" :disabled="loading" class="btn btn-primary">
+        <button :disabled="loading" class="btn btn-primary" @click="loadProducts">
           {{ loading ? 'Đang tải...' : 'Tải sản phẩm' }}
         </button>
-        
-        <button @click="cancelRequests" :disabled="!loading" class="btn btn-secondary">
-          Hủy yêu cầu
-        </button>
-        
-        <button @click="reset" class="btn btn-outline">
-          Reset
-        </button>
+
+        <button :disabled="!loading" class="btn btn-secondary" @click="cancelRequests">Hủy yêu cầu</button>
+
+        <button class="btn btn-outline" @click="reset">Reset</button>
       </div>
-      
+
       <div v-if="error" class="error">
         {{ error }}
       </div>
-      
+
       <div v-if="data" class="data-display">
         <pre>{{ JSON.stringify(data, null, 2) }}</pre>
       </div>
     </section>
-    
+
     <!-- Parallel Requests -->
     <section class="parallel-section">
       <h3>⚡ Parallel API Requests</h3>
-      
-      <button @click="loadMultipleData" :disabled="parallelLoading" class="btn btn-primary">
+
+      <button :disabled="parallelLoading" class="btn btn-primary" @click="loadMultipleData">
         {{ parallelLoading ? 'Đang tải...' : 'Tải nhiều dữ liệu cùng lúc' }}
       </button>
-      
+
       <div v-if="parallelData" class="data-grid">
         <div v-for="(dataset, index) in parallelData" :key="index" class="data-card">
           <h4>Dataset {{ index + 1 }}</h4>
@@ -83,41 +77,29 @@ import { orderService } from '@/services/orderService'
 // ============================================
 // 1. DEBOUNCED SEARCH EXAMPLE
 // ============================================
-const searchProducts = async (query) => {
+const searchProducts = async query => {
   // Simulate API call
-  const response = await productService.getProducts({ 
+  const response = await productService.getProducts({
     search: query,
-    limit: 5 
+    limit: 5
   })
   return response.data?.items || []
 }
 
-const {
-  searchQuery,
-  searchResults,
-  isSearching,
-  searchError,
-  clearSearch
-} = useDebouncedSearch(searchProducts, 500)
+const { searchQuery, searchResults, isSearching, searchError, clearSearch } = useDebouncedSearch(searchProducts, 500)
 
 // ============================================
 // 2. API WITH CANCELLATION EXAMPLE
 // ============================================
-const {
-  loading,
-  error,
-  data,
-  execute,
-  cancelRequests,
-  reset
-} = useApi()
+const { loading, error, data, execute, cancelRequests, reset } = useApi()
 
 const loadProducts = async () => {
   await execute(
-    (options) => productService.getProducts({ 
-      ...options,
-      limit: 10 
-    }),
+    options =>
+      productService.getProducts({
+        ...options,
+        limit: 10
+      }),
     { showLoading: true, showError: true }
   )
 }
@@ -131,16 +113,16 @@ const parallelData = parallelApi.data
 
 const loadMultipleData = async () => {
   await parallelApi.executeAll([
-    (options) => productService.getProducts({ ...options, limit: 5 }),
-    (options) => customerService.getCustomers({ ...options, limit: 5 }),
-    (options) => orderService.getOrders({ ...options, limit: 5 })
+    options => productService.getProducts({ ...options, limit: 5 }),
+    options => customerService.getCustomers({ ...options, limit: 5 }),
+    options => orderService.getOrders({ ...options, limit: 5 })
   ])
 }
 
 // ============================================
 // HELPER FUNCTIONS
 // ============================================
-const formatPrice = (price) => {
+const formatPrice = price => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
     currency: 'VND'
@@ -250,7 +232,7 @@ h4 {
   .button-group {
     flex-direction: column;
   }
-  
+
   .data-grid {
     grid-template-columns: 1fr;
   }

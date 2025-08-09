@@ -17,36 +17,38 @@ export const exportToCSV = (data, filename, options = {}) => {
 
     // Get headers from first object
     const headers = Object.keys(data[0])
-    
+
     // Convert data to CSV format
     const csvContent = [
       headers.join(','),
-      ...data.map(row => 
-        headers.map(header => {
-          const value = row[header] || ''
-          // Escape commas, quotes and newlines in CSV
-          const cleanValue = value.toString()
-            .replace(/"/g, '""')
-            .replace(/\n/g, ' ')
-            .replace(/\r/g, ' ')
-          return `"${cleanValue}"`
-        }).join(',')
+      ...data.map(row =>
+        headers
+          .map(header => {
+            const value = row[header] || ''
+            // Escape commas, quotes and newlines in CSV
+            const cleanValue = value
+              .toString()
+              .replace(/"/g, '""')
+              .replace(/\n/g, ' ')
+              .replace(/\r/g, ' ')
+            return `"${cleanValue}"`
+          })
+          .join(',')
       )
     ].join('\n')
 
     // Create and download file
-    const blob = new Blob(['\uFEFF' + csvContent], { 
-      type: 'text/csv;charset=utf-8;' 
+    const blob = new Blob(['\uFEFF' + csvContent], {
+      type: 'text/csv;charset=utf-8;'
     })
-    
+
     downloadFile(blob, `${filename}.csv`)
-    
+
     return {
       success: true,
       recordCount: data.length,
       message: `Đã xuất ${data.length} bản ghi thành công!`
     }
-    
   } catch (error) {
     console.error('Lỗi khi xuất Excel:', error)
     return {
@@ -65,15 +67,15 @@ export const exportToCSV = (data, filename, options = {}) => {
 const downloadFile = (blob, filename) => {
   const link = document.createElement('a')
   const url = URL.createObjectURL(blob)
-  
+
   link.setAttribute('href', url)
   link.setAttribute('download', filename)
   link.style.visibility = 'hidden'
-  
+
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)
-  
+
   // Clean up URL object
   URL.revokeObjectURL(url)
 }
@@ -92,7 +94,7 @@ export const generateTimestamp = () => {
  * @param {number} amount - Amount to format
  * @returns {string} Formatted currency
  */
-export const formatCurrencyForExport = (amount) => {
+export const formatCurrencyForExport = amount => {
   if (!amount) return '0'
   return new Intl.NumberFormat('vi-VN').format(amount) + ' VNĐ'
 }
@@ -102,7 +104,7 @@ export const formatCurrencyForExport = (amount) => {
  * @param {Date|string} date - Date to format
  * @returns {string} Formatted date
  */
-export const formatDateForExport = (date) => {
+export const formatDateForExport = date => {
   if (!date) return ''
   return new Intl.DateTimeFormat('vi-VN', {
     year: 'numeric',
@@ -120,25 +122,29 @@ export const formatDateForExport = (date) => {
  */
 export const exportDiscountsToExcel = (discounts, helpers) => {
   const dataToExport = discounts.map((discount, index) => ({
-    'STT': index + 1,
+    STT: index + 1,
     'Mã giảm giá': discount.ma_dot_giam_gia || `DGG${discount.id}`,
     'Tên chương trình': discount.ten_dot_giam_gia || discount.name,
     'Mô tả': discount.description,
     'Loại giảm giá': discount.type === 'percentage' ? 'Giảm phần trăm' : 'Giảm tiền cố định',
     'Giá trị': discount.value,
     'Đơn vị': discount.type === 'percentage' ? '%' : 'VNĐ',
-    'Giảm tối đa': discount.so_len_giam_toi_da ? formatCurrencyForExport(discount.so_len_giam_toi_da) : 'Không giới hạn',
+    'Giảm tối đa': discount.so_len_giam_toi_da
+      ? formatCurrencyForExport(discount.so_len_giam_toi_da)
+      : 'Không giới hạn',
     'Ngày bắt đầu': formatDateForExport(discount.ngay_bat_dau || discount.startDate),
     'Ngày kết thúc': formatDateForExport(discount.ngay_ket_thuc || discount.endDate),
     'Trạng thái': helpers.getDiscountStatusText(discount),
-    'Giá trị đơn hàng tối thiểu': discount.minOrderValue ? formatCurrencyForExport(discount.minOrderValue) : 'Không yêu cầu',
+    'Giá trị đơn hàng tối thiểu': discount.minOrderValue
+      ? formatCurrencyForExport(discount.minOrderValue)
+      : 'Không yêu cầu',
     'Áp dụng cho': helpers.getApplicableProductsText(discount),
     'Đang hoạt động': discount.isActive ? 'Có' : 'Không'
   }))
 
   const timestamp = generateTimestamp()
   const filename = `danh_sach_giam_gia_${timestamp}`
-  
+
   return exportToCSV(dataToExport, filename)
 }
 
@@ -149,7 +155,7 @@ export const exportDiscountsToExcel = (discounts, helpers) => {
  */
 export const exportCouponsToExcel = (coupons, helpers) => {
   const dataToExport = coupons.map((coupon, index) => ({
-    'STT': index + 1,
+    STT: index + 1,
     'Mã phiếu giảm giá': coupon.code,
     'Tên phiếu': coupon.ten_phieu_giam_gia || coupon.name,
     'Chi tiết': coupon.chi_phieu_giam_gia || coupon.description,
@@ -162,13 +168,17 @@ export const exportCouponsToExcel = (coupons, helpers) => {
     'Ngày bắt đầu': formatDateForExport(coupon.ngay_bat_dau || coupon.startDate),
     'Ngày kết thúc': formatDateForExport(coupon.ngay_ket_thuc || coupon.endDate),
     'Trạng thái': helpers.getCouponStatusText(coupon),
-    'Giá trị đơn hàng tối thiểu': coupon.minOrderValue ? formatCurrencyForExport(coupon.minOrderValue) : 'Không yêu cầu',
-    'Giảm tối đa': coupon.maxDiscountAmount ? formatCurrencyForExport(coupon.maxDiscountAmount) : 'Không giới hạn',
+    'Giá trị đơn hàng tối thiểu': coupon.minOrderValue
+      ? formatCurrencyForExport(coupon.minOrderValue)
+      : 'Không yêu cầu',
+    'Giảm tối đa': coupon.maxDiscountAmount
+      ? formatCurrencyForExport(coupon.maxDiscountAmount)
+      : 'Không giới hạn',
     'Đang hoạt động': coupon.isActive ? 'Có' : 'Không'
   }))
 
   const timestamp = generateTimestamp()
   const filename = `danh_sach_phieu_giam_gia_${timestamp}`
-  
+
   return exportToCSV(dataToExport, filename)
 }

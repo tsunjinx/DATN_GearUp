@@ -21,7 +21,10 @@ export function useNotifications() {
 
   const saveToStorage = () => {
     try {
-      const toSave = notifications.value.map(n => ({ ...n, timestamp: n.timestamp instanceof Date ? n.timestamp.toISOString() : n.timestamp }))
+      const toSave = notifications.value.map(n => ({
+        ...n,
+        timestamp: n.timestamp instanceof Date ? n.timestamp.toISOString() : n.timestamp
+      }))
       localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave))
     } catch {}
   }
@@ -29,7 +32,15 @@ export function useNotifications() {
   const seedIfEmpty = () => {
     if (notifications.value.length === 0) {
       notifications.value = [
-        { id: 1, title: 'Đơn hàng mới', message: 'Đơn hàng #1234 vừa được đặt', icon: '🛒', timestamp: new Date(), isRead: false, type: 'order' }
+        {
+          id: 1,
+          title: 'Đơn hàng mới',
+          message: 'Đơn hàng #1234 vừa được đặt',
+          icon: '🛒',
+          timestamp: new Date(),
+          isRead: false,
+          type: 'order'
+        }
       ]
     }
   }
@@ -40,7 +51,15 @@ export function useNotifications() {
     if (Math.random() < 0.15) {
       const id = Date.now()
       notifications.value = [
-        { id, title: 'Cập nhật kho', message: 'Một sản phẩm vừa giảm tồn', icon: '⚠️', timestamp: now, isRead: false, type: 'inventory' },
+        {
+          id,
+          title: 'Cập nhật kho',
+          message: 'Một sản phẩm vừa giảm tồn',
+          icon: '⚠️',
+          timestamp: now,
+          isRead: false,
+          type: 'inventory'
+        },
         ...notifications.value
       ]
       saveToStorage()
@@ -61,7 +80,7 @@ export function useNotifications() {
     }
   }
 
-  const markAsRead = (id) => {
+  const markAsRead = id => {
     const idx = notifications.value.findIndex(n => n.id === id)
     if (idx !== -1) {
       notifications.value[idx] = { ...notifications.value[idx], isRead: true }
@@ -86,5 +105,3 @@ export function useNotifications() {
     markAllAsRead
   }
 }
-
-

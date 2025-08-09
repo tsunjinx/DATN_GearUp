@@ -29,15 +29,10 @@
           <div class="search-group">
             <div class="search-input-wrapper">
               <i class="search-icon">🔍</i>
-              <input 
-                v-model="searchTerm" 
-                type="text" 
-                placeholder="Tìm kiếm theo tên, mô tả..." 
-                class="search-input"
-              />
+              <input v-model="searchTerm" type="text" placeholder="Tìm kiếm theo tên, mô tả..." class="search-input" />
             </div>
           </div>
-          
+
           <div class="filter-controls">
             <select v-model="selectedStatus" class="filter-select">
               <option value="">Tất cả trạng thái</option>
@@ -46,20 +41,20 @@
               <option value="expired">Đã hết hạn</option>
               <option value="disabled">Đã tắt</option>
             </select>
-            
+
             <select v-model="selectedType" class="filter-select">
               <option value="">Tất cả loại</option>
               <option value="percentage">Giảm phần trăm</option>
               <option value="fixed">Giảm tiền cố định</option>
             </select>
-            
-            <button v-if="hasActiveFilters" @click="clearFilters" class="clear-filters-btn">
+
+            <button v-if="hasActiveFilters" class="clear-filters-btn" @click="clearFilters">
               <i class="btn-icon">✕</i>
               Xóa bộ lọc
             </button>
           </div>
         </div>
-        
+
         <div class="results-summary">
           Hiển thị {{ filteredDiscounts.length }} / {{ sampleDiscounts.length }} kết quả
         </div>
@@ -69,7 +64,7 @@
     <!-- Table Section -->
     <main class="table-section">
       <div v-if="isLoading" class="loading-state">
-        <div class="loading-spinner"></div>
+        <div class="loading-spinner" />
         <p>Đang tải dữ liệu...</p>
       </div>
 
@@ -86,7 +81,13 @@
       <div v-else-if="filteredDiscounts.length === 0" class="empty-state">
         <div class="empty-icon">💸</div>
         <h3>Không tìm thấy kết quả</h3>
-        <p>{{ searchTerm || selectedStatus || selectedType ? 'Thử thay đổi bộ lọc để xem kết quả khác' : 'Tạo chương trình giảm giá đầu tiên của bạn' }}</p>
+        <p>
+          {{
+            searchTerm || selectedStatus || selectedType
+              ? 'Thử thay đổi bộ lọc để xem kết quả khác'
+              : 'Tạo chương trình giảm giá đầu tiên của bạn'
+          }}
+        </p>
         <button v-if="!searchTerm && !selectedStatus && !selectedType" class="btn btn-primary" @click="openAddModal">
           <i class="btn-icon">➕</i>
           Tạo giảm giá đầu tiên
@@ -109,27 +110,40 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(discount, index) in filteredDiscounts" :key="discount.id" class="discount-row" :data-discount-id="discount.id">
-              <td class="col-stt">{{ index + 1 }}</td>
-              
-              <td class="col-code">
-                <div class="discount-code">{{ discount.ma_dot_giam_gia || 'DGG' + discount.id }}</div>
+            <tr
+              v-for="(discount, index) in filteredDiscounts"
+              :key="discount.id"
+              class="discount-row"
+              :data-discount-id="discount.id"
+            >
+              <td class="col-stt">
+                {{ index + 1 }}
               </td>
-              
-              <td class="col-name">
-                <div class="discount-info">
-                  <div class="discount-name">{{ discount.ten_dot_giam_gia || discount.name }}</div>
-                  <div class="discount-description">{{ discount.description }}</div>
+
+              <td class="col-code">
+                <div class="discount-code">
+                  {{ discount.ma_dot_giam_gia || 'DGG' + discount.id }}
                 </div>
               </td>
-              
+
+              <td class="col-name">
+                <div class="discount-info">
+                  <div class="discount-name">
+                    {{ discount.ten_dot_giam_gia || discount.name }}
+                  </div>
+                  <div class="discount-description">
+                    {{ discount.description }}
+                  </div>
+                </div>
+              </td>
+
               <td class="col-value">
                 <div class="discount-value">
                   <span class="value-number">{{ discount.value }}</span>
                   <span class="value-unit">{{ discount.type === 'percentage' ? '%' : 'VNĐ' }}</span>
                 </div>
               </td>
-              
+
               <td class="col-max">
                 <div class="max-discount-amount">
                   <span v-if="discount.so_len_giam_toi_da || discount.maxDiscountAmount">
@@ -138,49 +152,53 @@
                   <span v-else class="no-limit">Không giới hạn</span>
                 </div>
               </td>
-              
+
               <td class="col-status">
                 <StatusBadge :status="getDiscountStatus(discount)" />
               </td>
-              
+
               <td class="col-start">
                 <div class="date-info">
-                  <div class="date-main">{{ formatDate(discount.ngay_bat_dau || discount.startDate) }}</div>
+                  <div class="date-main">
+                    {{ formatDate(discount.ngay_bat_dau || discount.startDate) }}
+                  </div>
                   <div class="date-status" :class="getStartDateStatusClass(discount)">
                     {{ getStartDateStatusText(discount) }}
                   </div>
                 </div>
               </td>
-              
+
               <td class="col-end">
                 <div class="date-info">
-                  <div class="date-main">{{ formatDate(discount.ngay_ket_thuc || discount.endDate) }}</div>
+                  <div class="date-main">
+                    {{ formatDate(discount.ngay_ket_thuc || discount.endDate) }}
+                  </div>
                   <div class="date-status" :class="getEndDateStatusClass(discount)">
                     {{ getEndDateStatusText(discount) }}
                   </div>
                 </div>
               </td>
-              
+
               <td class="col-actions">
                 <div class="action-buttons">
-                  <button class="action-btn edit-btn" @click="editDiscount(discount)" title="Chỉnh sửa">
+                  <button class="action-btn edit-btn" title="Chỉnh sửa" @click="editDiscount(discount)">
                     <i class="btn-icon">✏️</i>
                   </button>
-                  <button 
-                    class="action-btn toggle-btn" 
+                  <button
+                    class="action-btn toggle-btn"
                     :class="[
                       discount.isActive ? 'pause-btn' : 'play-btn',
-                      { 'loading': uiState.toggleLoadingIds.has(discount.id) }
+                      { loading: uiState.toggleLoadingIds.has(discount.id) }
                     ]"
-                    @click="toggleDiscountStatus(discount)"
                     :title="discount.isActive ? 'Tạm dừng' : 'Kích hoạt'"
                     :disabled="uiState.toggleLoadingIds.has(discount.id)"
+                    @click="toggleDiscountStatus(discount)"
                   >
-                    <i class="btn-icon" v-if="!uiState.toggleLoadingIds.has(discount.id)">
+                    <i v-if="!uiState.toggleLoadingIds.has(discount.id)" class="btn-icon">
                       {{ discount.isActive ? '⏸️' : '▶️' }}
                     </i>
                   </button>
-                  <button class="action-btn delete-btn" @click="deleteDiscount(discount.id)" title="Xóa">
+                  <button class="action-btn delete-btn" title="Xóa" @click="deleteDiscount(discount.id)">
                     <i class="btn-icon">🗑️</i>
                   </button>
                 </div>
@@ -206,7 +224,7 @@
           </div>
 
           <div class="modal-body">
-            <form @submit.prevent="saveDiscount" class="discount-form">
+            <form class="discount-form" @submit.prevent="saveDiscount">
               <div class="form-grid">
                 <!-- Left Column -->
                 <div class="form-column">
@@ -215,13 +233,13 @@
                       <i class="label-icon">🏷️</i>
                       Tên chương trình *
                     </label>
-                    <input 
-                      id="name" 
-                      v-model="discountForm.name" 
-                      type="text" 
-                      required 
+                    <input
+                      id="name"
+                      v-model="discountForm.name"
+                      type="text"
+                      required
                       placeholder="Ví dụ: Flash Sale Cuối Tuần"
-                      class="form-control" 
+                      class="form-control"
                     />
                   </div>
 
@@ -230,14 +248,14 @@
                       <i class="label-icon">📝</i>
                       Mô tả *
                     </label>
-                    <textarea 
-                      id="description" 
-                      v-model="discountForm.description" 
-                      required 
+                    <textarea
+                      id="description"
+                      v-model="discountForm.description"
+                      required
                       rows="3"
                       placeholder="Mô tả chi tiết về chương trình giảm giá..."
                       class="form-control"
-                    ></textarea>
+                    />
                   </div>
 
                   <div class="form-row">
@@ -259,15 +277,15 @@
                         Giá trị giảm *
                       </label>
                       <div class="input-with-unit">
-                        <input 
-                          id="value" 
-                          v-model.number="discountForm.value" 
-                          type="number" 
-                          required 
+                        <input
+                          id="value"
+                          v-model.number="discountForm.value"
+                          type="number"
+                          required
                           :min="1"
                           :max="discountForm.type === 'percentage' ? 100 : undefined"
                           placeholder="0"
-                          class="form-control" 
+                          class="form-control"
                         />
                         <span class="input-unit">
                           {{ discountForm.type === 'percentage' ? '%' : 'VNĐ' }}
@@ -282,12 +300,12 @@
                         <i class="label-icon">📅</i>
                         Ngày bắt đầu *
                       </label>
-                      <input 
-                        id="startDate" 
-                        v-model="discountForm.startDate" 
-                        type="datetime-local" 
+                      <input
+                        id="startDate"
+                        v-model="discountForm.startDate"
+                        type="datetime-local"
                         required
-                        class="form-control" 
+                        class="form-control"
                       />
                     </div>
 
@@ -296,12 +314,12 @@
                         <i class="label-icon">📅</i>
                         Ngày kết thúc *
                       </label>
-                      <input 
-                        id="endDate" 
-                        v-model="discountForm.endDate" 
-                        type="datetime-local" 
+                      <input
+                        id="endDate"
+                        v-model="discountForm.endDate"
+                        type="datetime-local"
                         required
-                        class="form-control" 
+                        class="form-control"
                       />
                     </div>
                   </div>
@@ -329,10 +347,10 @@
                     </label>
                     <div class="checkbox-group">
                       <label v-for="category in availableCategories" :key="category.id" class="checkbox-item">
-                        <input 
-                          type="checkbox" 
-                          :value="category.id"
+                        <input
                           v-model="discountForm.applicableCategories"
+                          type="checkbox"
+                          :value="category.id"
                           class="checkbox-input"
                         />
                         <span class="checkbox-label">{{ category.name }}</span>
@@ -346,18 +364,18 @@
                       Chọn sản phẩm
                     </label>
                     <div class="product-selector">
-                      <input 
-                        type="text" 
+                      <input
                         v-model="productSearchTerm"
+                        type="text"
                         placeholder="Tìm kiếm sản phẩm..."
                         class="form-control"
                       />
                       <div class="product-list">
                         <label v-for="product in filteredProducts" :key="product.id" class="checkbox-item">
-                          <input 
-                            type="checkbox" 
-                            :value="product.id"
+                          <input
                             v-model="discountForm.applicableProducts"
+                            type="checkbox"
+                            :value="product.id"
                             class="checkbox-input"
                           />
                           <span class="checkbox-label">{{ product.name }}</span>
@@ -371,13 +389,13 @@
                       <i class="label-icon">🛒</i>
                       Giá trị đơn hàng tối thiểu
                     </label>
-                    <input 
-                      id="minOrderValue" 
-                      v-model.number="discountForm.minOrderValue" 
-                      type="number" 
+                    <input
+                      id="minOrderValue"
+                      v-model.number="discountForm.minOrderValue"
+                      type="number"
                       min="0"
-                      placeholder="0" 
-                      class="form-control" 
+                      placeholder="0"
+                      class="form-control"
                     />
                     <div class="form-hint">Để trống nếu không yêu cầu giá trị tối thiểu</div>
                   </div>
@@ -387,13 +405,13 @@
                       <i class="label-icon">🎯</i>
                       Số tiền giảm tối đa
                     </label>
-                    <input 
-                      id="maxDiscountAmount" 
-                      v-model.number="discountForm.maxDiscountAmount" 
-                      type="number" 
+                    <input
+                      id="maxDiscountAmount"
+                      v-model.number="discountForm.maxDiscountAmount"
+                      type="number"
                       min="0"
-                      placeholder="Không giới hạn" 
-                      class="form-control" 
+                      placeholder="Không giới hạn"
+                      class="form-control"
                     />
                     <div class="form-hint">Giới hạn số tiền giảm tối đa cho phần trăm</div>
                   </div>
@@ -403,7 +421,7 @@
               <div class="form-status">
                 <label class="checkbox-wrapper">
                   <input v-model="discountForm.isActive" type="checkbox" class="form-checkbox" />
-                  <span class="checkbox-mark"></span>
+                  <span class="checkbox-mark" />
                   <span class="checkbox-label">
                     <i class="checkbox-icon">✅</i>
                     Kích hoạt chương trình ngay sau khi tạo
@@ -555,9 +573,8 @@ const filteredDiscounts = computed(() => {
 
   if (searchTerm.value) {
     const search = searchTerm.value.toLowerCase()
-    discounts = discounts.filter(discount =>
-      discount.name.toLowerCase().includes(search) ||
-      discount.description.toLowerCase().includes(search)
+    discounts = discounts.filter(
+      discount => discount.name.toLowerCase().includes(search) || discount.description.toLowerCase().includes(search)
     )
   }
 
@@ -587,15 +604,13 @@ const errorMessage = computed(() => uiState.value.errorMessage)
 
 const filteredProducts = computed(() => {
   if (!productSearchTerm.value) return availableProducts.value
-  
+
   const search = productSearchTerm.value.toLowerCase()
-  return availableProducts.value.filter(product =>
-    product.name.toLowerCase().includes(search)
-  )
+  return availableProducts.value.filter(product => product.name.toLowerCase().includes(search))
 })
 
 // Helper functions
-const formatCurrency = (amount) => {
+const formatCurrency = amount => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
     currency: 'VND'
@@ -609,7 +624,7 @@ const formatDateRange = (startDate, endDate) => {
   return `${start} - ${end}`
 }
 
-const formatDate = (date) => {
+const formatDate = date => {
   return new Intl.DateTimeFormat('vi-VN', {
     year: 'numeric',
     month: '2-digit',
@@ -619,96 +634,95 @@ const formatDate = (date) => {
   }).format(new Date(date))
 }
 
-const isExpired = (endDate) => {
+const isExpired = endDate => {
   return new Date(endDate) < new Date()
 }
 
-const isScheduled = (startDate) => {
+const isScheduled = startDate => {
   return new Date(startDate) > new Date()
 }
 
-const isActive = (discount) => {
+const isActive = discount => {
   const now = new Date()
   const start = new Date(discount.startDate)
   const end = new Date(discount.endDate)
   return discount.isActive && now >= start && now <= end
 }
 
-const getDiscountStatus = (discount) => {
+const getDiscountStatus = discount => {
   // Check expired first - this takes priority over isActive
   if (isExpired(discount.endDate)) return 'expired'
-  
+
   // Check if manually disabled via toggle
   if (!discount.isActive) return 'disabled'
-  
+
   // Check if scheduled for future
   if (isScheduled(discount.startDate)) return 'scheduled'
-  
+
   // Active and within date range
   return 'active'
 }
 
-const getDiscountTypeText = (type) => {
+const getDiscountTypeText = type => {
   return type === 'percentage' ? 'Giảm %' : 'Giảm tiền'
 }
 
-const getPeriodStatusClass = (discount) => {
+const getPeriodStatusClass = discount => {
   const status = getDiscountStatus(discount)
   return `period-${status}`
 }
 
-const getPeriodStatusText = (discount) => {
+const getPeriodStatusText = discount => {
   const now = new Date()
   const start = new Date(discount.startDate)
   const end = new Date(discount.endDate)
-  
+
   if (isExpired(end)) return 'Đã kết thúc'
   if (isScheduled(start)) return 'Chưa bắt đầu'
   if (now >= start && now <= end) return 'Đang diễn ra'
   return ''
 }
 
-const getStartDateStatusClass = (discount) => {
+const getStartDateStatusClass = discount => {
   const start = new Date(discount.ngay_bat_dau || discount.startDate)
   const now = new Date()
-  
+
   if (now < start) return 'date-future'
   if (now.toDateString() === start.toDateString()) return 'date-today'
   return 'date-past'
 }
 
-
-const getStartDateStatusText = (discount) => {
+const getStartDateStatusText = discount => {
   const start = new Date(discount.ngay_bat_dau || discount.startDate)
   const now = new Date()
-  
+
   if (now < start) return 'Sắp diễn ra'
   if (now.toDateString() === start.toDateString()) return 'Bắt đầu hôm nay'
   return 'Đã bắt đầu'
 }
 
-const getEndDateStatusClass = (discount) => {
+const getEndDateStatusClass = discount => {
   const end = new Date(discount.ngay_ket_thuc || discount.endDate)
   const now = new Date()
-  
+
   if (now > end) return 'date-expired'
   if (now.toDateString() === end.toDateString()) return 'date-today'
   return 'date-active'
 }
 
-const getEndDateStatusText = (discount) => {
+const getEndDateStatusText = discount => {
   const end = new Date(discount.ngay_ket_thuc || discount.endDate)
   const now = new Date()
-  
+
   if (now > end) return 'Đã hết hạn'
   if (now.toDateString() === end.toDateString()) return 'Hết hạn hôm nay'
-  
+
   const daysLeft = Math.ceil((end - now) / (1000 * 60 * 60 * 24))
   if (daysLeft <= 7) return `Còn ${daysLeft} ngày`
   return 'Còn hiệu lực'
 }
 
-const getApplicableProductsText = (discount) => {
+const getApplicableProductsText = discount => {
   switch (discount.applicableType) {
     case 'all':
       return 'Tất cả sản phẩm'
@@ -751,29 +765,28 @@ const exportToExcel = () => {
       getDiscountStatusText,
       getApplicableProductsText
     }
-    
+
     const result = exportDiscountsToExcel(filteredDiscounts.value, helpers)
-    
+
     if (result.success) {
       console.log(`✅ ${result.message}`)
       // You could also show a toast notification here
     } else {
       throw new Error(result.message)
     }
-    
   } catch (error) {
     console.error('Lỗi khi xuất Excel:', error)
     alert('Có lỗi xảy ra khi xuất file Excel. Vui lòng thử lại!')
   }
 }
 
-const getDiscountStatusText = (discount) => {
+const getDiscountStatusText = discount => {
   const status = getDiscountStatus(discount)
   const statusMap = {
-    'active': 'Đang áp dụng',
-    'scheduled': 'Chờ áp dụng', 
-    'expired': 'Đã hết hạn',
-    'disabled': 'Đã tắt'
+    active: 'Đang áp dụng',
+    scheduled: 'Chờ áp dụng',
+    expired: 'Đã hết hạn',
+    disabled: 'Đã tắt'
   }
   return statusMap[status] || status
 }
@@ -783,7 +796,7 @@ const openAddModal = () => {
   uiState.value.showAddModal = true
 }
 
-const editDiscount = (discount) => {
+const editDiscount = discount => {
   editingDiscount.value = discount
   discountForm.value = {
     ...discount,
@@ -793,7 +806,7 @@ const editDiscount = (discount) => {
   uiState.value.showEditModal = true
 }
 
-const toggleDiscountStatus = async (discount) => {
+const toggleDiscountStatus = async discount => {
   // Prevent multiple simultaneous toggles for the same discount
   if (uiState.value.toggleLoadingIds.has(discount.id)) {
     return
@@ -809,7 +822,7 @@ const toggleDiscountStatus = async (discount) => {
   if (!discount.isActive && isScheduled(discount.startDate)) {
     const confirmEarly = confirm(
       `Chương trình giảm giá "${discount.name}" được lên lịch bắt đầu từ ${formatDate(discount.startDate)}.\n\n` +
-      'Bạn có muốn kích hoạt sớm không?'
+        'Bạn có muốn kích hoạt sớm không?'
     )
     if (!confirmEarly) {
       return
@@ -820,7 +833,7 @@ const toggleDiscountStatus = async (discount) => {
   if (discount.isActive) {
     const confirmDeactivate = confirm(
       `Bạn có chắc chắn muốn tạm dừng chương trình giảm giá "${discount.name}"?\n\n` +
-      'Khách hàng sẽ không thể sử dụng ưu đãi này nữa cho đến khi được kích hoạt lại.'
+        'Khách hàng sẽ không thể sử dụng ưu đãi này nữa cho đến khi được kích hoạt lại.'
     )
     if (!confirmDeactivate) {
       return
@@ -830,7 +843,7 @@ const toggleDiscountStatus = async (discount) => {
   try {
     // Add loading state
     uiState.value.toggleLoadingIds.add(discount.id)
-    
+
     // Simulate API call with loading state
     const previousState = discount.isActive
     discount.isActive = !discount.isActive
@@ -838,7 +851,7 @@ const toggleDiscountStatus = async (discount) => {
     // Show success notification
     const statusText = discount.isActive ? 'kích hoạt' : 'tạm dừng'
     console.log(`✅ Đã ${statusText} chương trình giảm giá "${discount.name}" thành công!`)
-    
+
     // Add visual feedback by temporarily highlighting the row
     const rowElement = document.querySelector(`[data-discount-id="${discount.id}"]`)
     if (rowElement) {
@@ -850,7 +863,6 @@ const toggleDiscountStatus = async (discount) => {
 
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 800))
-
   } catch (error) {
     // Revert state on error
     discount.isActive = !discount.isActive
@@ -862,7 +874,7 @@ const toggleDiscountStatus = async (discount) => {
   }
 }
 
-const deleteDiscount = (id) => {
+const deleteDiscount = id => {
   if (confirm('Bạn có chắc chắn muốn xóa chương trình giảm giá này?')) {
     sampleDiscounts.value = sampleDiscounts.value.filter(d => d.id !== id)
   }
@@ -966,7 +978,6 @@ onMounted(() => {
 .title-icon {
   font-size: 36px;
 }
-
 
 .header-actions {
   display: flex;
@@ -1371,8 +1382,12 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .toggle-btn.play-btn {
@@ -1422,8 +1437,12 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .error-icon,
@@ -1734,7 +1753,7 @@ onMounted(() => {
     max-width: 100%;
     padding: 20px;
   }
-  
+
   .discounts-table {
     min-width: 1100px; /* Reduce minimum width slightly */
   }
@@ -1745,17 +1764,17 @@ onMounted(() => {
     font-size: 13px;
     min-width: 1000px;
   }
-  
+
   .discounts-table th,
   .discounts-table td {
     padding: 10px 12px;
   }
-  
+
   /* Adjust column widths for medium screens */
   .col-name {
     width: 200px;
   }
-  
+
   .col-start,
   .col-end {
     width: 140px;
@@ -1795,12 +1814,12 @@ onMounted(() => {
   .table-container {
     font-size: 12px;
   }
-  
+
   .action-buttons {
     flex-direction: column;
     gap: 4px;
   }
-  
+
   .action-btn {
     width: 28px;
     height: 28px;

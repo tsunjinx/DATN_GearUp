@@ -44,24 +44,24 @@ export function useForm(initialData = {}) {
 
   const validate = (rules = {}) => {
     clearErrors()
-    
+
     Object.keys(rules).forEach(field => {
       const rule = rules[field]
       const value = formData.value[field]
-      
+
       if (rule.required && !value) {
         setError(field, `${field} là bắt buộc`)
       }
-      
+
       if (rule.minLength && value && value.length < rule.minLength) {
         setError(field, `${field} phải có ít nhất ${rule.minLength} ký tự`)
       }
-      
+
       if (rule.pattern && value && !rule.pattern.test(value)) {
         setError(field, rule.message || `${field} không đúng định dạng`)
       }
     })
-    
+
     return isValid.value
   }
 
@@ -70,11 +70,11 @@ export function useForm(initialData = {}) {
     formData,
     errors,
     isSubmitting,
-    
+
     // Computed
     isValid,
     hasChanges,
-    
+
     // Methods
     setField,
     setError,

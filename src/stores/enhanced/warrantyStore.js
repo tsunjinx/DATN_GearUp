@@ -10,15 +10,13 @@ export const useWarrantyStore = defineStore('warranty', () => {
   const error = ref(null)
 
   // Getters
-  const getAllWarranties = computed(() => 
-    warranties.value.filter(item => !item.deleted)
-  )
-  
-  const getActiveWarranties = computed(() => 
+  const getAllWarranties = computed(() => warranties.value.filter(item => !item.deleted))
+
+  const getActiveWarranties = computed(() =>
     getAllWarranties.value.filter(warranty => warranty.trang_thai === 'active')
   )
 
-  const getExpiredWarranties = computed(() => 
+  const getExpiredWarranties = computed(() =>
     getAllWarranties.value.filter(warranty => {
       const expireDate = new Date(warranty.ngày_hết_han)
       return expireDate < new Date()
@@ -28,7 +26,7 @@ export const useWarrantyStore = defineStore('warranty', () => {
   const getExpiringWarranties = computed(() => {
     const thirtyDaysFromNow = new Date()
     thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30)
-    
+
     return getAllWarranties.value.filter(warranty => {
       const expireDate = new Date(warranty.ngày_hết_han)
       const now = new Date()
@@ -36,16 +34,15 @@ export const useWarrantyStore = defineStore('warranty', () => {
     })
   })
 
-  const getAllWarrantyRepairs = computed(() => 
-    warrantyRepairs.value.filter(item => !item.deleted)
+  const getAllWarrantyRepairs = computed(() => warrantyRepairs.value.filter(item => !item.deleted))
+
+  const getWarrantyById = computed(
+    () => id => warranties.value.find(w => w.id === id && !w.deleted)
   )
 
-  const getWarrantyById = computed(() => (id) => 
-    warranties.value.find(w => w.id === id && !w.deleted)
-  )
-
-  const getRepairsByWarrantyId = computed(() => (warrantyId) => 
-    getAllWarrantyRepairs.value.filter(repair => repair.id_phieu_bao_hanh === warrantyId)
+  const getRepairsByWarrantyId = computed(
+    () => warrantyId =>
+      getAllWarrantyRepairs.value.filter(repair => repair.id_phieu_bao_hanh === warrantyId)
   )
 
   // Statistics
@@ -65,7 +62,7 @@ export const useWarrantyStore = defineStore('warranty', () => {
     try {
       const response = await fetch('/api/admin/warranties')
       if (!response.ok) throw new Error('Failed to fetch warranties')
-      
+
       const data = await response.json()
       warranties.value = data.data || []
     } catch (err) {
@@ -81,7 +78,7 @@ export const useWarrantyStore = defineStore('warranty', () => {
     try {
       const response = await fetch('/api/admin/warranty-repairs')
       if (!response.ok) throw new Error('Failed to fetch warranty repairs')
-      
+
       const data = await response.json()
       warrantyRepairs.value = data.data || []
     } catch (err) {
@@ -93,13 +90,10 @@ export const useWarrantyStore = defineStore('warranty', () => {
   }
 
   const fetchAll = async () => {
-    await Promise.all([
-      fetchWarranties(),
-      fetchWarrantyRepairs()
-    ])
+    await Promise.all([fetchWarranties(), fetchWarrantyRepairs()])
   }
 
-  const createWarranty = async (warrantyData) => {
+  const createWarranty = async warrantyData => {
     loading.value = true
     try {
       const response = await fetch('/api/admin/warranties', {
@@ -118,10 +112,10 @@ export const useWarrantyStore = defineStore('warranty', () => {
       })
 
       if (!response.ok) throw new Error('Failed to create warranty')
-      
+
       const newWarranty = await response.json()
       warranties.value.push(newWarranty.data)
-      
+
       return newWarranty.data
     } catch (err) {
       error.value = 'Failed to create warranty'
@@ -143,13 +137,13 @@ export const useWarrantyStore = defineStore('warranty', () => {
       })
 
       if (!response.ok) throw new Error('Failed to update warranty')
-      
+
       const updatedWarranty = await response.json()
       const index = warranties.value.findIndex(w => w.id === id)
       if (index !== -1) {
         warranties.value[index] = updatedWarranty.data
       }
-      
+
       return updatedWarranty.data
     } catch (err) {
       error.value = 'Failed to update warranty'
@@ -159,7 +153,7 @@ export const useWarrantyStore = defineStore('warranty', () => {
     }
   }
 
-  const deleteWarranty = async (id) => {
+  const deleteWarranty = async id => {
     loading.value = true
     try {
       const response = await fetch(`/api/admin/warranties/${id}`, {
@@ -167,7 +161,7 @@ export const useWarrantyStore = defineStore('warranty', () => {
       })
 
       if (!response.ok) throw new Error('Failed to delete warranty')
-      
+
       // Soft delete
       const index = warranties.value.findIndex(w => w.id === id)
       if (index !== -1) {
@@ -181,7 +175,7 @@ export const useWarrantyStore = defineStore('warranty', () => {
     }
   }
 
-  const createWarrantyRepair = async (repairData) => {
+  const createWarrantyRepair = async repairData => {
     loading.value = true
     try {
       const response = await fetch('/api/admin/warranty-repairs', {
@@ -201,10 +195,10 @@ export const useWarrantyStore = defineStore('warranty', () => {
       })
 
       if (!response.ok) throw new Error('Failed to create warranty repair')
-      
+
       const newRepair = await response.json()
       warrantyRepairs.value.push(newRepair.data)
-      
+
       return newRepair.data
     } catch (err) {
       error.value = 'Failed to create warranty repair'
@@ -226,13 +220,13 @@ export const useWarrantyStore = defineStore('warranty', () => {
       })
 
       if (!response.ok) throw new Error('Failed to update warranty repair')
-      
+
       const updatedRepair = await response.json()
       const index = warrantyRepairs.value.findIndex(r => r.id === id)
       if (index !== -1) {
         warrantyRepairs.value[index] = updatedRepair.data
       }
-      
+
       return updatedRepair.data
     } catch (err) {
       error.value = 'Failed to update warranty repair'
@@ -242,7 +236,7 @@ export const useWarrantyStore = defineStore('warranty', () => {
     }
   }
 
-  const deleteWarrantyRepair = async (id) => {
+  const deleteWarrantyRepair = async id => {
     loading.value = true
     try {
       const response = await fetch(`/api/admin/warranty-repairs/${id}`, {
@@ -250,7 +244,7 @@ export const useWarrantyStore = defineStore('warranty', () => {
       })
 
       if (!response.ok) throw new Error('Failed to delete warranty repair')
-      
+
       // Soft delete
       const index = warrantyRepairs.value.findIndex(r => r.id === id)
       if (index !== -1) {
@@ -265,21 +259,21 @@ export const useWarrantyStore = defineStore('warranty', () => {
   }
 
   // Search functionality
-  const searchWarranties = computed(() => (query) => {
+  const searchWarranties = computed(() => query => {
     if (!query) return getAllWarranties.value
-    
+
     const searchTerm = query.toLowerCase()
-    return getAllWarranties.value.filter(warranty => 
+    return getAllWarranties.value.filter(warranty =>
       warranty.ma_bao_hanh.toLowerCase().includes(searchTerm)
     )
   })
 
   // Filter by status
-  const filterWarrantiesByStatus = computed(() => (status) => {
+  const filterWarrantiesByStatus = computed(() => status => {
     return getAllWarranties.value.filter(warranty => warranty.trang_thai === status)
   })
 
-  const filterRepairsByStatus = computed(() => (status) => {
+  const filterRepairsByStatus = computed(() => status => {
     return getAllWarrantyRepairs.value.filter(repair => repair.trang_thai === status)
   })
 
@@ -289,7 +283,7 @@ export const useWarrantyStore = defineStore('warranty', () => {
     warrantyRepairs,
     loading,
     error,
-    
+
     // Getters
     getAllWarranties,
     getActiveWarranties,
@@ -302,7 +296,7 @@ export const useWarrantyStore = defineStore('warranty', () => {
     searchWarranties,
     filterWarrantiesByStatus,
     filterRepairsByStatus,
-    
+
     // Actions
     fetchWarranties,
     fetchWarrantyRepairs,
@@ -315,4 +309,3 @@ export const useWarrantyStore = defineStore('warranty', () => {
     deleteWarrantyRepair
   }
 })
-

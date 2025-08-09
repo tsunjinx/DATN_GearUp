@@ -6,17 +6,17 @@ export const useOrderStore = defineStore('order', {
     loading: false,
     error: null
   }),
-  
+
   getters: {
-    getOrderById: (state) => (id) => {
+    getOrderById: state => id => {
       return state.orders.find(order => order.id === id)
     },
-    totalOrders: (state) => state.orders.length,
-    totalRevenue: (state) => {
+    totalOrders: state => state.orders.length,
+    totalRevenue: state => {
       return state.orders.reduce((sum, order) => sum + order.total, 0)
     }
   },
-  
+
   actions: {
     async fetchOrders() {
       this.loading = true
@@ -28,7 +28,7 @@ export const useOrderStore = defineStore('order', {
         this.loading = false
       }
     },
-    
+
     async createOrder(order) {
       try {
         // API call
@@ -36,7 +36,7 @@ export const useOrderStore = defineStore('order', {
         this.error = error.message
       }
     },
-    
+
     async updateOrderStatus(id, status) {
       try {
         // API call

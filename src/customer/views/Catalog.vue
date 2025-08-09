@@ -4,7 +4,7 @@
     <!-- Page Header with Breadcrumb -->
     <div class="page-header">
       <div class="breadcrumb">
-        <router-link to="/" class="breadcrumb-item">Trang chủ</router-link>
+        <router-link to="/" class="breadcrumb-item"> Trang chủ </router-link>
         <span class="breadcrumb-separator">/</span>
         <span class="breadcrumb-item current">Danh mục sản phẩm</span>
       </div>
@@ -16,49 +16,33 @@
       <div class="left-controls">
         <div class="search-box">
           <i class="search-icon">🔍</i>
-          <FormControl 
-            as="input" 
-            placeholder="Tìm kiếm sản phẩm..." 
-            v-model="q" 
-            class="search-input"
-          />
+          <FormControl v-model="q" as="input" placeholder="Tìm kiếm sản phẩm..." class="search-input" />
         </div>
-        <Button 
-          variant="outline" 
-          size="sm" 
-          @click="mobileFiltersOpen = !mobileFiltersOpen"
-          class="filter-btn"
-        >
+        <Button variant="outline" size="sm" class="filter-btn" @click="mobileFiltersOpen = !mobileFiltersOpen">
           <i class="filter-icon">🎛️</i>
           {{ mobileFiltersOpen ? 'Đóng bộ lọc' : 'Bộ lọc' }}
         </Button>
       </div>
-      
+
       <div class="right-controls">
         <div class="view-toggle">
-          <button 
-            :class="['view-btn', { active: viewMode==='grid' }]" 
-            @click="viewMode='grid'"
+          <button
+            :class="['view-btn', { active: viewMode === 'grid' }]"
             title="Xem dạng lưới"
+            @click="viewMode = 'grid'"
           >
             <i>⊞</i>
           </button>
-          <button 
-            :class="['view-btn', { active: viewMode==='list' }]" 
-            @click="viewMode='list'"
+          <button
+            :class="['view-btn', { active: viewMode === 'list' }]"
             title="Xem dạng danh sách"
+            @click="viewMode = 'list'"
           >
             <i>☰</i>
           </button>
         </div>
-        
-        <Button 
-          v-if="hasActiveFilters" 
-          variant="outline" 
-          size="sm" 
-          @click="clearAll"
-          class="clear-btn"
-        >
+
+        <Button v-if="hasActiveFilters" variant="outline" size="sm" @click="clearAll" class="clear-btn">
           <i>🗑️</i>
           Xóa bộ lọc
         </Button>
@@ -69,34 +53,34 @@
     <div class="brand-filter">
       <div class="brand-label">Thương hiệu:</div>
       <div class="brand-options">
-        <button 
-          class="brand-chip" 
-          :class="{active: brand==='nike'}" 
-          @click="brand = brand==='nike' ? '' : 'nike'"
+        <button
+          class="brand-chip"
+          :class="{ active: brand === 'nike' }"
+          @click="brand = brand === 'nike' ? '' : 'nike'"
         >
           <img src="/brand-logos/nike.svg" alt="Nike" />
           Nike
         </button>
-        <button 
-          class="brand-chip" 
-          :class="{active: brand==='adidas'}" 
-          @click="brand = brand==='adidas' ? '' : 'adidas'"
+        <button
+          class="brand-chip"
+          :class="{ active: brand === 'adidas' }"
+          @click="brand = brand === 'adidas' ? '' : 'adidas'"
         >
           <img src="/brand-logos/adidas.svg" alt="Adidas" />
           Adidas
         </button>
-        <button 
-          class="brand-chip" 
-          :class="{active: brand==='puma'}" 
-          @click="brand = brand==='puma' ? '' : 'puma'"
+        <button
+          class="brand-chip"
+          :class="{ active: brand === 'puma' }"
+          @click="brand = brand === 'puma' ? '' : 'puma'"
         >
           <img src="/brand-logos/puma.svg" alt="Puma" />
           Puma
         </button>
-        <button 
-          class="brand-chip" 
-          :class="{active: brand==='converse'}" 
-          @click="brand = brand==='converse' ? '' : 'converse'"
+        <button
+          class="brand-chip"
+          :class="{ active: brand === 'converse' }"
+          @click="brand = brand === 'converse' ? '' : 'converse'"
         >
           <img src="/brand-logos/converse.svg" alt="Converse" />
           Converse
@@ -111,9 +95,7 @@
         <div class="filter-panel">
           <div class="filter-header">
             <h3 class="filter-title">Bộ lọc</h3>
-            <button class="close-btn" @click="mobileFiltersOpen=false" aria-label="Đóng">
-              ×
-            </button>
+            <button class="close-btn" aria-label="Đóng" @click="mobileFiltersOpen = false">×</button>
           </div>
           <CategoryFilter
             v-model="filterModel"
@@ -130,25 +112,20 @@
       <main class="products-area">
         <!-- Loading State -->
         <div v-if="loading" class="loading-grid">
-          <div v-for="n in 8" :key="n" class="loading-card"></div>
+          <div v-for="n in 8" :key="n" class="loading-card" />
         </div>
-        
+
         <!-- Error State -->
-        <StateBlock 
-          v-else-if="error" 
-          type="error" 
-          :message="error" 
-          class="state-block"
-        />
-        
+        <StateBlock v-else-if="error" type="error" :message="error" class="state-block" />
+
         <!-- Empty State -->
-        <StateBlock 
-          v-else-if="items.length === 0" 
-          type="empty" 
-          message="Không tìm thấy sản phẩm nào" 
+        <StateBlock
+          v-else-if="items.length === 0"
+          type="empty"
+          message="Không tìm thấy sản phẩm nào"
           class="state-block"
         />
-        
+
         <!-- Products Grid/List -->
         <div v-else :class="['products-container', viewMode]">
           <ProductCard
@@ -156,58 +133,49 @@
             :key="p.id"
             :product="p"
             :is-wished="wish.has(p.id)"
+            :class="['product-card', viewMode]"
             @toggle-wish="wish.toggle(p)"
             @quick-view="quickView(p)"
             @add="addToCart(p)"
-            :class="['product-card', viewMode]"
           />
         </div>
 
         <!-- Pagination -->
         <div v-if="!loading && items.length > pageSize" class="pagination">
-          <button 
-            class="page-btn" 
-            :disabled="page===1" 
-            @click="prevPage"
-            title="Trang trước"
-          >
-            ← Trước
-          </button>
+          <button class="page-btn" :disabled="page === 1" title="Trang trước" @click="prevPage">← Trước</button>
           <div class="page-info">
             <span class="page-numbers">Trang {{ page }} / {{ totalPages }}</span>
             <span class="item-count">({{ items.length }} sản phẩm)</span>
           </div>
-          <button 
-            class="page-btn" 
-            :disabled="page===totalPages" 
-            @click="nextPage"
-            title="Trang sau"
-          >
-            Sau →
-          </button>
+          <button class="page-btn" :disabled="page === totalPages" title="Trang sau" @click="nextPage">Sau →</button>
         </div>
       </main>
     </div>
-
 
     <!-- Quick View Modal: chuẩn hoá giống Admin (header/body/footer) -->
     <teleport to="body">
       <div v-if="showQuick && current" class="modal-overlay" @click.self="closeQuick">
         <div class="modal" @click.stop>
           <div class="modal-header">
-            <h3 class="modal-title">{{ current.name }}</h3>
+            <h3 class="modal-title">
+              {{ current.name }}
+            </h3>
             <button class="modal-close" aria-label="Đóng" @click="closeQuick">×</button>
           </div>
           <div class="modal-body modal-grid">
             <img :src="current.image || '/placeholder-shoe.jpg'" class="modal-image" alt="" />
             <div class="modal-info">
-              <div class="price">{{ formatCurrency(current.price) }}</div>
-              <p class="desc">{{ current.description }}</p>
+              <div class="price">
+                {{ formatCurrency(current.price) }}
+              </div>
+              <p class="desc">
+                {{ current.description }}
+              </p>
             </div>
           </div>
           <div class="modal-footer">
-            <Button variant="outline" @click="goDetails(current)">Chi tiết</Button>
-            <Button @click="addToCart(current)">Thêm vào giỏ</Button>
+            <Button variant="outline" @click="goDetails(current)"> Chi tiết </Button>
+            <Button @click="addToCart(current)"> Thêm vào giỏ </Button>
           </div>
         </div>
       </div>
@@ -232,8 +200,10 @@ const router = useRouter()
 const route = useRoute()
 const cart = useCartStore()
 cart.load()
-const wish = useWishlistStore(); wish.load()
-const catalog = useCatalogStore(); catalog.load()
+const wish = useWishlistStore()
+wish.load()
+const catalog = useCatalogStore()
+catalog.load()
 const q = ref(catalog.q)
 const brand = ref(catalog.brand)
 const category = ref(catalog.category)
@@ -282,11 +252,21 @@ const fetchCatalog = async () => {
 const debouncedFetch = debounce(fetchCatalog, 400)
 watch([q, brand, category, sort, minPrice, maxPrice, inStockOnly], () => debouncedFetch())
 
-const view = (p) => router.push({ path: `/shop/details/${p.id}` })
+const view = p => router.push({ path: `/shop/details/${p.id}` })
 const goDetails = view
-const addToCart = (p) => cart.add(p, 1)
-const prevPage = () => { if (page.value > 1) { page.value--; pushQuery() } }
-const nextPage = () => { if (page.value < totalPages.value) { page.value++; pushQuery() } }
+const addToCart = p => cart.add(p, 1)
+const prevPage = () => {
+  if (page.value > 1) {
+    page.value--
+    pushQuery()
+  }
+}
+const nextPage = () => {
+  if (page.value < totalPages.value) {
+    page.value++
+    pushQuery()
+  }
+}
 const resetFilters = () => {
   brand.value = ''
   category.value = ''
@@ -295,8 +275,14 @@ const resetFilters = () => {
   maxPrice.value = ''
   inStockOnly.value = false
 }
-const applyFilters = () => { mobileFiltersOpen.value = false; fetchCatalog() }
-const hasActiveFilters = computed(() => !!(brand.value || category.value || sort.value || minPrice.value || maxPrice.value || inStockOnly.value || q.value))
+const applyFilters = () => {
+  mobileFiltersOpen.value = false
+  fetchCatalog()
+}
+const hasActiveFilters = computed(
+  () =>
+    !!(brand.value || category.value || sort.value || minPrice.value || maxPrice.value || inStockOnly.value || q.value)
+)
 const clearAll = () => {
   q.value = ''
   resetFilters()
@@ -306,15 +292,28 @@ const clearAll = () => {
 // Quick view modal
 const showQuick = ref(false)
 const current = ref(null)
-const quickView = (p) => { current.value = p; showQuick.value = true }
-const closeQuick = () => { showQuick.value = false; current.value = null }
+const quickView = p => {
+  current.value = p
+  showQuick.value = true
+}
+const closeQuick = () => {
+  showQuick.value = false
+  current.value = null
+}
 
-const formatCurrency = (amount) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount)
+const formatCurrency = amount => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount)
 
 // route sync
 const filterModel = computed({
-  get: () => ({ brand: brand.value, category: category.value, minPrice: minPrice.value, maxPrice: maxPrice.value, inStockOnly: inStockOnly.value, sort: sort.value }),
-  set: (v) => {
+  get: () => ({
+    brand: brand.value,
+    category: category.value,
+    minPrice: minPrice.value,
+    maxPrice: maxPrice.value,
+    inStockOnly: inStockOnly.value,
+    sort: sort.value
+  }),
+  set: v => {
     brand.value = v.brand
     category.value = v.category
     minPrice.value = v.minPrice
@@ -333,7 +332,8 @@ const hydrateFromRoute = () => {
   minPrice.value = qy.minPrice || ''
   maxPrice.value = qy.maxPrice || ''
   inStockOnly.value = qy.inStockOnly === 'true' || qy.inStockOnly === true
-  const p = Number(qy.page); page.value = Number.isFinite(p) && p > 0 ? p : 1
+  const p = Number(qy.page)
+  page.value = Number.isFinite(p) && p > 0 ? p : 1
   viewMode.value = qy.view === 'list' ? 'list' : 'grid'
 }
 const pushQuery = () => {
@@ -350,13 +350,26 @@ const pushQuery = () => {
   }
   router.replace({ query: qy })
   // persist
-  Object.assign(catalog, { q: q.value, brand: brand.value, category: category.value, sort: sort.value, minPrice: minPrice.value, maxPrice: maxPrice.value, inStockOnly: inStockOnly.value, viewMode: viewMode.value, page: page.value });
+  Object.assign(catalog, {
+    q: q.value,
+    brand: brand.value,
+    category: category.value,
+    sort: sort.value,
+    minPrice: minPrice.value,
+    maxPrice: maxPrice.value,
+    inStockOnly: inStockOnly.value,
+    viewMode: viewMode.value,
+    page: page.value
+  })
   catalog.persist()
 }
 
 watch([q, brand, category, sort, minPrice, maxPrice, inStockOnly, viewMode], () => pushQuery())
 
-onMounted(() => { hydrateFromRoute(); fetchCatalog() })
+onMounted(() => {
+  hydrateFromRoute()
+  fetchCatalog()
+})
 </script>
 
 <style scoped>
@@ -629,19 +642,18 @@ onMounted(() => { hydrateFromRoute(); fetchCatalog() })
 .loading-card {
   height: 320px;
   border-radius: var(--radius-lg);
-  background: linear-gradient(
-    90deg,
-    var(--gray-100) 0%,
-    var(--gray-200) 50%,
-    var(--gray-100) 100%
-  );
+  background: linear-gradient(90deg, var(--gray-100) 0%, var(--gray-200) 50%, var(--gray-100) 100%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
 
 @keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 /* Products Container */
@@ -810,7 +822,7 @@ onMounted(() => { hydrateFromRoute(); fetchCatalog() })
     grid-template-columns: 260px 1fr;
     gap: var(--spacing-md);
   }
-  
+
   .search-input {
     width: 250px;
   }
@@ -820,11 +832,11 @@ onMounted(() => { hydrateFromRoute(); fetchCatalog() })
   .catalog-page {
     padding: var(--spacing-md);
   }
-  
+
   .catalog-content {
     display: block;
   }
-  
+
   .filter-sidebar {
     position: fixed;
     top: 0;
@@ -835,11 +847,11 @@ onMounted(() => { hydrateFromRoute(); fetchCatalog() })
     transform: translateX(-100%);
     transition: transform 0.3s ease;
   }
-  
+
   .filter-sidebar.open {
     transform: translateX(0);
   }
-  
+
   .filter-sidebar::before {
     content: '';
     position: fixed;
@@ -850,51 +862,51 @@ onMounted(() => { hydrateFromRoute(); fetchCatalog() })
     background: rgba(0, 0, 0, 0.5);
     z-index: -1;
   }
-  
+
   .close-btn {
     display: flex !important;
   }
-  
+
   .controls-bar {
     flex-direction: column;
     gap: var(--spacing-sm);
   }
-  
+
   .left-controls {
     width: 100%;
     justify-content: space-between;
   }
-  
+
   .search-input {
     width: 200px;
   }
-  
+
   .brand-filter {
     padding: var(--spacing-sm);
   }
-  
+
   .brand-options {
     gap: var(--spacing-xs);
   }
-  
+
   .brand-chip {
     padding: var(--spacing-xs);
     font-size: 0.75rem;
   }
-  
+
   .brand-chip img {
     width: 16px;
     height: 12px;
   }
-  
+
   .products-container.grid {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   }
-  
+
   .loading-grid {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   }
-  
+
   .modal-grid {
     grid-template-columns: 1fr;
   }
@@ -904,69 +916,67 @@ onMounted(() => { hydrateFromRoute(); fetchCatalog() })
   .catalog-page {
     padding: var(--spacing-sm);
   }
-  
+
   .page-title {
     font-size: 1.5rem;
   }
-  
+
   .controls-bar {
     padding: var(--spacing-sm);
   }
-  
+
   .left-controls {
     flex-direction: column;
     align-items: stretch;
     gap: var(--spacing-sm);
   }
-  
+
   .search-input {
     width: 100%;
   }
-  
+
   .right-controls {
     justify-content: space-between;
     width: 100%;
   }
-  
+
   .brand-filter {
     flex-direction: column;
     align-items: stretch;
     gap: var(--spacing-sm);
   }
-  
+
   .brand-options {
     justify-content: center;
   }
-  
+
   .products-container.grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: var(--spacing-sm);
   }
-  
+
   .loading-grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: var(--spacing-sm);
   }
-  
+
   .pagination {
     flex-direction: column;
     gap: var(--spacing-sm);
   }
-  
+
   .modal {
     width: 95vw;
     margin: var(--spacing-sm);
   }
-  
+
   .modal-body {
     padding: var(--spacing-md);
   }
-  
+
   .modal-footer {
     padding: var(--spacing-sm) var(--spacing-md);
     flex-direction: column;
   }
 }
 </style>
-
-

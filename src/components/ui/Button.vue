@@ -7,10 +7,9 @@
     :disabled="disabled || loading"
     @click="$emit('click', $event)"
   >
-    <span v-if="loading" class="loading-spinner" aria-hidden="true"></span>
+    <span v-if="loading" class="loading-spinner" aria-hidden="true" />
     <slot />
   </button>
-  
 </template>
 
 <script setup>
@@ -20,12 +19,12 @@ const props = defineProps({
   variant: {
     type: String,
     default: 'primary',
-    validator: (v) => ['primary', 'secondary', 'outline', 'success', 'danger'].includes(v)
+    validator: v => ['primary', 'secondary', 'outline', 'success', 'danger'].includes(v)
   },
   size: {
     type: String,
     default: 'md',
-    validator: (v) => ['sm', 'md', 'lg'].includes(v)
+    validator: v => ['sm', 'md', 'lg'].includes(v)
   },
   type: {
     type: String,
@@ -62,7 +61,10 @@ const sizeClass = computed(() => `gu-button--${props.size}`)
   background: var(--gray-100);
   color: var(--gray-800);
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease,
+    box-shadow 0.2s ease;
 }
 
 .gu-button:disabled {
@@ -80,38 +82,58 @@ const sizeClass = computed(() => `gu-button--${props.size}`)
   background: var(--primary-500);
   color: #fff;
 }
-.gu-button--primary:not(:disabled):hover { background: var(--primary-600); box-shadow: 0 4px 12px rgba(34,197,94,.25); }
+.gu-button--primary:not(:disabled):hover {
+  background: var(--primary-600);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.25);
+}
 
 .gu-button--secondary {
   background: var(--gray-100);
   border-color: var(--border);
   color: var(--gray-800);
 }
-.gu-button--secondary:not(:disabled):hover { background: var(--gray-200); }
+.gu-button--secondary:not(:disabled):hover {
+  background: var(--gray-200);
+}
 
 .gu-button--outline {
   background: transparent;
   border-color: var(--primary-300);
   color: var(--primary-700);
 }
-.gu-button--outline:not(:disabled):hover { background: var(--primary-50); }
+.gu-button--outline:not(:disabled):hover {
+  background: var(--primary-50);
+}
 
 .gu-button--success {
   background: var(--success);
   color: #fff;
 }
-.gu-button--success:not(:disabled):hover { filter: brightness(0.95); }
+.gu-button--success:not(:disabled):hover {
+  filter: brightness(0.95);
+}
 
 .gu-button--danger {
   background: var(--error);
   color: #fff;
 }
-.gu-button--danger:not(:disabled):hover { filter: brightness(0.95); }
+.gu-button--danger:not(:disabled):hover {
+  filter: brightness(0.95);
+}
 
 /* Sizes */
-.gu-button--sm { padding: 0.375rem 0.75rem; font-size: 0.8125rem; }
-.gu-button--md { padding: 0.5rem 1rem; font-size: 0.875rem; }
-.gu-button--lg { padding: 0.625rem 1.25rem; font-size: 1rem; }
+.gu-button--sm {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.8125rem;
+}
+.gu-button--md {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+.gu-button--lg {
+  padding: 0.625rem 1.25rem;
+  font-size: 1rem;
+}
 
 .loading-spinner {
   width: 16px;
@@ -123,8 +145,8 @@ const sizeClass = computed(() => `gu-button--${props.size}`)
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
-
-

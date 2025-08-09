@@ -9,25 +9,15 @@
           Quản lý Thuộc tính Giày
         </h1>
         <div class="header-actions">
-          <Button 
-            variant="secondary" 
-            @click="refreshData"
-            :loading="loading"
-          >
+          <Button variant="secondary" :loading="loading" @click="refreshData">
             <span class="icon">🔄</span>
             Làm mới
           </Button>
-          <Button 
-            variant="success" 
-            @click="openCreateAttributeModal"
-          >
+          <Button variant="success" @click="openCreateAttributeModal">
             <span class="icon">➕</span>
             Thêm thuộc tính
           </Button>
-          <Button 
-            variant="primary" 
-            @click="exportAttributes"
-          >
+          <Button variant="primary" @click="exportAttributes">
             <span class="icon">📊</span>
             Xuất dữ liệu
           </Button>
@@ -72,8 +62,8 @@
 
     <!-- Tab Navigation -->
     <div class="tab-navigation">
-      <button 
-        v-for="tab in attributeTabs" 
+      <button
+        v-for="tab in attributeTabs"
         :key="tab.key"
         class="tab-button"
         :class="{ active: activeTab === tab.key }"
@@ -91,23 +81,18 @@
       <div class="filters-section">
         <div class="filters-row">
           <div class="search-box">
-            <input 
+            <input
               v-model="searchQuery"
-              type="text" 
+              type="text"
               :placeholder="`Tìm kiếm ${getCurrentTabLabel()}...`"
               class="search-input"
-            >
+            />
             <span class="search-icon">🔍</span>
           </div>
-          
-          <Button variant="outline" @click="clearFilters">
-            Xóa bộ lọc
-          </Button>
-          
-          <Button 
-            variant="success" 
-            @click="openCreateAttributeModal"
-          >
+
+          <Button variant="outline" @click="clearFilters"> Xóa bộ lọc </Button>
+
+          <Button variant="success" @click="openCreateAttributeModal">
             <span class="icon">➕</span>
             Thêm {{ getCurrentTabLabel() }}
           </Button>
@@ -133,17 +118,18 @@
             <tbody>
               <tr v-for="item in filteredAttributes" :key="item.id" class="attribute-row">
                 <td>
-                  <div class="attribute-code">{{ getAttributeCode(item) }}</div>
+                  <div class="attribute-code">
+                    {{ getAttributeCode(item) }}
+                  </div>
                 </td>
                 <td>
-                  <div class="attribute-name">{{ getAttributeName(item) }}</div>
+                  <div class="attribute-name">
+                    {{ getAttributeName(item) }}
+                  </div>
                 </td>
                 <td v-if="activeTab === 'colors'">
                   <div class="color-preview">
-                    <div 
-                      class="color-swatch"
-                      :style="{ backgroundColor: item.ma_mau_sac }"
-                    ></div>
+                    <div class="color-swatch" :style="{ backgroundColor: item.ma_mau_sac }" />
                     <span class="color-code">{{ item.ma_mau_sac }}</span>
                   </div>
                 </td>
@@ -157,45 +143,18 @@
                   <span class="date">{{ formatDate(item.created_at) }}</span>
                 </td>
                 <td>
-                  <span 
-                    class="status-badge"
-                    :class="item.deleted ? 'inactive' : 'active'"
-                  >
+                  <span class="status-badge" :class="item.deleted ? 'inactive' : 'active'">
                     {{ item.deleted ? 'Không hoạt động' : 'Hoạt động' }}
                   </span>
                 </td>
                 <td>
                   <div class="actions">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      @click="editAttribute(item)"
-                    >
-                      Sửa
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      @click="viewAttributeUsage(item)"
-                    >
-                      Sử dụng
-                    </Button>
-                    <Button 
-                      v-if="!item.deleted"
-                      variant="danger" 
-                      size="sm"
-                      @click="deleteAttribute(item)"
-                    >
+                    <Button variant="outline" size="sm" @click="editAttribute(item)"> Sửa </Button>
+                    <Button variant="outline" size="sm" @click="viewAttributeUsage(item)"> Sử dụng </Button>
+                    <Button v-if="!item.deleted" variant="danger" size="sm" @click="deleteAttribute(item)">
                       Xóa
                     </Button>
-                    <Button 
-                      v-else
-                      variant="success" 
-                      size="sm"
-                      @click="restoreAttribute(item)"
-                    >
-                      Khôi phục
-                    </Button>
+                    <Button v-else variant="success" size="sm" @click="restoreAttribute(item)"> Khôi phục </Button>
                   </div>
                 </td>
               </tr>
@@ -205,28 +164,22 @@
 
         <!-- Empty State -->
         <div v-if="filteredAttributes.length === 0 && !loading" class="empty-state">
-          <div class="empty-icon">{{ getCurrentTabIcon() }}</div>
+          <div class="empty-icon">
+            {{ getCurrentTabIcon() }}
+          </div>
           <h3>Chưa có {{ getCurrentTabLabel().toLowerCase() }} nào</h3>
           <p>Hãy thêm {{ getCurrentTabLabel().toLowerCase() }} đầu tiên cho sản phẩm</p>
-          <Button variant="primary" @click="openCreateAttributeModal">
-            Thêm {{ getCurrentTabLabel() }}
-          </Button>
+          <Button variant="primary" @click="openCreateAttributeModal"> Thêm {{ getCurrentTabLabel() }} </Button>
         </div>
       </div>
     </div>
 
     <!-- Bulk Operations Bar -->
     <div v-if="selectedAttributes.length > 0" class="bulk-actions-bar">
-      <div class="selected-count">
-        Đã chọn {{ selectedAttributes.length }} thuộc tính
-      </div>
+      <div class="selected-count">Đã chọn {{ selectedAttributes.length }} thuộc tính</div>
       <div class="bulk-actions">
-        <Button variant="outline" @click="bulkEdit">
-          Sửa hàng loạt
-        </Button>
-        <Button variant="danger" @click="bulkDelete">
-          Xóa đã chọn
-        </Button>
+        <Button variant="outline" @click="bulkEdit"> Sửa hàng loạt </Button>
+        <Button variant="danger" @click="bulkDelete"> Xóa đã chọn </Button>
       </div>
     </div>
 
@@ -248,16 +201,14 @@
               <span class="usage-value">{{ attributeUsage.totalVariants }}</span>
             </div>
           </div>
-          
+
           <div class="usage-products">
             <h4>Sản phẩm sử dụng thuộc tính này:</h4>
             <div class="product-list">
-              <div 
-                v-for="product in attributeUsage.products" 
-                :key="product.id"
-                class="product-item"
-              >
-                <div class="product-name">{{ product.name }}</div>
+              <div v-for="product in attributeUsage.products" :key="product.id" class="product-item">
+                <div class="product-name">
+                  {{ product.name }}
+                </div>
                 <div class="product-variants">{{ product.variantCount }} biến thể</div>
               </div>
             </div>
@@ -308,16 +259,18 @@ const attributeTabs = [
 
 // Computed properties
 const totalAttributes = computed(() => {
-  return attributeStore.getAllColors.length + 
-         attributeStore.getAllSizes.length + 
-         attributeStore.getAllMaterials.length +
-         attributeStore.getAllSoleTypes.length +
-         attributeStore.getAllInsoleTypes.length +
-         attributeStore.getAllWeights.length +
-         attributeStore.getAllSportsSeasons.length +
-         attributeStore.getAllRainTypes.length +
-         attributeStore.getAllDurabilities.length +
-         attributeStore.getAllWaterproofLevels.length
+  return (
+    attributeStore.getAllColors.length +
+    attributeStore.getAllSizes.length +
+    attributeStore.getAllMaterials.length +
+    attributeStore.getAllSoleTypes.length +
+    attributeStore.getAllInsoleTypes.length +
+    attributeStore.getAllWeights.length +
+    attributeStore.getAllSportsSeasons.length +
+    attributeStore.getAllRainTypes.length +
+    attributeStore.getAllDurabilities.length +
+    attributeStore.getAllWaterproofLevels.length
+  )
 })
 
 const filteredAttributes = computed(() => {
@@ -333,17 +286,17 @@ const filteredAttributes = computed(() => {
     durabilities: attributeStore.getAllDurabilities,
     waterproofLevels: attributeStore.getAllWaterproofLevels
   }
-  
+
   let attributes = attributeMap[activeTab.value] || []
-  
+
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    attributes = attributes.filter(attr => 
-      getAttributeName(attr).toLowerCase().includes(query) ||
-      getAttributeCode(attr).toLowerCase().includes(query)
+    attributes = attributes.filter(
+      attr =>
+        getAttributeName(attr).toLowerCase().includes(query) || getAttributeCode(attr).toLowerCase().includes(query)
     )
   }
-  
+
   return attributes
 })
 
@@ -358,7 +311,7 @@ const getCurrentTabIcon = () => {
   return tab?.icon || '🏷️'
 }
 
-const getAttributeCount = (tabKey) => {
+const getAttributeCount = tabKey => {
   const attributeMap = {
     colors: attributeStore.getAllColors.length,
     sizes: attributeStore.getAllSizes.length,
@@ -374,7 +327,7 @@ const getAttributeCount = (tabKey) => {
   return attributeMap[tabKey] || 0
 }
 
-const getAttributeCode = (item) => {
+const getAttributeCode = item => {
   const codeMap = {
     colors: item.ma_mau_sac,
     sizes: item.ma_kich_thuoc,
@@ -390,7 +343,7 @@ const getAttributeCode = (item) => {
   return codeMap[activeTab.value] || item.id
 }
 
-const getAttributeName = (item) => {
+const getAttributeName = item => {
   const nameMap = {
     colors: item.ten_mau_sac,
     sizes: item.ten_kich_thuoc,
@@ -406,13 +359,13 @@ const getAttributeName = (item) => {
   return nameMap[activeTab.value] || 'N/A'
 }
 
-const getSizeEU = (sizeItem) => {
+const getSizeEU = sizeItem => {
   // Convert VN size to EU size (placeholder logic)
   const vnSize = parseInt(sizeItem.ten_kich_thuoc)
   return vnSize ? vnSize + 1 : 'N/A'
 }
 
-const getMaterialType = (materialItem) => {
+const getMaterialType = materialItem => {
   // Determine material type based on name (placeholder logic)
   const name = materialItem.ten_chat_lieu.toLowerCase()
   if (name.includes('da')) return 'Da thật'
@@ -421,17 +374,14 @@ const getMaterialType = (materialItem) => {
   return 'Khác'
 }
 
-const formatDate = (dateString) => {
+const formatDate = dateString => {
   if (!dateString) return 'N/A'
   return new Intl.DateTimeFormat('vi-VN').format(new Date(dateString))
 }
 
 // Actions
 const refreshData = async () => {
-  await Promise.all([
-    attributeStore.fetchAllAttributes(),
-    variantStore.fetchVariants()
-  ])
+  await Promise.all([attributeStore.fetchAllAttributes(), variantStore.fetchVariants()])
 }
 
 const clearFilters = () => {
@@ -448,12 +398,12 @@ const exportAttributes = () => {
   console.log('Export attributes')
 }
 
-const editAttribute = (attribute) => {
+const editAttribute = attribute => {
   // TODO: Implement edit attribute modal
   console.log('Edit attribute:', attribute)
 }
 
-const viewAttributeUsage = (attribute) => {
+const viewAttributeUsage = attribute => {
   // TODO: Calculate actual usage from variants
   // This is placeholder data
   attributeUsage.value = {
@@ -472,7 +422,7 @@ const closeUsageModal = () => {
   showUsageModal.value = false
 }
 
-const deleteAttribute = async (attribute) => {
+const deleteAttribute = async attribute => {
   if (confirm(`Bạn có chắc chắn muốn xóa ${getCurrentTabLabel().toLowerCase()} "${getAttributeName(attribute)}"?`)) {
     try {
       await attributeStore.deleteAttribute(activeTab.value, attribute.id)
@@ -482,7 +432,7 @@ const deleteAttribute = async (attribute) => {
   }
 }
 
-const restoreAttribute = async (attribute) => {
+const restoreAttribute = async attribute => {
   try {
     await attributeStore.updateAttribute(activeTab.value, attribute.id, { deleted: false })
   } catch (error) {
@@ -498,11 +448,7 @@ const bulkEdit = () => {
 const bulkDelete = async () => {
   if (confirm(`Bạn có chắc chắn muốn xóa ${selectedAttributes.value.length} thuộc tính đã chọn?`)) {
     try {
-      await Promise.all(
-        selectedAttributes.value.map(id => 
-          attributeStore.deleteAttribute(activeTab.value, id)
-        )
-      )
+      await Promise.all(selectedAttributes.value.map(id => attributeStore.deleteAttribute(activeTab.value, id)))
       selectedAttributes.value = []
     } catch (error) {
       console.error('Failed to bulk delete attributes:', error)
@@ -527,7 +473,7 @@ onMounted(() => {
 
 .attribute-header {
   margin-bottom: var(--spacing-3xl);
-  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
   border-radius: var(--radius-xl);
   padding: var(--spacing-xl) var(--spacing-3xl);
   color: var(--white);
@@ -967,29 +913,28 @@ onMounted(() => {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .search-box {
     min-width: auto;
   }
-  
+
   .header-content {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .tab-navigation {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .usage-stats {
     flex-direction: column;
     gap: var(--spacing-md);
   }
-  
+
   .modal-content {
     width: 95%;
     margin: var(--spacing-md);
   }
 }
 </style>
-

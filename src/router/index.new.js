@@ -80,20 +80,20 @@ const router = createRouter({
 // Navigation guards with proper authentication
 router.beforeEach(async (to, from, next) => {
   console.log('Route navigation to:', to.path)
-  
+
   // Enable authentication
   const DISABLE_AUTH = false // Authentication is now enabled
-  
+
   if (DISABLE_AUTH) {
     console.log('Authentication disabled for development')
     next()
     return
   }
-  
+
   const authStore = useAuthStore()
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
   const requiresGuest = to.matched.some(record => record.meta.requiresGuest)
-  
+
   // Check authentication status
   if (requiresAuth && !authStore.isAuthenticated) {
     // Try to restore session
@@ -104,14 +104,14 @@ router.beforeEach(async (to, from, next) => {
       return
     }
   }
-  
+
   // Prevent authenticated users from accessing guest-only pages
   if (requiresGuest && authStore.isAuthenticated) {
     console.log('Already authenticated, redirecting to dashboard')
     next('/')
     return
   }
-  
+
   next()
 })
 

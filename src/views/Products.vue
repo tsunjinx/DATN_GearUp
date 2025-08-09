@@ -31,8 +31,12 @@
           <div class="search-section">
             <div class="search-box">
               <i class="search-icon">🔍</i>
-              <input v-model="searchTerm" type="text" placeholder="Tìm kiếm theo tên sản phẩm, mã sản phẩm..."
-                class="search-input" />
+              <input
+                v-model="searchTerm"
+                type="text"
+                placeholder="Tìm kiếm theo tên sản phẩm, mã sản phẩm..."
+                class="search-input"
+              />
             </div>
           </div>
 
@@ -72,11 +76,19 @@
             <div class="filter-group">
               <label>Khoảng giá</label>
               <div class="price-range">
-                <input v-model.number="priceRange.min" type="number" placeholder="Từ"
-                  class="form-control price-input" />
+                <input
+                  v-model.number="priceRange.min"
+                  type="number"
+                  placeholder="Từ"
+                  class="form-control price-input"
+                />
                 <span class="price-separator">-</span>
-                <input v-model.number="priceRange.max" type="number" placeholder="Đến"
-                  class="form-control price-input" />
+                <input
+                  v-model.number="priceRange.max"
+                  type="number"
+                  placeholder="Đến"
+                  class="form-control price-input"
+                />
               </div>
             </div>
           </div>
@@ -117,7 +129,7 @@
               </button>
             </div>
           </div>
-          
+
           <div class="action-group">
             <label class="action-label">📱 Tiện ích</label>
             <div class="action-buttons-row">
@@ -142,7 +154,7 @@
     <!-- States: loading / error / empty -->
     <div v-if="loading" class="card fade-in" style="animation-delay: 0.45s">
       <div class="card-body text-center">
-        <span class="loading-spinner"></span>
+        <span class="loading-spinner" />
         <span class="ml-2">Đang tải dữ liệu sản phẩm...</span>
       </div>
     </div>
@@ -166,15 +178,19 @@
         </h3>
         <div class="table-actions">
           <div class="view-options">
-            <button class="btn btn-sm"
+            <button
+              class="btn btn-sm"
               :class="{ 'btn-primary': viewMode === 'table', 'btn-outline': viewMode !== 'table' }"
-              @click="viewMode = 'table'">
+              @click="viewMode = 'table'"
+            >
               <i class="btn-icon">📋</i>
               Bảng
             </button>
-            <button class="btn btn-sm"
+            <button
+              class="btn btn-sm"
               :class="{ 'btn-primary': viewMode === 'grid', 'btn-outline': viewMode !== 'grid' }"
-              @click="viewMode = 'grid'">
+              @click="viewMode = 'grid'"
+            >
               <i class="btn-icon">🔲</i>
               Lưới
             </button>
@@ -182,7 +198,7 @@
         </div>
       </div>
 
-      <div class="card-body" v-if="viewMode === 'table'">
+      <div v-if="viewMode === 'table'" class="card-body">
         <div class="table-responsive">
           <table class="table">
             <thead>
@@ -210,14 +226,21 @@
                 </td>
                 <td>
                   <div class="product-image-cell">
-                    <img :src="product.image || '/placeholder-shoe.jpg'" :alt="product.name"
-                      class="product-thumbnail" />
+                    <img
+                      :src="product.image || '/placeholder-shoe.jpg'"
+                      :alt="product.name"
+                      class="product-thumbnail"
+                    />
                   </div>
                 </td>
                 <td>
                   <div class="product-name-cell">
-                    <div class="product-name">{{ product.name }}</div>
-                    <div class="product-description">{{ truncateText(product.description, 50) }}</div>
+                    <div class="product-name">
+                      {{ product.name }}
+                    </div>
+                    <div class="product-description">
+                      {{ truncateText(product.description, 50) }}
+                    </div>
                   </div>
                 </td>
                 <td>
@@ -225,8 +248,12 @@
                 </td>
                 <td>
                   <div class="brand-logo-cell">
-                    <img :src="getBrandLogo(product.brand)" :alt="getBrandName(product.brand)" class="brand-logo"
-                      @error="handleBrandLogoError" />
+                    <img
+                      :src="getBrandLogo(product.brand)"
+                      :alt="getBrandName(product.brand)"
+                      class="brand-logo"
+                      @error="handleBrandLogoError"
+                    />
                     <span class="brand-name">{{ getBrandName(product.brand) }}</span>
                   </div>
                 </td>
@@ -269,13 +296,13 @@
                 </td>
                 <td>
                   <div class="action-buttons">
-                    <button class="btn btn-sm btn-outline" @click="viewProduct(product)" title="Xem chi tiết">
+                    <button class="btn btn-sm btn-outline" title="Xem chi tiết" @click="viewProduct(product)">
                       <i class="btn-icon">👁️</i>
                     </button>
-                    <button class="btn btn-sm btn-outline" @click="editProduct(product)" title="Chỉnh sửa">
+                    <button class="btn btn-sm btn-outline" title="Chỉnh sửa" @click="editProduct(product)">
                       <i class="btn-icon">✏️</i>
                     </button>
-                    <button class="btn btn-sm btn-outline btn-danger" @click="deleteProduct(product.id)" title="Xóa">
+                    <button class="btn btn-sm btn-outline btn-danger" title="Xóa" @click="deleteProduct(product.id)">
                       <i class="btn-icon">🗑️</i>
                     </button>
                   </div>
@@ -293,13 +320,15 @@
             của {{ filteredProducts.length }} sản phẩm
           </div>
           <div class="pagination-controls">
-            <button class="btn btn-sm btn-outline" :disabled="currentPage === 1" @click="currentPage--">
-              ← Trước
-            </button>
+            <button class="btn btn-sm btn-outline" :disabled="currentPage === 1" @click="currentPage--">← Trước</button>
             <span class="page-numbers">
-              <button v-for="page in visiblePages" :key="page" class="btn btn-sm"
+              <button
+                v-for="page in visiblePages"
+                :key="page"
+                class="btn btn-sm"
                 :class="{ 'btn-primary': page === currentPage, 'btn-outline': page !== currentPage }"
-                @click="currentPage = page">
+                @click="currentPage = page"
+              >
                 {{ page }}
               </button>
             </span>
@@ -311,7 +340,7 @@
       </div>
 
       <!-- Grid View -->
-      <div class="card-body" v-else>
+      <div v-else class="card-body">
         <div class="products-grid">
           <div v-for="product in paginatedProducts" :key="product.id" class="product-grid-card">
             <div class="product-image">
@@ -326,13 +355,21 @@
               </div>
             </div>
             <div class="product-grid-info">
-              <h4 class="product-grid-name">{{ product.name }}</h4>
+              <h4 class="product-grid-name">
+                {{ product.name }}
+              </h4>
               <div class="product-grid-brand">
-                <img :src="getBrandLogo(product.brand)" :alt="getBrandName(product.brand)" class="brand-logo-small"
-                  @error="handleBrandLogoError" />
+                <img
+                  :src="getBrandLogo(product.brand)"
+                  :alt="getBrandName(product.brand)"
+                  class="brand-logo-small"
+                  @error="handleBrandLogoError"
+                />
                 <span class="brand-name-small">{{ getBrandName(product.brand) }}</span>
               </div>
-              <div class="product-grid-price">{{ formatCurrency(product.price) }}</div>
+              <div class="product-grid-price">
+                {{ formatCurrency(product.price) }}
+              </div>
               <div class="product-grid-meta">
                 <span class="stock-info">Kho: {{ product.stock }}</span>
                 <span class="badge badge-sm" :class="getStatusClass(product.status)">
@@ -356,17 +393,27 @@
           <button class="close-btn" @click="closeModal">×</button>
         </div>
         <div class="modal-body">
-          <form @submit.prevent="saveProduct" class="product-form">
+          <form class="product-form" @submit.prevent="saveProduct">
             <div class="form-row">
               <div class="form-group">
                 <label class="required">Tên sản phẩm</label>
-                <input v-model="productForm.name" type="text" class="form-control" placeholder="Nhập tên sản phẩm"
-                  required />
+                <input
+                  v-model="productForm.name"
+                  type="text"
+                  class="form-control"
+                  placeholder="Nhập tên sản phẩm"
+                  required
+                />
               </div>
               <div class="form-group">
                 <label class="required">Mã sản phẩm</label>
-                <input v-model="productForm.code" type="text" class="form-control"
-                  placeholder="Mã tự động hoặc nhập thủ công" required />
+                <input
+                  v-model="productForm.code"
+                  type="text"
+                  class="form-control"
+                  placeholder="Mã tự động hoặc nhập thủ công"
+                  required
+                />
               </div>
             </div>
 
@@ -397,16 +444,25 @@
               <div class="form-group">
                 <label class="required">Giá bán</label>
                 <div class="input-group">
-                  <input v-model.number="productForm.price" type="number" class="form-control" placeholder="0"
-                    required />
+                  <input
+                    v-model.number="productForm.price"
+                    type="number"
+                    class="form-control"
+                    placeholder="0"
+                    required
+                  />
                   <span class="input-suffix">₫</span>
                 </div>
               </div>
               <div class="form-group">
                 <label>Giá gốc</label>
                 <div class="input-group">
-                  <input v-model.number="productForm.originalPrice" type="number" class="form-control"
-                    placeholder="0" />
+                  <input
+                    v-model.number="productForm.originalPrice"
+                    type="number"
+                    class="form-control"
+                    placeholder="0"
+                  />
                   <span class="input-suffix">₫</span>
                 </div>
               </div>
@@ -447,7 +503,7 @@
                   <option value="8">Under Armour</option>
                 </select>
               </div>
-              
+
               <div class="form-group">
                 <label>Xuất xứ</label>
                 <select v-model="productForm.origin" class="form-control">
@@ -478,7 +534,7 @@
                   <option value="7">EVA</option>
                 </select>
               </div>
-              
+
               <div class="form-group">
                 <label>Loại đế giày</label>
                 <select v-model="productForm.soleType" class="form-control">
@@ -504,7 +560,7 @@
                   <option value="4">Hoàn toàn chống nước</option>
                 </select>
               </div>
-              
+
               <div class="form-group">
                 <label>Độ bền</label>
                 <select v-model="productForm.durability" class="form-control">
@@ -531,7 +587,7 @@
                   <option value="7">Đa năng</option>
                 </select>
               </div>
-              
+
               <div class="form-group">
                 <label>Loại mùa</label>
                 <select v-model="productForm.seasonType" class="form-control">
@@ -547,8 +603,12 @@
 
             <div class="form-group">
               <label>Mô tả sản phẩm</label>
-              <textarea v-model="productForm.description" class="form-control" rows="4"
-                placeholder="Nhập mô tả chi tiết về sản phẩm"></textarea>
+              <textarea
+                v-model="productForm.description"
+                class="form-control"
+                rows="4"
+                placeholder="Nhập mô tả chi tiết về sản phẩm"
+              />
             </div>
 
             <div class="form-group">
@@ -703,18 +763,20 @@ const fetchProducts = async () => {
 
 const debouncedFetch = debounce(fetchProducts, 400)
 
-watch([searchTerm, selectedCategory, selectedBrand, selectedStatus, () => priceRange.value.min, () => priceRange.value.max], () => {
-  debouncedFetch()
-})
+watch(
+  [searchTerm, selectedCategory, selectedBrand, selectedStatus, () => priceRange.value.min, () => priceRange.value.max],
+  () => {
+    debouncedFetch()
+  }
+)
 
 const filteredProducts = computed(() => {
   let products = sampleProducts.value
 
   if (searchTerm.value) {
     const search = searchTerm.value.toLowerCase()
-    products = products.filter(product =>
-      product.name.toLowerCase().includes(search) ||
-      product.code.toLowerCase().includes(search)
+    products = products.filter(
+      product => product.name.toLowerCase().includes(search) || product.code.toLowerCase().includes(search)
     )
   }
 
@@ -785,14 +847,14 @@ const visiblePages = computed(() => {
   return pages
 })
 
-const formatCurrency = (amount) => {
+const formatCurrency = amount => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
     currency: 'VND'
   }).format(amount)
 }
 
-const formatDate = (date) => {
+const formatDate = date => {
   return new Intl.DateTimeFormat('vi-VN', {
     year: 'numeric',
     month: '2-digit',
@@ -800,7 +862,7 @@ const formatDate = (date) => {
   }).format(new Date(date))
 }
 
-const getBrandName = (brand) => {
+const getBrandName = brand => {
   const brands = {
     nike: 'Nike',
     adidas: 'Adidas',
@@ -810,7 +872,7 @@ const getBrandName = (brand) => {
   return brands[brand] || brand
 }
 
-const getBrandLogo = (brand) => {
+const getBrandLogo = brand => {
   const brandLogos = {
     nike: '/brand-logos/nike.svg',
     adidas: '/brand-logos/adidas.svg',
@@ -820,16 +882,17 @@ const getBrandLogo = (brand) => {
   return brandLogos[brand] || '/brand-logos/default.svg'
 }
 
-const handleBrandLogoError = (event) => {
+const handleBrandLogoError = event => {
   // Fallback to a generic brand icon if logo fails to load
-  event.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCA0MCAyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iMjAiIGZpbGw9IiNmM2Y0ZjYiLz4KICA8dGV4dCB4PSIyMCIgeT0iMTIiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI4IiBmaWxsPSIjNjc3NDgwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5CUkFORDwvdGV4dD4KPC9zdmc+'
+  event.target.src =
+    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCA0MCAyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iMjAiIGZpbGw9IiNmM2Y0ZjYiLz4KICA8dGV4dCB4PSIyMCIgeT0iMTIiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI4IiBmaWxsPSIjNjc3NDgwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5CUkFORDwvdGV4dD4KPC9zdmc+'
 }
 
-const getBrandClass = (brand) => {
+const getBrandClass = brand => {
   return `brand-${brand}`
 }
 
-const getCategoryName = (category) => {
+const getCategoryName = category => {
   const categories = {
     sneakers: 'Giày thể thao',
     boots: 'Giày boot',
@@ -839,11 +902,11 @@ const getCategoryName = (category) => {
   return categories[category] || category
 }
 
-const getCategoryClass = (category) => {
+const getCategoryClass = category => {
   return `category-${category}`
 }
 
-const getStatusText = (status) => {
+const getStatusText = status => {
   const statusMap = {
     active: 'Đang bán',
     inactive: 'Ngừng bán'
@@ -851,7 +914,7 @@ const getStatusText = (status) => {
   return statusMap[status] || status
 }
 
-const getStatusClass = (status) => {
+const getStatusClass = status => {
   const classMap = {
     active: 'badge-success',
     inactive: 'badge-error'
@@ -859,7 +922,7 @@ const getStatusClass = (status) => {
   return classMap[status] || 'badge-secondary'
 }
 
-const getStockClass = (stock) => {
+const getStockClass = stock => {
   if (stock === 0) return 'stock-out'
   if (stock <= 10) return 'stock-low'
   return 'stock-good'
@@ -870,44 +933,63 @@ const truncateText = (text, length) => {
   return text.length > length ? text.substring(0, length) + '...' : text
 }
 
-const resetFilters = async (event) => {
-  await withLoadingAnimation(event, async () => {
-    // Simulate reset process
-    await new Promise(resolve => setTimeout(resolve, 800))
-    
-    searchTerm.value = ''
-    selectedCategory.value = ''
-    selectedBrand.value = ''
-    selectedStatus.value = ''
-    priceRange.value = { min: null, max: null }
-    
-    return 'Filters reset successfully!'
-  }, {
-    onSuccess: (result) => console.log(result),
-    onError: (error) => console.error('Reset failed:', error)
-  })
+const resetFilters = async event => {
+  await withLoadingAnimation(
+    event,
+    async () => {
+      // Simulate reset process
+      await new Promise(resolve => setTimeout(resolve, 800))
+
+      searchTerm.value = ''
+      selectedCategory.value = ''
+      selectedBrand.value = ''
+      selectedStatus.value = ''
+      priceRange.value = { min: null, max: null }
+
+      return 'Filters reset successfully!'
+    },
+    {
+      onSuccess: result => console.log(result),
+      onError: error => console.error('Reset failed:', error)
+    }
+  )
 }
 
 // Enhanced header action methods with animations
-const openAddModal = async (event) => {
-  await withLoadingAnimation(event, async () => {
-    // Simulate modal preparation
-    await new Promise(resolve => setTimeout(resolve, 600))
-    showAddModal.value = true
-    return 'Add modal opened!'
-  }, {
-    onSuccess: (result) => console.log(result),
-    onError: (error) => console.error('Open modal failed:', error)
-  })
+const openAddModal = async event => {
+  await withLoadingAnimation(
+    event,
+    async () => {
+      // Simulate modal preparation
+      await new Promise(resolve => setTimeout(resolve, 600))
+      showAddModal.value = true
+      return 'Add modal opened!'
+    },
+    {
+      onSuccess: result => console.log(result),
+      onError: error => console.error('Open modal failed:', error)
+    }
+  )
 }
 
 // Xuất CSV danh sách sản phẩm (đơn giản) để phục vụ import/export nhanh
 const exportToCSV = async () => {
   const rows = [
-    ['id','name','code','brand','category','price','originalPrice','stock','status','description'],
-    ...sampleProducts.value.map(p => [p.id,p.name,p.code,p.brand,p.category,p.price,p.originalPrice ?? '',p.stock,p.status,p.description?.replaceAll('\n',' ') ?? ''])
+    ['id', 'name', 'code', 'brand', 'category', 'price', 'originalPrice', 'stock', 'status', 'description'],
+    ...sampleProducts.value.map(p => [
+      p.id,
+      p.name,
+      p.code,
+      p.brand,
+      p.category,
+      p.price,
+      p.originalPrice ?? '',
+      p.stock,
+      p.status,
+      p.description?.replaceAll('\n', ' ') ?? ''
+    ])
   ]
-  const csv = rows.map(r => r.map(x => `"${String(x).replaceAll('"','""')}"`).join(',')).join('\n')
+  const csv = rows.map(r => r.map(x => `"${String(x).replaceAll('"', '""')}"`).join(',')).join('\n')
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
@@ -920,21 +1002,25 @@ const exportToCSV = async () => {
 // Nhập CSV để thêm/cập nhật nhanh sản phẩm (tối giản)
 const csvInput = ref(null)
 const triggerImport = () => csvInput.value?.click()
-const importCSV = async (e) => {
+const importCSV = async e => {
   const file = e.target.files?.[0]
   if (!file) return
   const text = await file.text()
   const lines = text.split(/\r?\n/).filter(Boolean)
-  const header = lines.shift()?.split(',').map(h => h.replaceAll('"','').trim()) || []
-  const getVal = (val) => val?.replace(/^\"|\"$/g,'').replaceAll('""','"')
-  const toObj = (arr) => Object.fromEntries(arr.map((v,i)=>[header[i], getVal(v)]))
+  const header =
+    lines
+      .shift()
+      ?.split(',')
+      .map(h => h.replaceAll('"', '').trim()) || []
+  const getVal = val => val?.replace(/^\"|\"$/g, '').replaceAll('""', '"')
+  const toObj = arr => Object.fromEntries(arr.map((v, i) => [header[i], getVal(v)]))
   const parsed = lines.map(l => toObj(l.match(/\"(?:[^\"]|\"\")*\"|[^,]+/g) || []))
   // Hợp nhất đơn giản theo code
   parsed.forEach(p => {
     if (!p.code) return
     const idx = sampleProducts.value.findIndex(x => x.code === p.code)
     const normalized = {
-      id: idx === -1 ? Date.now() + Math.floor(Math.random()*1000) : sampleProducts.value[idx].id,
+      id: idx === -1 ? Date.now() + Math.floor(Math.random() * 1000) : sampleProducts.value[idx].id,
       name: p.name || 'Sản phẩm',
       code: p.code,
       brand: p.brand || 'nike',
@@ -986,17 +1072,17 @@ const printProductLabels = async () => {
   }
 }
 
-const viewProduct = (product) => {
+const viewProduct = product => {
   console.log('Viewing product:', product)
 }
 
-const editProduct = (product) => {
+const editProduct = product => {
   editingProduct.value = product
   productForm.value = { ...product }
   showEditModal.value = true
 }
 
-const deleteProduct = (id) => {
+const deleteProduct = id => {
   if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?')) {
     sampleProducts.value = sampleProducts.value.filter(p => p.id !== id)
   }
@@ -1042,7 +1128,11 @@ const closeModal = () => {
 onMounted(async () => {
   staggeredFadeIn('.header-actions', 100)
   // Initial fetch
-  try { await fetchProducts() } catch (e) { /* handled in useApi */ }
+  try {
+    await fetchProducts()
+  } catch (e) {
+    /* handled in useApi */
+  }
 })
 </script>
 
@@ -1453,7 +1543,7 @@ onMounted(async () => {
 }
 
 /* Default fallback */
-.category-badge:not([class*="category-"]) {
+.category-badge:not([class*='category-']) {
   background: var(--gray-100);
   color: var(--gray-700);
   border-color: var(--gray-200);
@@ -1880,7 +1970,9 @@ onMounted(async () => {
   background: rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
+  transition:
+    width 0.6s,
+    height 0.6s;
 }
 
 .header-actions .btn:hover {
@@ -1991,15 +2083,15 @@ onMounted(async () => {
     flex-direction: column;
     gap: var(--spacing-lg);
   }
-  
+
   .action-group {
     min-width: auto;
   }
-  
+
   .action-buttons-row {
     justify-content: center;
   }
-  
+
   .action-buttons-row .btn {
     flex: 1;
     min-width: 120px;

@@ -11,20 +11,20 @@
  */
 export function debounce(func, delay = 300) {
   let timeoutId = null
-  
-  const debounced = function(...args) {
+
+  const debounced = function (...args) {
     // Clear previous timeout
     if (timeoutId) {
       clearTimeout(timeoutId)
     }
-    
+
     // Set new timeout
     timeoutId = setTimeout(() => {
       func.apply(this, args)
       timeoutId = null
     }, delay)
   }
-  
+
   // Add cancel method
   debounced.cancel = () => {
     if (timeoutId) {
@@ -32,16 +32,16 @@ export function debounce(func, delay = 300) {
       timeoutId = null
     }
   }
-  
+
   // Add flush method to execute immediately
-  debounced.flush = function(...args) {
+  debounced.flush = function (...args) {
     if (timeoutId) {
       clearTimeout(timeoutId)
       timeoutId = null
     }
     func.apply(this, args)
   }
-  
+
   return debounced
 }
 
@@ -55,15 +55,15 @@ export function throttle(func, limit = 100) {
   let inThrottle = false
   let lastArgs = null
   let lastThis = null
-  
-  const throttled = function(...args) {
+
+  const throttled = function (...args) {
     if (!inThrottle) {
       func.apply(this, args)
       inThrottle = true
-      
+
       setTimeout(() => {
         inThrottle = false
-        
+
         // Execute pending call if exists
         if (lastArgs) {
           func.apply(lastThis, lastArgs)
@@ -77,7 +77,7 @@ export function throttle(func, limit = 100) {
       lastThis = this
     }
   }
-  
+
   return throttled
 }
 
@@ -91,17 +91,17 @@ export function useDebouncedSearch(searchFunction, delay = 500) {
   const isSearching = ref(false)
   const searchResults = ref([])
   const searchError = ref(null)
-  
+
   // Create debounced search
-  const debouncedSearch = debounce(async (query) => {
+  const debouncedSearch = debounce(async query => {
     if (!query || query.trim().length < 2) {
       searchResults.value = []
       return
     }
-    
+
     isSearching.value = true
     searchError.value = null
-    
+
     try {
       const results = await searchFunction(query)
       searchResults.value = results
@@ -112,18 +112,18 @@ export function useDebouncedSearch(searchFunction, delay = 500) {
       isSearching.value = false
     }
   }, delay)
-  
+
   // Watch search query changes
-  watch(searchQuery, (newQuery) => {
+  watch(searchQuery, newQuery => {
     if (!newQuery) {
       searchResults.value = []
       debouncedSearch.cancel()
       return
     }
-    
+
     debouncedSearch(newQuery)
   })
-  
+
   // Clear search
   const clearSearch = () => {
     searchQuery.value = ''
@@ -131,7 +131,7 @@ export function useDebouncedSearch(searchFunction, delay = 500) {
     searchError.value = null
     debouncedSearch.cancel()
   }
-  
+
   return {
     searchQuery,
     searchResults,

@@ -14,7 +14,7 @@ export const useAttributeStore = defineStore('attribute', () => {
   const rainTypes = ref([]) // loại_mũa
   const durabilities = ref([]) // đỗ_bền
   const waterproofLevels = ref([]) // chống_nước
-  
+
   const loading = ref(false)
   const error = ref(null)
 
@@ -28,13 +28,23 @@ export const useAttributeStore = defineStore('attribute', () => {
   const getAllSportsSeasons = computed(() => sportsSeasons.value.filter(item => !item.deleted))
   const getAllRainTypes = computed(() => rainTypes.value.filter(item => !item.deleted))
   const getAllDurabilities = computed(() => durabilities.value.filter(item => !item.deleted))
-  const getAllWaterproofLevels = computed(() => waterproofLevels.value.filter(item => !item.deleted))
+  const getAllWaterproofLevels = computed(() =>
+    waterproofLevels.value.filter(item => !item.deleted)
+  )
 
   // Helper to get attribute by ID
   const getAttributeById = (attributeType, id) => {
     const mapping = {
-      colors, sizes, materials, soleTypes, insoleTypes, 
-      weights, sportsSeasons, rainTypes, durabilities, waterproofLevels
+      colors,
+      sizes,
+      materials,
+      soleTypes,
+      insoleTypes,
+      weights,
+      sportsSeasons,
+      rainTypes,
+      durabilities,
+      waterproofLevels
     }
     return mapping[attributeType]?.value.find(item => item.id === id)
   }
@@ -43,12 +53,20 @@ export const useAttributeStore = defineStore('attribute', () => {
   const fetchAllAttributes = async () => {
     loading.value = true
     error.value = null
-    
+
     try {
       // Fetch all attributes in parallel
       const [
-        colorsData, sizesData, materialsData, soleTypesData, insoleTypesData,
-        weightsData, sportsSeasonsData, rainTypesData, durabilitiesData, waterproofData
+        colorsData,
+        sizesData,
+        materialsData,
+        soleTypesData,
+        insoleTypesData,
+        weightsData,
+        sportsSeasonsData,
+        rainTypesData,
+        durabilitiesData,
+        waterproofData
       ] = await Promise.all([
         fetch('/api/admin/attributes/colors').then(r => r.json()),
         fetch('/api/admin/attributes/sizes').then(r => r.json()),
@@ -72,7 +90,6 @@ export const useAttributeStore = defineStore('attribute', () => {
       rainTypes.value = rainTypesData.data || []
       durabilities.value = durabilitiesData.data || []
       waterproofLevels.value = waterproofData.data || []
-      
     } catch (err) {
       error.value = 'Failed to fetch attributes'
       console.error('Attribute fetch error:', err)
@@ -89,18 +106,26 @@ export const useAttributeStore = defineStore('attribute', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       })
-      
+
       if (!response.ok) throw new Error('Failed to create attribute')
-      
+
       const newAttribute = await response.json()
-      
+
       // Add to appropriate array
       const mapping = {
-        colors, sizes, materials, soleTypes, insoleTypes,
-        weights, sportsSeasons, rainTypes, durabilities, waterproofLevels
+        colors,
+        sizes,
+        materials,
+        soleTypes,
+        insoleTypes,
+        weights,
+        sportsSeasons,
+        rainTypes,
+        durabilities,
+        waterproofLevels
       }
       mapping[attributeType]?.value.push(newAttribute.data)
-      
+
       return newAttribute.data
     } catch (err) {
       error.value = `Failed to create ${attributeType}`
@@ -118,15 +143,23 @@ export const useAttributeStore = defineStore('attribute', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       })
-      
+
       if (!response.ok) throw new Error('Failed to update attribute')
-      
+
       const updatedAttribute = await response.json()
-      
+
       // Update in appropriate array
       const mapping = {
-        colors, sizes, materials, soleTypes, insoleTypes,
-        weights, sportsSeasons, rainTypes, durabilities, waterproofLevels
+        colors,
+        sizes,
+        materials,
+        soleTypes,
+        insoleTypes,
+        weights,
+        sportsSeasons,
+        rainTypes,
+        durabilities,
+        waterproofLevels
       }
       const targetArray = mapping[attributeType]?.value
       if (targetArray) {
@@ -135,7 +168,7 @@ export const useAttributeStore = defineStore('attribute', () => {
           targetArray[index] = updatedAttribute.data
         }
       }
-      
+
       return updatedAttribute.data
     } catch (err) {
       error.value = `Failed to update ${attributeType}`
@@ -151,13 +184,21 @@ export const useAttributeStore = defineStore('attribute', () => {
       const response = await fetch(`/api/admin/attributes/${attributeType}/${id}`, {
         method: 'DELETE'
       })
-      
+
       if (!response.ok) throw new Error('Failed to delete attribute')
-      
+
       // Soft delete - mark as deleted
       const mapping = {
-        colors, sizes, materials, soleTypes, insoleTypes,
-        weights, sportsSeasons, rainTypes, durabilities, waterproofLevels
+        colors,
+        sizes,
+        materials,
+        soleTypes,
+        insoleTypes,
+        weights,
+        sportsSeasons,
+        rainTypes,
+        durabilities,
+        waterproofLevels
       }
       const targetArray = mapping[attributeType]?.value
       if (targetArray) {
@@ -166,7 +207,6 @@ export const useAttributeStore = defineStore('attribute', () => {
           targetArray[index].deleted = true
         }
       }
-      
     } catch (err) {
       error.value = `Failed to delete ${attributeType}`
       throw err
@@ -177,17 +217,36 @@ export const useAttributeStore = defineStore('attribute', () => {
 
   return {
     // State
-    colors, sizes, materials, soleTypes, insoleTypes,
-    weights, sportsSeasons, rainTypes, durabilities, waterproofLevels,
-    loading, error,
-    
+    colors,
+    sizes,
+    materials,
+    soleTypes,
+    insoleTypes,
+    weights,
+    sportsSeasons,
+    rainTypes,
+    durabilities,
+    waterproofLevels,
+    loading,
+    error,
+
     // Getters
-    getAllColors, getAllSizes, getAllMaterials, getAllSoleTypes, getAllInsoleTypes,
-    getAllWeights, getAllSportsSeasons, getAllRainTypes, getAllDurabilities, getAllWaterproofLevels,
-    
+    getAllColors,
+    getAllSizes,
+    getAllMaterials,
+    getAllSoleTypes,
+    getAllInsoleTypes,
+    getAllWeights,
+    getAllSportsSeasons,
+    getAllRainTypes,
+    getAllDurabilities,
+    getAllWaterproofLevels,
+
     // Actions
-    fetchAllAttributes, createAttribute, updateAttribute, deleteAttribute,
+    fetchAllAttributes,
+    createAttribute,
+    updateAttribute,
+    deleteAttribute,
     getAttributeById
   }
 })
-

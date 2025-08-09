@@ -6,17 +6,8 @@
       <span v-if="required" aria-hidden="true" class="gu-req">*</span>
     </span>
     <div class="gu-field__control">
-      <input
-        v-if="as === 'input'"
-        class="gu-input"
-        :type="type"
-        v-bind="$attrs"
-      />
-      <textarea
-        v-else-if="as === 'textarea'"
-        class="gu-input gu-input--textarea"
-        v-bind="$attrs"
-      />
+      <input v-if="as === 'input'" class="gu-input" :type="type" v-bind="$attrs" />
+      <textarea v-else-if="as === 'textarea'" class="gu-input gu-input--textarea" v-bind="$attrs" />
       <select v-else class="gu-input" v-bind="$attrs">
         <slot />
       </select>
@@ -40,9 +31,19 @@ defineProps({
 </script>
 
 <style scoped>
-.gu-field { display: grid; gap: 0.375rem; }
-.gu-field__label { color: var(--gray-700); font-weight: 600; font-size: 0.875rem; }
-.gu-req { color: var(--error); margin-left: 2px; }
+.gu-field {
+  display: grid;
+  gap: 0.375rem;
+}
+.gu-field__label {
+  color: var(--gray-700);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+.gu-req {
+  color: var(--error);
+  margin-left: 2px;
+}
 
 .gu-input {
   width: 100%;
@@ -53,15 +54,31 @@ defineProps({
   border-radius: var(--form-input-radius, var(--radius-lg));
   font-size: 0.875rem;
   color: var(--gray-800);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-.gu-input:focus { outline: none; border-color: var(--primary-400); box-shadow: 0 0 0 3px rgba(74,222,128,0.15); }
-.gu-input::placeholder { color: var(--gray-400); }
-.gu-input--textarea { min-height: 96px; resize: vertical; }
+.gu-input:focus {
+  outline: none;
+  border-color: var(--primary-400);
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.15);
+}
+.gu-input::placeholder {
+  color: var(--gray-400);
+}
+.gu-input--textarea {
+  min-height: 96px;
+  resize: vertical;
+}
 
-.gu-field__hint { color: var(--gray-500); font-size: 0.75rem; }
-.gu-field__error { color: var(--error); font-size: 0.75rem; font-weight: 600; }
+.gu-field__hint {
+  color: var(--gray-500);
+  font-size: 0.75rem;
+}
+.gu-field__error {
+  color: var(--error);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
 </style>
-
-

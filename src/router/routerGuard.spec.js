@@ -5,9 +5,15 @@ vi.mock('@/stores/authStore', () => {
   let isAuthenticated = false
   return {
     useAuthStore: () => ({
-      get isAuthenticated() { return isAuthenticated },
-      set isAuthenticated(v) { isAuthenticated = v },
-      async checkAuth() { return isAuthenticated }
+      get isAuthenticated() {
+        return isAuthenticated
+      },
+      set isAuthenticated(v) {
+        isAuthenticated = v
+      },
+      async checkAuth() {
+        return isAuthenticated
+      }
     })
   }
 })
@@ -24,10 +30,8 @@ describe('router guards', () => {
   it('redirects unauthenticated user to /login for protected routes', async () => {
     await router.push('/')
     await router.isReady()
-  expect(router.currentRoute.value.path).toBe('/admin/login')
+    expect(router.currentRoute.value.path).toBe('/admin/login')
   })
 
   it.todo('redirects authenticated user away from /login to /')
 })
-
-

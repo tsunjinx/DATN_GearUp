@@ -10,44 +10,37 @@ export const useVoucherStore = defineStore('voucher', () => {
   const error = ref(null)
 
   // Getters
-  const getAllVouchers = computed(() => 
-    vouchers.value.filter(item => !item.deleted)
-  )
-  
+  const getAllVouchers = computed(() => vouchers.value.filter(item => !item.deleted))
+
   const getActiveVouchers = computed(() => {
     const now = new Date()
-    return getAllVouchers.value.filter(voucher => 
-      voucher.trang_thai === 'active' &&
-      new Date(voucher.ngày_bat_đau) <= now &&
-      new Date(voucher.ngày_ket_thuc) >= now
+    return getAllVouchers.value.filter(
+      voucher =>
+        voucher.trang_thai === 'active' &&
+        new Date(voucher.ngày_bat_đau) <= now &&
+        new Date(voucher.ngày_ket_thuc) >= now
     )
   })
 
   const getExpiredVouchers = computed(() => {
     const now = new Date()
-    return getAllVouchers.value.filter(voucher => 
-      new Date(voucher.ngày_ket_thuc) < now
-    )
+    return getAllVouchers.value.filter(voucher => new Date(voucher.ngày_ket_thuc) < now)
   })
 
   const getUpcomingVouchers = computed(() => {
     const now = new Date()
-    return getAllVouchers.value.filter(voucher => 
-      new Date(voucher.ngày_bat_đau) > now
-    )
+    return getAllVouchers.value.filter(voucher => new Date(voucher.ngày_bat_đau) > now)
   })
 
-  const getAllPersonalVouchers = computed(() => 
+  const getAllPersonalVouchers = computed(() =>
     personalVouchers.value.filter(item => !item.deleted)
   )
 
-  const getPersonalVouchersByCustomer = computed(() => (customerId) => 
-    getAllPersonalVouchers.value.filter(pv => pv.id_khach_hang === customerId)
+  const getPersonalVouchersByCustomer = computed(
+    () => customerId => getAllPersonalVouchers.value.filter(pv => pv.id_khach_hang === customerId)
   )
 
-  const getVoucherById = computed(() => (id) => 
-    vouchers.value.find(v => v.id === id && !v.deleted)
-  )
+  const getVoucherById = computed(() => id => vouchers.value.find(v => v.id === id && !v.deleted))
 
   // Statistics
   const voucherStats = computed(() => ({
@@ -56,8 +49,11 @@ export const useVoucherStore = defineStore('voucher', () => {
     expiredVouchers: getExpiredVouchers.value.length,
     upcomingVouchers: getUpcomingVouchers.value.length,
     totalPersonalVouchers: getAllPersonalVouchers.value.length,
-    usedPersonalVouchers: getAllPersonalVouchers.value.filter(pv => pv.trang_thai === 'used').length,
-    availablePersonalVouchers: getAllPersonalVouchers.value.filter(pv => pv.trang_thai === 'available').length
+    usedPersonalVouchers: getAllPersonalVouchers.value.filter(pv => pv.trang_thai === 'used')
+      .length,
+    availablePersonalVouchers: getAllPersonalVouchers.value.filter(
+      pv => pv.trang_thai === 'available'
+    ).length
   }))
 
   // Actions
@@ -66,7 +62,7 @@ export const useVoucherStore = defineStore('voucher', () => {
     try {
       const response = await fetch('/api/admin/vouchers')
       if (!response.ok) throw new Error('Failed to fetch vouchers')
-      
+
       const data = await response.json()
       vouchers.value = data.data || []
     } catch (err) {
@@ -82,7 +78,7 @@ export const useVoucherStore = defineStore('voucher', () => {
     try {
       const response = await fetch('/api/admin/personal-vouchers')
       if (!response.ok) throw new Error('Failed to fetch personal vouchers')
-      
+
       const data = await response.json()
       personalVouchers.value = data.data || []
     } catch (err) {
@@ -94,13 +90,10 @@ export const useVoucherStore = defineStore('voucher', () => {
   }
 
   const fetchAll = async () => {
-    await Promise.all([
-      fetchVouchers(),
-      fetchPersonalVouchers()
-    ])
+    await Promise.all([fetchVouchers(), fetchPersonalVouchers()])
   }
 
-  const createVoucher = async (voucherData) => {
+  const createVoucher = async voucherData => {
     loading.value = true
     try {
       const response = await fetch('/api/admin/vouchers', {
@@ -120,10 +113,10 @@ export const useVoucherStore = defineStore('voucher', () => {
       })
 
       if (!response.ok) throw new Error('Failed to create voucher')
-      
+
       const newVoucher = await response.json()
       vouchers.value.push(newVoucher.data)
-      
+
       return newVoucher.data
     } catch (err) {
       error.value = 'Failed to create voucher'
@@ -145,13 +138,13 @@ export const useVoucherStore = defineStore('voucher', () => {
       })
 
       if (!response.ok) throw new Error('Failed to update voucher')
-      
+
       const updatedVoucher = await response.json()
       const index = vouchers.value.findIndex(v => v.id === id)
       if (index !== -1) {
         vouchers.value[index] = updatedVoucher.data
       }
-      
+
       return updatedVoucher.data
     } catch (err) {
       error.value = 'Failed to update voucher'
@@ -161,7 +154,7 @@ export const useVoucherStore = defineStore('voucher', () => {
     }
   }
 
-  const deleteVoucher = async (id) => {
+  const deleteVoucher = async id => {
     loading.value = true
     try {
       const response = await fetch(`/api/admin/vouchers/${id}`, {
@@ -169,7 +162,7 @@ export const useVoucherStore = defineStore('voucher', () => {
       })
 
       if (!response.ok) throw new Error('Failed to delete voucher')
-      
+
       // Soft delete
       const index = vouchers.value.findIndex(v => v.id === id)
       if (index !== -1) {
@@ -183,7 +176,7 @@ export const useVoucherStore = defineStore('voucher', () => {
     }
   }
 
-  const createPersonalVoucher = async (personalVoucherData) => {
+  const createPersonalVoucher = async personalVoucherData => {
     loading.value = true
     try {
       const response = await fetch('/api/admin/personal-vouchers', {
@@ -203,10 +196,10 @@ export const useVoucherStore = defineStore('voucher', () => {
       })
 
       if (!response.ok) throw new Error('Failed to create personal voucher')
-      
+
       const newPersonalVoucher = await response.json()
       personalVouchers.value.push(newPersonalVoucher.data)
-      
+
       return newPersonalVoucher.data
     } catch (err) {
       error.value = 'Failed to create personal voucher'
@@ -231,11 +224,11 @@ export const useVoucherStore = defineStore('voucher', () => {
       })
 
       if (!response.ok) throw new Error('Failed to assign voucher to customers')
-      
+
       const result = await response.json()
       // Refresh personal vouchers to get the new assignments
       await fetchPersonalVouchers()
-      
+
       return result.data
     } catch (err) {
       error.value = 'Failed to assign voucher to customers'
@@ -257,13 +250,13 @@ export const useVoucherStore = defineStore('voucher', () => {
       })
 
       if (!response.ok) throw new Error('Failed to update personal voucher')
-      
+
       const updatedPersonalVoucher = await response.json()
       const index = personalVouchers.value.findIndex(pv => pv.id === id)
       if (index !== -1) {
         personalVouchers.value[index] = updatedPersonalVoucher.data
       }
-      
+
       return updatedPersonalVoucher.data
     } catch (err) {
       error.value = 'Failed to update personal voucher'
@@ -289,10 +282,10 @@ export const useVoucherStore = defineStore('voucher', () => {
       })
 
       if (!response.ok) throw new Error('Failed to bulk create personal vouchers')
-      
+
       const result = await response.json()
       personalVouchers.value.push(...result.data)
-      
+
       return result.data
     } catch (err) {
       error.value = 'Failed to bulk create personal vouchers'
@@ -303,21 +296,21 @@ export const useVoucherStore = defineStore('voucher', () => {
   }
 
   // Search functionality
-  const searchVouchers = computed(() => (query) => {
+  const searchVouchers = computed(() => query => {
     if (!query) return getAllVouchers.value
-    
+
     const searchTerm = query.toLowerCase()
-    return getAllVouchers.value.filter(voucher => 
+    return getAllVouchers.value.filter(voucher =>
       voucher.ten_phieu_giam_gia.toLowerCase().includes(searchTerm)
     )
   })
 
   // Filter by status
-  const filterVouchersByStatus = computed(() => (status) => {
+  const filterVouchersByStatus = computed(() => status => {
     return getAllVouchers.value.filter(voucher => voucher.trang_thai === status)
   })
 
-  const filterPersonalVouchersByStatus = computed(() => (status) => {
+  const filterPersonalVouchersByStatus = computed(() => status => {
     return getAllPersonalVouchers.value.filter(pv => pv.trang_thai === status)
   })
 
@@ -327,7 +320,7 @@ export const useVoucherStore = defineStore('voucher', () => {
     personalVouchers,
     loading,
     error,
-    
+
     // Getters
     getAllVouchers,
     getActiveVouchers,
@@ -340,7 +333,7 @@ export const useVoucherStore = defineStore('voucher', () => {
     searchVouchers,
     filterVouchersByStatus,
     filterPersonalVouchersByStatus,
-    
+
     // Actions
     fetchVouchers,
     fetchPersonalVouchers,
@@ -354,4 +347,3 @@ export const useVoucherStore = defineStore('voucher', () => {
     bulkCreatePersonalVouchers
   }
 })
-

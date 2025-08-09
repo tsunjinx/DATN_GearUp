@@ -37,11 +37,20 @@
         </div>
         <div class="chart-content">
           <div class="chart-bars">
-            <div v-for="(month, index) in monthlyRevenue" :key="index" class="chart-bar" :style="{
-              height: `${calculateBarHeight(month.value)}%`,
-              animationDelay: `${index * 0.1}s`
-            }" :class="{ 'current-month': month.current }" style="animation: chartBarGrow 0.8s ease-out both">
-              <div class="bar-tooltip">{{ formatCurrency(month.value) }}</div>
+            <div
+              v-for="(month, index) in monthlyRevenue"
+              :key="index"
+              class="chart-bar"
+              :style="{
+                height: `${calculateBarHeight(month.value)}%`,
+                animationDelay: `${index * 0.1}s`
+              }"
+              :class="{ 'current-month': month.current }"
+              style="animation: chartBarGrow 0.8s ease-out both"
+            >
+              <div class="bar-tooltip">
+                {{ formatCurrency(month.value) }}
+              </div>
             </div>
           </div>
           <div class="chart-labels">
@@ -64,19 +73,23 @@
         </div>
         <div class="top-products">
           <div v-for="(product, index) in topProducts" :key="product.id" class="top-product-item">
-            <div class="product-rank">{{ index + 1 }}</div>
+            <div class="product-rank">
+              {{ index + 1 }}
+            </div>
             <div class="product-image-container">
               <div class="product-image">👟</div>
             </div>
             <div class="product-info">
-              <div class="product-name">{{ product.name }}</div>
+              <div class="product-name">
+                {{ product.name }}
+              </div>
               <div class="product-meta">
                 <span class="product-sold">Đã bán: {{ product.sold }}</span>
                 <span class="product-revenue">{{ formatCurrency(product.revenue) }}</span>
               </div>
             </div>
             <div class="product-percentage">
-              <div class="percentage-bar" :style="{ width: `${calculatePercentage(product.sold)}%` }"></div>
+              <div class="percentage-bar" :style="{ width: `${calculatePercentage(product.sold)}%` }" />
               <span>{{ calculatePercentage(product.sold) }}%</span>
             </div>
           </div>
@@ -199,18 +212,18 @@ const totalCustomers = computed(() => customerStore.totalCustomers || 1250)
 const totalOrders = computed(() => orderStore.totalOrders || 89)
 const totalRevenue = computed(() => orderStore.totalRevenue || 125000000)
 
-const formatCurrency = (amount) => {
+const formatCurrency = amount => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
     currency: 'VND'
   }).format(amount)
 }
 
-const formatDate = (date) => {
+const formatDate = date => {
   return new Intl.DateTimeFormat('vi-VN').format(new Date(date))
 }
 
-const getStatusText = (status) => {
+const getStatusText = status => {
   const statusMap = {
     pending: 'Chờ xử lý',
     completed: 'Hoàn thành',
@@ -256,57 +269,65 @@ const topProducts = computed(() => {
   ]
 })
 
-const calculateBarHeight = (value) => {
+const calculateBarHeight = value => {
   const maxValue = Math.max(...monthlyRevenue.value.map(item => item.value))
   return (value / maxValue) * 100
 }
 
-const calculatePercentage = (sold) => {
+const calculatePercentage = sold => {
   const maxSold = Math.max(...topProducts.value.map(p => p.sold))
   return Math.round((sold / maxSold) * 100)
 }
 
 // Dashboard action methods with animations using composable
-const refreshData = async (event) => {
-  await withLoadingAnimation(event, async () => {
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 2000))
+const refreshData = async event => {
+  await withLoadingAnimation(
+    event,
+    async () => {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 2000))
 
-    // Refresh store data
-    await Promise.all([
-      productStore.fetchProducts(),
-      customerStore.fetchCustomers(),
-      orderStore.fetchOrders()
-    ])
+      // Refresh store data
+      await Promise.all([productStore.fetchProducts(), customerStore.fetchCustomers(), orderStore.fetchOrders()])
 
-    return 'Data refreshed successfully!'
-  }, {
-    onSuccess: (result) => console.log(result),
-    onError: (error) => console.error('Refresh failed:', error)
-  })
+      return 'Data refreshed successfully!'
+    },
+    {
+      onSuccess: result => console.log(result),
+      onError: error => console.error('Refresh failed:', error)
+    }
+  )
 }
 
-const exportData = async (event) => {
-  await withLoadingAnimation(event, async () => {
-    // Simulate export process
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    return 'Export completed successfully!'
-  }, {
-    onSuccess: (result) => console.log(result),
-    onError: (error) => console.error('Export failed:', error)
-  })
+const exportData = async event => {
+  await withLoadingAnimation(
+    event,
+    async () => {
+      // Simulate export process
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      return 'Export completed successfully!'
+    },
+    {
+      onSuccess: result => console.log(result),
+      onError: error => console.error('Export failed:', error)
+    }
+  )
 }
 
-const viewAnalytics = async (event) => {
-  await withLoadingAnimation(event, async () => {
-    // Simulate analytics loading
-    await new Promise(resolve => setTimeout(resolve, 1200))
-    console.log('Opening analytics view...')
-    return 'Analytics loaded successfully!'
-  }, {
-    onSuccess: (result) => console.log(result),
-    onError: (error) => console.error('Analytics failed:', error)
-  })
+const viewAnalytics = async event => {
+  await withLoadingAnimation(
+    event,
+    async () => {
+      // Simulate analytics loading
+      await new Promise(resolve => setTimeout(resolve, 1200))
+      console.log('Opening analytics view...')
+      return 'Analytics loaded successfully!'
+    },
+    {
+      onSuccess: result => console.log(result),
+      onError: error => console.error('Analytics failed:', error)
+    }
+  )
 }
 
 onMounted(() => {
@@ -623,17 +644,17 @@ onMounted(() => {
 }
 
 .top-product-item:nth-child(1) .product-rank {
-  background: #FFD700;
+  background: #ffd700;
   color: var(--text-inverse);
 }
 
 .top-product-item:nth-child(2) .product-rank {
-  background: #C0C0C0;
+  background: #c0c0c0;
   color: var(--text-inverse);
 }
 
 .top-product-item:nth-child(3) .product-rank {
-  background: #CD7F32;
+  background: #cd7f32;
   color: var(--text-inverse);
 }
 

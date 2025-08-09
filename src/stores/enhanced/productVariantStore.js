@@ -15,27 +15,27 @@ export const useProductVariantStore = defineStore('productVariant', () => {
   const manufacturerStore = useManufacturerStore()
 
   // Getters
-  const getAllVariants = computed(() => 
-    variants.value.filter(variant => !variant.deleted)
-  )
+  const getAllVariants = computed(() => variants.value.filter(variant => !variant.deleted))
 
   // Get variants for a specific product
-  const getVariantsByProductId = computed(() => (productId) => {
+  const getVariantsByProductId = computed(() => productId => {
     return getAllVariants.value.filter(variant => variant.id_sản_phẩm === productId)
   })
 
   // Get variant by combination of attributes
   const getVariantByAttributes = computed(() => (productId, colorId, sizeId) => {
-    return getAllVariants.value.find(variant => 
-      variant.id_sản_phẩm === productId &&
-      variant.id_mau_sac === colorId &&
-      variant.id_kich_thuoc === sizeId
+    return getAllVariants.value.find(
+      variant =>
+        variant.id_sản_phẩm === productId &&
+        variant.id_mau_sac === colorId &&
+        variant.id_kich_thuoc === sizeId
     )
   })
 
   // Calculate total stock for a product across all variants
-  const getTotalStockByProduct = computed(() => (productId) => {
-    return getVariantsByProductId.value(productId)
+  const getTotalStockByProduct = computed(() => productId => {
+    return getVariantsByProductId
+      .value(productId)
       .reduce((total, variant) => total + (variant.stock || 0), 0)
   })
 
@@ -45,14 +45,14 @@ export const useProductVariantStore = defineStore('productVariant', () => {
   })
 
   // Get available size/color combinations for a product
-  const getAvailableCombinations = computed(() => (productId) => {
+  const getAvailableCombinations = computed(() => productId => {
     const productVariants = getVariantsByProductId.value(productId)
     const combinations = []
-    
+
     productVariants.forEach(variant => {
       const color = attributeStore.getAllColors.find(c => c.id === variant.id_mau_sac)
       const size = attributeStore.getAllSizes.find(s => s.id === variant.id_kich_thuoc)
-      
+
       if (color && size) {
         combinations.push({
           variantId: variant.id,
@@ -68,12 +68,12 @@ export const useProductVariantStore = defineStore('productVariant', () => {
         })
       }
     })
-    
+
     return combinations
   })
 
   // Get variant with full attribute details
-  const getVariantWithDetails = computed(() => (variantId) => {
+  const getVariantWithDetails = computed(() => variantId => {
     const variant = getAllVariants.value.find(v => v.id === variantId)
     if (!variant) return null
 
@@ -85,10 +85,14 @@ export const useProductVariantStore = defineStore('productVariant', () => {
       soleType: attributeStore.getAllSoleTypes.find(st => st.id === variant.id_de_giay),
       insoleType: attributeStore.getAllInsoleTypes.find(it => it.id === variant.id_dem_giay),
       weight: attributeStore.getAllWeights.find(w => w.id === variant.id_trong_luong),
-      sportsSeason: attributeStore.getAllSportsSeasons.find(ss => ss.id === variant.id_mon_the_thao),
+      sportsSeason: attributeStore.getAllSportsSeasons.find(
+        ss => ss.id === variant.id_mon_the_thao
+      ),
       rainType: attributeStore.getAllRainTypes.find(rt => rt.id === variant.id_loai_mua),
       durability: attributeStore.getAllDurabilities.find(d => d.id === variant.id_do_ben),
-      waterproofLevel: attributeStore.getAllWaterproofLevels.find(wl => wl.id === variant.id_chong_nuoc),
+      waterproofLevel: attributeStore.getAllWaterproofLevels.find(
+        wl => wl.id === variant.id_chong_nuoc
+      ),
       manufacturer: manufacturerStore.getManufacturerById(variant.id_nha_san_xuat),
       origin: manufacturerStore.getOriginById(variant.id_xuat_xu)
     }
@@ -99,7 +103,7 @@ export const useProductVariantStore = defineStore('productVariant', () => {
     totalVariants: getAllVariants.value.length,
     lowStockVariants: getLowStockVariants.value(10).length,
     outOfStockVariants: getAllVariants.value.filter(v => v.stock === 0).length,
-    totalValue: getAllVariants.value.reduce((sum, v) => sum + (v.price * v.stock), 0)
+    totalValue: getAllVariants.value.reduce((sum, v) => sum + v.price * v.stock, 0)
   }))
 
   // Actions
@@ -108,7 +112,7 @@ export const useProductVariantStore = defineStore('productVariant', () => {
     try {
       const response = await fetch('/api/admin/product-variants')
       if (!response.ok) throw new Error('Failed to fetch variants')
-      
+
       const data = await response.json()
       variants.value = data.data || []
     } catch (err) {
@@ -119,18 +123,18 @@ export const useProductVariantStore = defineStore('productVariant', () => {
     }
   }
 
-  const fetchVariantsByProduct = async (productId) => {
+  const fetchVariantsByProduct = async productId => {
     loading.value = true
     try {
       const response = await fetch(`/api/admin/products/${productId}/variants`)
       if (!response.ok) throw new Error('Failed to fetch product variants')
-      
+
       const data = await response.json()
-      
+
       // Replace variants for this product
       variants.value = variants.value.filter(v => v.id_sản_phẩm !== productId)
       variants.value.push(...(data.data || []))
-      
+
       return data.data
     } catch (err) {
       error.value = 'Failed to fetch product variants'
@@ -141,11 +145,17 @@ export const useProductVariantStore = defineStore('productVariant', () => {
   }
 
   // Create variants for a product with size/color matrix
-  const createVariantsMatrix = async (productId, selectedColors, selectedSizes, basePrice, attributes) => {
+  const createVariantsMatrix = async (
+    productId,
+    selectedColors,
+    selectedSizes,
+    basePrice,
+    attributes
+  ) => {
     loading.value = true
     try {
       const variantsToCreate = []
-      
+
       // Generate all combinations of selected colors and sizes
       for (const color of selectedColors) {
         for (const size of selectedSizes) {
@@ -183,10 +193,10 @@ export const useProductVariantStore = defineStore('productVariant', () => {
       })
 
       if (!response.ok) throw new Error('Failed to create variants')
-      
+
       const result = await response.json()
       variants.value.push(...result.data)
-      
+
       return result.data
     } catch (err) {
       error.value = 'Failed to create variants matrix'
@@ -196,7 +206,7 @@ export const useProductVariantStore = defineStore('productVariant', () => {
     }
   }
 
-  const createSingleVariant = async (variantData) => {
+  const createSingleVariant = async variantData => {
     loading.value = true
     try {
       const response = await fetch('/api/admin/product-variants', {
@@ -209,10 +219,10 @@ export const useProductVariantStore = defineStore('productVariant', () => {
       })
 
       if (!response.ok) throw new Error('Failed to create variant')
-      
+
       const result = await response.json()
       variants.value.push(result.data)
-      
+
       return result.data
     } catch (err) {
       error.value = 'Failed to create variant'
@@ -233,13 +243,13 @@ export const useProductVariantStore = defineStore('productVariant', () => {
       })
 
       if (!response.ok) throw new Error('Failed to update variant')
-      
+
       const result = await response.json()
       const index = variants.value.findIndex(v => v.id === variantId)
       if (index !== -1) {
         variants.value[index] = { ...variants.value[index], ...result.data }
       }
-      
+
       return result.data
     } catch (err) {
       error.value = 'Failed to update variant'
@@ -250,7 +260,7 @@ export const useProductVariantStore = defineStore('productVariant', () => {
   }
 
   // Bulk update variants (useful for pricing updates)
-  const bulkUpdateVariants = async (updates) => {
+  const bulkUpdateVariants = async updates => {
     loading.value = true
     try {
       const response = await fetch('/api/admin/product-variants/bulk-update', {
@@ -260,9 +270,9 @@ export const useProductVariantStore = defineStore('productVariant', () => {
       })
 
       if (!response.ok) throw new Error('Failed to bulk update variants')
-      
+
       const result = await response.json()
-      
+
       // Update local state
       updates.forEach(update => {
         const index = variants.value.findIndex(v => v.id === update.id)
@@ -270,7 +280,7 @@ export const useProductVariantStore = defineStore('productVariant', () => {
           variants.value[index] = { ...variants.value[index], ...update }
         }
       })
-      
+
       return result.data
     } catch (err) {
       error.value = 'Failed to bulk update variants'
@@ -281,7 +291,7 @@ export const useProductVariantStore = defineStore('productVariant', () => {
   }
 
   // Delete variant (soft delete)
-  const deleteVariant = async (variantId) => {
+  const deleteVariant = async variantId => {
     loading.value = true
     try {
       const response = await fetch(`/api/admin/product-variants/${variantId}`, {
@@ -289,7 +299,7 @@ export const useProductVariantStore = defineStore('productVariant', () => {
       })
 
       if (!response.ok) throw new Error('Failed to delete variant')
-      
+
       // Update local state - soft delete
       const index = variants.value.findIndex(v => v.id === variantId)
       if (index !== -1) {
@@ -304,7 +314,7 @@ export const useProductVariantStore = defineStore('productVariant', () => {
   }
 
   // Bulk stock update
-  const bulkUpdateStock = async (stockUpdates) => {
+  const bulkUpdateStock = async stockUpdates => {
     loading.value = true
     try {
       const response = await fetch('/api/admin/product-variants/bulk-stock', {
@@ -314,9 +324,9 @@ export const useProductVariantStore = defineStore('productVariant', () => {
       })
 
       if (!response.ok) throw new Error('Failed to bulk update stock')
-      
+
       const result = await response.json()
-      
+
       // Update local state
       stockUpdates.forEach(update => {
         const index = variants.value.findIndex(v => v.id === update.variantId)
@@ -324,7 +334,7 @@ export const useProductVariantStore = defineStore('productVariant', () => {
           variants.value[index].stock = update.stock
         }
       })
-      
+
       return result.data
     } catch (err) {
       error.value = 'Failed to bulk update stock'
@@ -335,13 +345,14 @@ export const useProductVariantStore = defineStore('productVariant', () => {
   }
 
   // Search functionality
-  const searchVariants = computed(() => (query) => {
+  const searchVariants = computed(() => query => {
     if (!query) return getAllVariants.value
-    
+
     const searchTerm = query.toLowerCase()
-    return getAllVariants.value.filter(variant => 
-      variant.ten_san_pham.toLowerCase().includes(searchTerm) ||
-      variant.ma_san_pham.toLowerCase().includes(searchTerm)
+    return getAllVariants.value.filter(
+      variant =>
+        variant.ten_san_pham.toLowerCase().includes(searchTerm) ||
+        variant.ma_san_pham.toLowerCase().includes(searchTerm)
     )
   })
 
@@ -355,7 +366,7 @@ export const useProductVariantStore = defineStore('productVariant', () => {
     variants,
     loading,
     error,
-    
+
     // Getters
     getAllVariants,
     getVariantsByProductId,
@@ -366,7 +377,7 @@ export const useProductVariantStore = defineStore('productVariant', () => {
     getVariantWithDetails,
     variantStats,
     searchVariants,
-    
+
     // Actions
     fetchVariants,
     fetchVariantsByProduct,

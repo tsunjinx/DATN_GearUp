@@ -13,11 +13,11 @@
             <GearUpLogo variant="small" />
           </div>
         </div>
-        <button class="sidebar-toggle" @click="toggleSidebar" v-if="!isMobile">
-          <div class="hamburger-icon" :class="{ 'active': !sidebarCollapsed }">
-            <span class="line"></span>
-            <span class="line"></span>
-            <span class="line"></span>
+        <button v-if="!isMobile" class="sidebar-toggle" @click="toggleSidebar">
+          <div class="hamburger-icon" :class="{ active: !sidebarCollapsed }">
+            <span class="line" />
+            <span class="line" />
+            <span class="line" />
           </div>
         </button>
       </div>
@@ -103,21 +103,24 @@
     <!-- Main Content -->
     <main class="main-content">
       <!-- Mobile/Tablet Overlay - only covers main content area -->
-      <div class="mobile-overlay" :class="{ active: mobileMenuOpen || (isTablet && !sidebarCollapsed) }"
-        @click="closeMenu"></div>
+      <div
+        class="mobile-overlay"
+        :class="{ active: mobileMenuOpen || (isTablet && !sidebarCollapsed) }"
+        @click="closeMenu"
+      />
 
       <!-- Top Header -->
       <header class="top-header">
         <div class="header-left">
-          <button class="mobile-menu-toggle" @click="toggleMobileMenu" v-if="isMobile">
-            <div class="hamburger-icon" :class="{ 'active': mobileMenuOpen }">
-              <span class="line"></span>
-              <span class="line"></span>
-              <span class="line"></span>
+          <button v-if="isMobile" class="mobile-menu-toggle" @click="toggleMobileMenu">
+            <div class="hamburger-icon" :class="{ active: mobileMenuOpen }">
+              <span class="line" />
+              <span class="line" />
+              <span class="line" />
             </div>
           </button>
-  <div class="breadcrumb">
-    <router-link to="/admin/dashboard" class="breadcrumb-link">Trang chủ</router-link>
+          <div class="breadcrumb">
+            <router-link to="/admin/dashboard" class="breadcrumb-link"> Trang chủ </router-link>
             <span class="breadcrumb-separator">/</span>
             <span class="breadcrumb-current">{{ pageTitle }}</span>
           </div>
@@ -128,17 +131,26 @@
             <button class="notification-button" @click="toggleNotifications">
               <div class="bell-icon-container">
                 <!-- Clean Bell Icon -->
-                <svg class="bell-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg
+                  class="bell-icon"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
                   <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
                   <path d="M13.73 21a2 2 0 0 1-3.46 0" />
                 </svg>
                 <!-- Notification count badge with dynamic animation -->
-                <div 
-                  class="notification-count" 
-                  :class="{ 'updating': isCountUpdating }"
+                <div
                   v-if="unreadNotifications > 0"
                   :key="unreadNotifications"
+                  class="notification-count"
+                  :class="{ updating: isCountUpdating }"
                 >
                   {{ unreadNotifications > 9 ? '9+' : unreadNotifications }}
                 </div>
@@ -161,30 +173,45 @@
                 </div>
 
                 <div v-else>
-                  <div v-for="notification in notifications" :key="notification.id" class="notification-item"
-                    :class="{ 'unread': !notification.isRead }" @click="markAsRead(notification.id)">
-                    <div class="notification-icon">{{ notification.icon }}</div>
-                    <div class="notification-content">
-                      <div class="notification-title">{{ notification.title }}</div>
-                      <div class="notification-message">{{ notification.message }}</div>
-                      <div class="notification-time">{{ formatTimeAgo(notification.timestamp) }}</div>
+                  <div
+                    v-for="notification in notifications"
+                    :key="notification.id"
+                    class="notification-item"
+                    :class="{ unread: !notification.isRead }"
+                    @click="markAsRead(notification.id)"
+                  >
+                    <div class="notification-icon">
+                      {{ notification.icon }}
                     </div>
-                    <div v-if="!notification.isRead" class="unread-indicator"></div>
+                    <div class="notification-content">
+                      <div class="notification-title">
+                        {{ notification.title }}
+                      </div>
+                      <div class="notification-message">
+                        {{ notification.message }}
+                      </div>
+                      <div class="notification-time">
+                        {{ formatTimeAgo(notification.timestamp) }}
+                      </div>
+                    </div>
+                    <div v-if="!notification.isRead" class="unread-indicator" />
                   </div>
                 </div>
               </div>
 
               <div class="notifications-footer">
-                <button class="view-all-btn" @click="viewAllNotifications">
-                  Xem tất cả thông báo
-                </button>
+                <button class="view-all-btn" @click="viewAllNotifications">Xem tất cả thông báo</button>
               </div>
             </div>
 
             <!-- Full Notifications Modal -->
             <teleport to="body">
-              <div v-if="showAllNotificationsModal" class="modal-overlay" :class="{ 'modal-closing': isModalClosing }"
-                @click="closeAllNotificationsModal">
+              <div
+                v-if="showAllNotificationsModal"
+                class="modal-overlay"
+                :class="{ 'modal-closing': isModalClosing }"
+                @click="closeAllNotificationsModal"
+              >
                 <div class="notifications-modal" :class="{ 'modal-closing': isModalClosing }" @click.stop>
                   <div class="modal-header">
                     <div class="modal-title-section">
@@ -199,23 +226,31 @@
                         <i class="action-icon">✓</i>
                         Đánh dấu tất cả đã đọc
                       </button>
-                      <button type="button" class="close-modal-btn" @click="closeAllNotificationsModal" title="Đóng">
-                        <img class="close-icon" src="@/assets/close.png" alt="Close" aria-hidden="true">
+                      <button type="button" class="close-modal-btn" title="Đóng" @click="closeAllNotificationsModal">
+                        <img class="close-icon" src="@/assets/close.png" alt="Close" aria-hidden="true" />
                       </button>
                     </div>
                   </div>
 
                   <div class="modal-filters">
                     <div class="filter-tabs">
-                      <button v-for="filter in notificationFilters" :key="filter.key" class="filter-tab"
-                        :class="{ 'active': selectedFilter === filter.key }" @click="selectFilter(filter.key)">
+                      <button
+                        v-for="filter in notificationFilters"
+                        :key="filter.key"
+                        class="filter-tab"
+                        :class="{ active: selectedFilter === filter.key }"
+                        @click="selectFilter(filter.key)"
+                      >
                         <i class="tab-icon">{{ filter.icon }}</i>
                         {{ filter.label }}
-                        <span v-show="filterCounts[filter.key] > 0" class="tab-badge" 
-                              :class="{ 
-                                'badge-unread': getUnreadCountForFilter(filter.key) > 0,
-                                'badge-read': getUnreadCountForFilter(filter.key) === 0 && filterCounts[filter.key] > 0 
-                              }">
+                        <span
+                          v-show="filterCounts[filter.key] > 0"
+                          class="tab-badge"
+                          :class="{
+                            'badge-unread': getUnreadCountForFilter(filter.key) > 0,
+                            'badge-read': getUnreadCountForFilter(filter.key) === 0 && filterCounts[filter.key] > 0
+                          }"
+                        >
                           {{ filterCounts[filter.key] }}
                         </span>
                       </button>
@@ -230,9 +265,14 @@
                     </div>
 
                     <div v-else class="notifications-grid">
-                      <div v-for="(notification, index) in filteredNotificationsModal" :key="notification.id"
-                        class="notification-card" :class="{ 'unread': !notification.isRead }"
-                        :style="{ 'animation-delay': `${index * 0.05}s` }" @click="markAsRead(notification.id)">
+                      <div
+                        v-for="(notification, index) in filteredNotificationsModal"
+                        :key="notification.id"
+                        class="notification-card"
+                        :class="{ unread: !notification.isRead }"
+                        :style="{ 'animation-delay': `${index * 0.05}s` }"
+                        @click="markAsRead(notification.id)"
+                      >
                         <div class="card-header">
                           <div class="notification-type" :class="`type-${notification.type}`">
                             <i class="type-icon">{{ notification.icon }}</i>
@@ -240,19 +280,26 @@
                           </div>
                           <div class="notification-meta">
                             <span class="notification-time-full">{{ formatFullDate(notification.timestamp) }}</span>
-                            <div v-if="!notification.isRead" class="unread-dot"></div>
+                            <div v-if="!notification.isRead" class="unread-dot" />
                           </div>
                         </div>
 
                         <div class="card-body">
-                          <h4 class="notification-title-full">{{ notification.title }}</h4>
-                          <p class="notification-message-full">{{ notification.message }}</p>
+                          <h4 class="notification-title-full">
+                            {{ notification.title }}
+                          </h4>
+                          <p class="notification-message-full">
+                            {{ notification.message }}
+                          </p>
                         </div>
 
                         <div class="card-footer">
                           <span class="time-ago">{{ formatTimeAgo(notification.timestamp) }}</span>
-                          <button v-if="!notification.isRead" class="mark-read-btn"
-                            @click.stop="markAsRead(notification.id)">
+                          <button
+                            v-if="!notification.isRead"
+                            class="mark-read-btn"
+                            @click.stop="markAsRead(notification.id)"
+                          >
                             <i class="check-icon">✓</i>
                             Đánh dấu đã đọc
                           </button>
@@ -323,12 +370,12 @@ const loadSidebarPreference = () => {
   try {
     // Always start with sidebar expanded on admin site access
     sidebarCollapsed.value = false
-    
+
     // Load user toggle preference for maintaining state during session
     const savedUserToggled = localStorage.getItem('gearup-sidebar-user-toggled')
     if (savedUserToggled !== null) {
       userToggledSidebar.value = JSON.parse(savedUserToggled)
-      
+
       // Only apply saved collapsed state if user has manually toggled before
       // and we're on desktop (not mobile/tablet)
       if (userToggledSidebar.value && window.innerWidth > 1024) {
@@ -338,7 +385,7 @@ const loadSidebarPreference = () => {
         }
       }
     }
-    
+
     console.log('📋 Sidebar initialized:', {
       collapsed: sidebarCollapsed.value,
       userToggled: userToggledSidebar.value,
@@ -388,7 +435,13 @@ const forceAdminSidebarOpen = () => {
 }
 
 // Notifications
-const { notifications, unreadCount, startPolling, markAsRead: markAsReadComposable, markAllAsRead: markAllAsReadComposable } = useNotifications()
+const {
+  notifications,
+  unreadCount,
+  startPolling,
+  markAsRead: markAsReadComposable,
+  markAllAsRead: markAllAsReadComposable
+} = useNotifications()
 const showNotifications = ref(false)
 const showAllNotificationsModal = ref(false)
 const isModalClosing = ref(false)
@@ -468,12 +521,12 @@ const unreadNotifications = computed(() => unreadCount.value)
 // Optimized with early return and reduced iterations
 const filteredNotificationsModal = computed(() => {
   const notifs = notifications.value
-  
+
   // Early return for 'all' filter to avoid unnecessary filtering
   if (selectedFilter.value === 'all') {
     return [...notifs].sort((a, b) => b.timestamp - a.timestamp)
   }
-  
+
   let filtered
   if (selectedFilter.value === 'unread') {
     filtered = notifs.filter(n => !n.isRead)
@@ -528,14 +581,14 @@ const checkResponsive = () => {
       // Desktop: always start expanded for admin site
       sidebarCollapsed.value = false // Always start expanded on desktop
     }
-    
+
     console.log('🚀 Initial admin sidebar state:', {
       width: currentWidth,
       collapsed: sidebarCollapsed.value,
       isMobile: isMobile.value,
       isTablet: isTablet.value
     })
-    
+
     isInitialLoad.value = false
     previousWidth.value = currentWidth
     return
@@ -585,23 +638,23 @@ const checkResponsive = () => {
 onMounted(() => {
   // Load user preferences first (but always start expanded for admin site)
   loadSidebarPreference()
-  
+
   // Force sidebar open for admin site access
   forceAdminSidebarOpen()
-  
+
   // Then check responsive layout
   checkResponsive()
-  
+
   // Use debounced resize handler for better performance
   window.addEventListener('resize', debouncedCheckResponsive, { passive: true })
   document.addEventListener('click', handleClickOutside, { passive: true })
-  
+
   // Notifications polling
   startPolling()
   previousUnreadCount.value = unreadNotifications.value
-  
+
   console.log('🎯 AdminLayout mounted - sidebar always starts open for admin site')
-  
+
   // Development utilities
   if (import.meta.env.DEV) {
     // Expose functions for debugging
@@ -618,48 +671,60 @@ onMounted(() => {
 onUnmounted(() => {
   // Clean up timers
   if (resizeTimeout) clearTimeout(resizeTimeout)
-  
+
   // Remove event listeners
   window.removeEventListener('resize', debouncedCheckResponsive)
   document.removeEventListener('click', handleClickOutside)
 })
 
 // Optimized watchers with better performance
-watch(unreadNotifications, (newCount, oldCount) => {
-  if (newCount !== oldCount && oldCount !== undefined) {
-    // Trigger update animation
-    isCountUpdating.value = true
-    
-    // Reset animation class after animation completes
-    setTimeout(() => {
-      isCountUpdating.value = false
-    }, 600)
-  }
-  
-  previousUnreadCount.value = newCount
-}, { immediate: false })
+watch(
+  unreadNotifications,
+  (newCount, oldCount) => {
+    if (newCount !== oldCount && oldCount !== undefined) {
+      // Trigger update animation
+      isCountUpdating.value = true
+
+      // Reset animation class after animation completes
+      setTimeout(() => {
+        isCountUpdating.value = false
+      }, 600)
+    }
+
+    previousUnreadCount.value = newCount
+  },
+  { immediate: false }
+)
 
 // Simplified notification watcher - only in development
 if (import.meta.env.DEV) {
-  watch(notifications, () => {
-    console.log('Notifications changed, filter counts will update automatically')
-  }, { deep: true })
-  
-  watch(selectedFilter, (newFilter) => {
+  watch(
+    notifications,
+    () => {
+      console.log('Notifications changed, filter counts will update automatically')
+    },
+    { deep: true }
+  )
+
+  watch(selectedFilter, newFilter => {
     console.log('Filter changed to:', newFilter)
   })
 }
 
 // Watch for route changes to ensure sidebar is always open for admin routes
-watch(route, (newRoute) => {
-  // If navigating to any admin route, ensure sidebar is open (except mobile)
-  if (newRoute.path.startsWith('/admin') && !isMobile.value) {
-    if (sidebarCollapsed.value) {
-      console.log('🔄 Auto-opening sidebar for admin route:', newRoute.path)
-      sidebarCollapsed.value = false
+watch(
+  route,
+  newRoute => {
+    // If navigating to any admin route, ensure sidebar is open (except mobile)
+    if (newRoute.path.startsWith('/admin') && !isMobile.value) {
+      if (sidebarCollapsed.value) {
+        console.log('🔄 Auto-opening sidebar for admin route:', newRoute.path)
+        sidebarCollapsed.value = false
+      }
     }
-  }
-}, { immediate: true })
+  },
+  { immediate: true }
+)
 
 const pageTitle = computed(() => {
   // First try to get title from route meta, remove "GearUp - " prefix for display
@@ -732,9 +797,13 @@ const toggleNotifications = () => {
   console.log('New state:', showNotifications.value)
 }
 
-const markAsRead = async (notificationId) => { markAsReadComposable(notificationId) }
+const markAsRead = async notificationId => {
+  markAsReadComposable(notificationId)
+}
 
-const markAllAsRead = async () => { markAllAsReadComposable() }
+const markAllAsRead = async () => {
+  markAllAsReadComposable()
+}
 
 const viewAllNotifications = () => {
   showNotifications.value = false
@@ -752,9 +821,9 @@ const closeAllNotificationsModal = () => {
   }, 400) // 400ms matches the animation duration
 }
 
-const selectFilter = (filterKey) => {
+const selectFilter = filterKey => {
   selectedFilter.value = filterKey
-  
+
   // Performance: Only add debug logging in development
   if (import.meta.env.DEV) {
     console.log('� Selecting filter:', filterKey)
@@ -773,16 +842,16 @@ const filterCounts = computed(() => {
     customer: notifications.value.filter(n => n.type === 'customer').length,
     report: notifications.value.filter(n => n.type === 'report').length
   }
-  
+
   console.log('Filter counts updated:', counts)
   return counts
 })
 
-const getFilterCount = (filterKey) => {
+const getFilterCount = filterKey => {
   return filterCounts.value[filterKey] || 0
 }
 
-const getUnreadCountForFilter = (filterKey) => {
+const getUnreadCountForFilter = filterKey => {
   switch (filterKey) {
     case 'all':
       return notifications.value.filter(n => !n.isRead).length
@@ -813,7 +882,7 @@ const getEmptyMessage = () => {
   }
 }
 
-const getTypeLabel = (type) => {
+const getTypeLabel = type => {
   const typeLabels = {
     order: 'Đơn hàng',
     inventory: 'Kho hàng',
@@ -824,7 +893,7 @@ const getTypeLabel = (type) => {
   return typeLabels[type] || type
 }
 
-const formatFullDate = (timestamp) => {
+const formatFullDate = timestamp => {
   return new Intl.DateTimeFormat('vi-VN', {
     year: 'numeric',
     month: 'long',
@@ -834,7 +903,7 @@ const formatFullDate = (timestamp) => {
   }).format(new Date(timestamp))
 }
 
-const formatTimeAgo = (timestamp) => {
+const formatTimeAgo = timestamp => {
   const now = new Date()
   const diff = now - timestamp
   const minutes = Math.floor(diff / (1000 * 60))
@@ -848,8 +917,12 @@ const formatTimeAgo = (timestamp) => {
 }
 
 // Close notifications when clicking outside
-const handleClickOutside = (event) => {
-  if (showNotifications.value && !event.target.closest('.notification-button') && !event.target.closest('.notifications-dropdown')) {
+const handleClickOutside = event => {
+  if (
+    showNotifications.value &&
+    !event.target.closest('.notification-button') &&
+    !event.target.closest('.notifications-dropdown')
+  ) {
     showNotifications.value = false
   }
   if (showAllNotificationsModal.value && !event.target.closest('.notifications-modal')) {
@@ -900,8 +973,12 @@ const handleClickOutside = (event) => {
 }
 
 @keyframes loading-shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 /* Dynamic responsive sidebar states */
@@ -1037,7 +1114,7 @@ const handleClickOutside = (event) => {
 }
 
 .sidebar-collapsed .logo-wrapper :deep(.gearup-logo) {
-  transform: scale(1.0);
+  transform: scale(1);
 }
 
 .sidebar-toggle {
@@ -1285,7 +1362,8 @@ const handleClickOutside = (event) => {
 }
 
 .nav-link:hover .nav-icon {
-  filter: brightness(0) saturate(100%) invert(18%) sepia(85%) saturate(2736%) hue-rotate(177deg) brightness(91%) contrast(96%);
+  filter: brightness(0) saturate(100%) invert(18%) sepia(85%) saturate(2736%) hue-rotate(177deg) brightness(91%)
+    contrast(96%);
 }
 
 .nav-link.router-link-exact-active {
@@ -1496,7 +1574,9 @@ const handleClickOutside = (event) => {
   border: 2px solid white;
   box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
   z-index: 1;
-  animation: badgeEntrance 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), badgePulse 2s infinite 1s;
+  animation:
+    badgeEntrance 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+    badgePulse 2s infinite 1s;
   transform-origin: center;
 }
 
@@ -1527,7 +1607,8 @@ const handleClickOutside = (event) => {
 
 /* Continuous pulse animation */
 @keyframes badgePulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
   }
@@ -1580,7 +1661,6 @@ const handleClickOutside = (event) => {
   outline: 2px solid var(--primary-500);
   outline-offset: 2px;
 }
-
 
 /* Notifications Dropdown */
 .notifications-dropdown {
@@ -2028,14 +2108,17 @@ const handleClickOutside = (event) => {
 
 /* Pulse animation on hover */
 @keyframes closeButtonPulse {
-
   0%,
   100% {
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2), 0 0 0 0 rgba(156, 163, 175, 0.4);
+    box-shadow:
+      0 6px 20px rgba(0, 0, 0, 0.2),
+      0 0 0 0 rgba(156, 163, 175, 0.4);
   }
 
   50% {
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2), 0 0 0 8px rgba(156, 163, 175, 0);
+    box-shadow:
+      0 6px 20px rgba(0, 0, 0, 0.2),
+      0 0 0 8px rgba(156, 163, 175, 0);
   }
 }
 
@@ -2054,7 +2137,6 @@ const handleClickOutside = (event) => {
 
 /* Shake animation on click */
 @keyframes closeButtonShake {
-
   0%,
   100% {
     transform: scale(0.9) rotate(180deg) translateX(0);
@@ -2077,7 +2159,6 @@ const handleClickOutside = (event) => {
 
 /* Focus pulse animation */
 @keyframes closeButtonFocusPulse {
-
   0%,
   100% {
     outline-color: var(--primary-500);
@@ -2102,13 +2183,15 @@ const handleClickOutside = (event) => {
 /* Icon rotation animation on hover */
 .close-modal-btn:hover .close-icon {
   transform: rotate(90deg) scale(1.1) !important;
-  filter: brightness(0) saturate(100%) invert(27%) sepia(91%) saturate(2870%) hue-rotate(346deg) brightness(91%) contrast(94%) !important; /* Red color filter */
+  filter: brightness(0) saturate(100%) invert(27%) sepia(91%) saturate(2870%) hue-rotate(346deg) brightness(91%)
+    contrast(94%) !important; /* Red color filter */
 }
 
 /* Icon animation on active */
 .close-modal-btn:active .close-icon {
   transform: rotate(180deg) scale(0.8) !important;
-  filter: brightness(0) saturate(100%) invert(9%) sepia(100%) saturate(7093%) hue-rotate(352deg) brightness(86%) contrast(118%) !important; /* Darker red color filter */
+  filter: brightness(0) saturate(100%) invert(9%) sepia(100%) saturate(7093%) hue-rotate(352deg) brightness(86%)
+    contrast(118%) !important; /* Darker red color filter */
 }
 
 /* Special closing animation for the close button when modal is closing */
@@ -2157,13 +2240,15 @@ const handleClickOutside = (event) => {
   50% {
     opacity: 0.7;
     transform: rotate(180deg) scale(1.2);
-    filter: brightness(0) saturate(100%) invert(27%) sepia(91%) saturate(2870%) hue-rotate(346deg) brightness(91%) contrast(94%);
+    filter: brightness(0) saturate(100%) invert(27%) sepia(91%) saturate(2870%) hue-rotate(346deg) brightness(91%)
+      contrast(94%);
   }
 
   100% {
     opacity: 0;
     transform: rotate(360deg) scale(0);
-    filter: brightness(0) saturate(100%) invert(9%) sepia(100%) saturate(7093%) hue-rotate(352deg) brightness(86%) contrast(118%);
+    filter: brightness(0) saturate(100%) invert(9%) sepia(100%) saturate(7093%) hue-rotate(352deg) brightness(86%)
+      contrast(118%);
   }
 }
 
@@ -2320,7 +2405,7 @@ const handleClickOutside = (event) => {
   animation-delay: 120ms !important;
 }
 
-.modal-closing .filter-tab:nth-child(n+6) {
+.modal-closing .filter-tab:nth-child(n + 6) {
   animation-delay: 150ms !important;
 }
 
@@ -2424,7 +2509,7 @@ const handleClickOutside = (event) => {
   animation-delay: 200ms !important;
 }
 
-.modal-closing .notification-card:nth-child(n+6) {
+.modal-closing .notification-card:nth-child(n + 6) {
   animation-delay: 250ms !important;
 }
 

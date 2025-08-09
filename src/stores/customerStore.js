@@ -6,14 +6,14 @@ export const useCustomerStore = defineStore('customer', {
     loading: false,
     error: null
   }),
-  
+
   getters: {
-    getCustomerById: (state) => (id) => {
+    getCustomerById: state => id => {
       return state.customers.find(customer => customer.id === id)
     },
-    totalCustomers: (state) => state.customers.length
+    totalCustomers: state => state.customers.length
   },
-  
+
   actions: {
     async fetchCustomers() {
       this.loading = true
@@ -25,7 +25,7 @@ export const useCustomerStore = defineStore('customer', {
         this.loading = false
       }
     },
-    
+
     async addCustomer(customer) {
       try {
         // API call
@@ -33,7 +33,7 @@ export const useCustomerStore = defineStore('customer', {
         this.error = error.message
       }
     },
-    
+
     async updateCustomer(id, customer) {
       try {
         // API call
@@ -45,7 +45,7 @@ export const useCustomerStore = defineStore('customer', {
         this.error = error.message
       }
     },
-    
+
     async deleteCustomer(id) {
       try {
         // API call

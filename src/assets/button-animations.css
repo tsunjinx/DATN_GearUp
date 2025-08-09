@@ -62,19 +62,27 @@
 
 .btn-secondary.loading::after,
 .btn-outline.loading::after,
-.btn[style*="background"].loading::after {
+.btn[style*='background'].loading::after {
   border-top-color: rgba(0, 0, 0, 0.6);
 }
 
 /* Light colored buttons need darker spinner */
 .btn-light.loading::after,
-.btn[style*="background-color: #f"]:not([style*="background-color: #f0"]):not([style*="background-color: #f1"]):not([style*="background-color: #f2"]):not([style*="background-color: #f3"]):not([style*="background-color: #f4"]):not([style*="background-color: #f5"]).loading::after {
+.btn[style*='background-color: #f']:not([style*='background-color: #f0']):not(
+    [style*='background-color: #f1']
+  ):not([style*='background-color: #f2']):not([style*='background-color: #f3']):not(
+    [style*='background-color: #f4']
+  ):not([style*='background-color: #f5']).loading::after {
   border-top-color: rgba(0, 0, 0, 0.7);
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Simple Success Animation */
@@ -91,9 +99,16 @@
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-2px); }
-  75% { transform: translateX(2px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-2px);
+  }
+  75% {
+    transform: translateX(2px);
+  }
 }
 
 /* Remove all complex animations */

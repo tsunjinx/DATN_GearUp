@@ -6,14 +6,14 @@ export const useProductStore = defineStore('product', {
     loading: false,
     error: null
   }),
-  
+
   getters: {
-    getProductById: (state) => (id) => {
+    getProductById: state => id => {
       return state.products.find(product => product.id === id)
     },
-    totalProducts: (state) => state.products.length
+    totalProducts: state => state.products.length
   },
-  
+
   actions: {
     async fetchProducts() {
       this.loading = true
@@ -27,7 +27,7 @@ export const useProductStore = defineStore('product', {
         this.loading = false
       }
     },
-    
+
     async addProduct(product) {
       try {
         // API call
@@ -37,7 +37,7 @@ export const useProductStore = defineStore('product', {
         this.error = error.message
       }
     },
-    
+
     async updateProduct(id, product) {
       try {
         // API call
@@ -50,7 +50,7 @@ export const useProductStore = defineStore('product', {
         this.error = error.message
       }
     },
-    
+
     async deleteProduct(id) {
       try {
         // API call

@@ -1,11 +1,16 @@
 <!-- Khối trạng thái dùng chung: loading / error / empty -->
 <template>
   <div class="state" :class="type">
-    <div class="icon" aria-hidden="true">{{ icon }}</div>
-    <div class="message">{{ messageToShow }}</div>
-    <div v-if="$slots.action" class="action"><slot name="action" /></div>
+    <div class="icon" aria-hidden="true">
+      {{ icon }}
+    </div>
+    <div class="message">
+      {{ messageToShow }}
+    </div>
+    <div v-if="$slots.action" class="action">
+      <slot name="action" />
+    </div>
   </div>
-  
 </template>
 
 <script setup>
@@ -33,10 +38,19 @@ const messageToShow = computed(() => {
 </script>
 
 <style scoped>
-.state { text-align:center; color: var(--gray-600); padding: var(--spacing-lg) }
-.icon { font-size: 32px; margin-bottom: 8px }
-.message { font-weight: 600 }
-.action { margin-top: var(--spacing-sm) }
+.state {
+  text-align: center;
+  color: var(--gray-600);
+  padding: var(--spacing-lg);
+}
+.icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+.message {
+  font-weight: 600;
+}
+.action {
+  margin-top: var(--spacing-sm);
+}
 </style>
-
-

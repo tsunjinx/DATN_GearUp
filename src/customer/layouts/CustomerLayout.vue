@@ -4,13 +4,10 @@
   </div>
 </template>
 
-<script setup>
-</script>
+<script setup></script>
 
 <style scoped>
 .customer-layout {
   min-height: 100vh;
 }
 </style>
-
-

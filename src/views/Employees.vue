@@ -30,8 +30,12 @@
           <div class="search-section">
             <div class="search-box">
               <i class="search-icon">🔍</i>
-              <input v-model="searchTerm" type="text" placeholder="Tìm kiếm theo tên, email, mã nhân viên..."
-                class="search-input" />
+              <input
+                v-model="searchTerm"
+                type="text"
+                placeholder="Tìm kiếm theo tên, email, mã nhân viên..."
+                class="search-input"
+              />
             </div>
           </div>
 
@@ -73,11 +77,21 @@
             <div class="filter-group">
               <label>Mức lương</label>
               <div class="salary-range">
-                <input v-model.number="salaryRange.min" type="number" placeholder="Từ" 
-                  class="form-control salary-input" step="1000000" />
+                <input
+                  v-model.number="salaryRange.min"
+                  type="number"
+                  placeholder="Từ"
+                  class="form-control salary-input"
+                  step="1000000"
+                />
                 <span class="salary-separator">-</span>
-                <input v-model.number="salaryRange.max" type="number" placeholder="Đến" 
-                  class="form-control salary-input" step="1000000" />
+                <input
+                  v-model.number="salaryRange.max"
+                  type="number"
+                  placeholder="Đến"
+                  class="form-control salary-input"
+                  step="1000000"
+                />
               </div>
             </div>
 
@@ -129,7 +143,7 @@
               </button>
             </div>
           </div>
-          
+
           <div class="action-group">
             <label class="action-label">💼 Quản lý nhân sự</label>
             <div class="action-buttons-row">
@@ -173,8 +187,12 @@
             <td>{{ employee.email }}</td>
             <td>{{ employee.phone }}</td>
             <td>
-              <StatusBadge :status="employee.role" :size="isMobile ? 'small' : 'normal'" variant="outline"
-                :custom-text="getRoleText(employee.role)" />
+              <StatusBadge
+                :status="employee.role"
+                :size="isMobile ? 'small' : 'normal'"
+                variant="outline"
+                :custom-text="getRoleText(employee.role)"
+              />
             </td>
             <td>{{ formatCurrency(employee.salary) }}</td>
             <td>{{ formatDate(employee.startDate) }}</td>
@@ -183,12 +201,8 @@
             </td>
             <td>
               <div class="action-buttons">
-                <button class="btn btn-sm btn-outline" @click="editEmployee(employee)">
-                  Sửa
-                </button>
-                <button class="btn btn-sm btn-danger" @click="deleteEmployee(employee.id)">
-                  Xóa
-                </button>
+                <button class="btn btn-sm btn-outline" @click="editEmployee(employee)">Sửa</button>
+                <button class="btn btn-sm btn-danger" @click="deleteEmployee(employee.id)">Xóa</button>
               </div>
             </td>
           </tr>
@@ -243,9 +257,7 @@
               </select>
             </div>
             <div class="form-actions">
-              <button type="button" class="btn btn-secondary" @click="closeModal">
-                Hủy
-              </button>
+              <button type="button" class="btn btn-secondary" @click="closeModal">Hủy</button>
               <button type="submit" class="btn btn-primary">
                 {{ showAddModal ? 'Thêm' : 'Cập nhật' }}
               </button>
@@ -284,16 +296,20 @@ const checkMobile = () => {
 }
 
 // Enhanced header action methods with animations
-const openAddModal = async (event) => {
-  await withLoadingAnimation(event, async () => {
-    // Simulate modal preparation
-    await new Promise(resolve => setTimeout(resolve, 600))
-    showAddModal.value = true
-    return 'Add employee modal opened!'
-  }, {
-    onSuccess: (result) => console.log(result),
-    onError: (error) => console.error('Open modal failed:', error)
-  })
+const openAddModal = async event => {
+  await withLoadingAnimation(
+    event,
+    async () => {
+      // Simulate modal preparation
+      await new Promise(resolve => setTimeout(resolve, 600))
+      showAddModal.value = true
+      return 'Add employee modal opened!'
+    },
+    {
+      onSuccess: result => console.log(result),
+      onError: error => console.error('Open modal failed:', error)
+    }
+  )
 }
 
 onMounted(() => {
@@ -415,11 +431,12 @@ const filteredEmployees = computed(() => {
   // Text search filter
   if (searchTerm.value) {
     const search = searchTerm.value.toLowerCase()
-    employees = employees.filter(employee =>
-      employee.fullName.toLowerCase().includes(search) ||
-      employee.email.toLowerCase().includes(search) ||
-      employee.phone.includes(search) ||
-      employee.id.toString().includes(search)
+    employees = employees.filter(
+      employee =>
+        employee.fullName.toLowerCase().includes(search) ||
+        employee.email.toLowerCase().includes(search) ||
+        employee.phone.includes(search) ||
+        employee.id.toString().includes(search)
     )
   }
 
@@ -460,18 +477,18 @@ const filteredEmployees = computed(() => {
   return employees
 })
 
-const formatCurrency = (amount) => {
+const formatCurrency = amount => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
     currency: 'VND'
   }).format(amount)
 }
 
-const formatDate = (date) => {
+const formatDate = date => {
   return new Intl.DateTimeFormat('vi-VN').format(new Date(date))
 }
 
-const getRoleText = (role) => {
+const getRoleText = role => {
   const roleMap = {
     admin: 'Quản trị viên',
     manager: 'Quản lý',
@@ -481,7 +498,7 @@ const getRoleText = (role) => {
   return roleMap[role] || role
 }
 
-const getStatusText = (status) => {
+const getStatusText = status => {
   const statusMap = {
     active: 'Hoạt động',
     inactive: 'Tạm nghỉ',
@@ -492,8 +509,8 @@ const getStatusText = (status) => {
 }
 
 // Enhanced statistics - as requested by team
-const activeEmployeesCount = computed(() => 
-  sampleEmployees.value.filter(employee => employee.status === 'active').length
+const activeEmployeesCount = computed(
+  () => sampleEmployees.value.filter(employee => employee.status === 'active').length
 )
 
 const totalMonthlySalary = computed(() => {
@@ -560,7 +577,7 @@ const generateEmployeeReport = async () => {
   }
 }
 
-const editEmployee = (employee) => {
+const editEmployee = employee => {
   editingEmployee.value = employee
   employeeForm.value = {
     ...employee,
@@ -569,7 +586,7 @@ const editEmployee = (employee) => {
   showEditModal.value = true
 }
 
-const deleteEmployee = (id) => {
+const deleteEmployee = id => {
   if (confirm('Bạn có chắc chắn muốn xóa nhân viên này?')) {
     sampleEmployees.value = sampleEmployees.value.filter(e => e.id !== id)
   }
@@ -967,7 +984,6 @@ const closeModal = () => {
 }
 
 @media (max-width: 1200px) {
-
   .table th,
   .table td {
     padding: 12px 8px;
@@ -1313,7 +1329,9 @@ const closeModal = () => {
   background: rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
+  transition:
+    width 0.6s,
+    height 0.6s;
 }
 
 .page-header .btn:hover {
@@ -1505,36 +1523,36 @@ const closeModal = () => {
   .filter-controls {
     grid-template-columns: 1fr;
   }
-  
+
   .action-buttons {
     flex-direction: column;
     gap: var(--spacing-lg);
   }
-  
+
   .action-group {
     min-width: auto;
   }
-  
+
   .action-buttons-row {
     justify-content: center;
   }
-  
+
   .action-buttons-row .btn {
     flex: 1;
     min-width: 120px;
   }
-  
+
   .summary-stats {
     flex-direction: column;
     gap: var(--spacing-sm);
   }
-  
+
   .salary-range,
   .date-range {
     flex-direction: column;
     gap: var(--spacing-xs);
   }
-  
+
   .salary-input,
   .date-input {
     max-width: 100%;

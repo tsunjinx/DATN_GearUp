@@ -1,11 +1,6 @@
 <template>
   <div class="gearup-logo" :class="variant">
-    <img 
-      :src="logoSrc" 
-      alt="GearUp Logo" 
-      :class="logoClass"
-      :style="logoStyle"
-    />
+    <img :src="logoSrc" alt="GearUp Logo" :class="logoClass" :style="logoStyle" />
   </div>
 </template>
 
@@ -17,7 +12,7 @@ const props = defineProps({
   variant: {
     type: String,
     default: 'default', // 'default', 'white', 'small', 'large'
-    validator: (value) => ['default', 'white', 'small', 'large'].includes(value)
+    validator: value => ['default', 'white', 'small', 'large'].includes(value)
   },
   width: {
     type: [String, Number],

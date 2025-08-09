@@ -16,7 +16,7 @@ export const useCatalogStore = defineStore('catalog', {
     page: 1
   }),
   getters: {
-    queryObject: (s) => ({
+    queryObject: s => ({
       q: s.q || undefined,
       brand: s.brand || undefined,
       category: s.category || undefined,
@@ -35,17 +35,22 @@ export const useCatalogStore = defineStore('catalog', {
       } catch {}
     },
     persist() {
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        q: this.q,
-        brand: this.brand,
-        category: this.category,
-        sort: this.sort,
-        minPrice: this.minPrice,
-        maxPrice: this.maxPrice,
-        inStockOnly: this.inStockOnly,
-        viewMode: this.viewMode,
-        page: this.page
-      })) } catch {}
+      try {
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({
+            q: this.q,
+            brand: this.brand,
+            category: this.category,
+            sort: this.sort,
+            minPrice: this.minPrice,
+            maxPrice: this.maxPrice,
+            inStockOnly: this.inStockOnly,
+            viewMode: this.viewMode,
+            page: this.page
+          })
+        )
+      } catch {}
     },
     resetFilters() {
       this.brand = ''
@@ -71,7 +76,3 @@ export const useCatalogStore = defineStore('catalog', {
     }
   }
 })
-
-
-
-

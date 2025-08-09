@@ -9,25 +9,15 @@
           Quản lý Bảo hành
         </h1>
         <div class="header-actions">
-          <Button 
-            variant="secondary" 
-            @click="refreshData"
-            :loading="loading"
-          >
+          <Button variant="secondary" :loading="loading" @click="refreshData">
             <span class="icon">🔄</span>
             Làm mới
           </Button>
-          <Button 
-            variant="success" 
-            @click="openCreateWarrantyModal"
-          >
+          <Button variant="success" @click="openCreateWarrantyModal">
             <span class="icon">➕</span>
             Tạo phiếu bảo hành
           </Button>
-          <Button 
-            variant="primary" 
-            @click="exportWarrantyReport"
-          >
+          <Button variant="primary" @click="exportWarrantyReport">
             <span class="icon">📊</span>
             Xuất báo cáo
           </Button>
@@ -72,25 +62,13 @@
 
     <!-- Tab Navigation -->
     <div class="tab-navigation">
-      <button 
-        class="tab-button"
-        :class="{ active: activeTab === 'warranties' }"
-        @click="activeTab = 'warranties'"
-      >
+      <button class="tab-button" :class="{ active: activeTab === 'warranties' }" @click="activeTab = 'warranties'">
         Phiếu bảo hành
       </button>
-      <button 
-        class="tab-button"
-        :class="{ active: activeTab === 'repairs' }"
-        @click="activeTab = 'repairs'"
-      >
+      <button class="tab-button" :class="{ active: activeTab === 'repairs' }" @click="activeTab = 'repairs'">
         Sửa chữa bảo hành
       </button>
-      <button 
-        class="tab-button"
-        :class="{ active: activeTab === 'expiring' }"
-        @click="activeTab = 'expiring'"
-      >
+      <button class="tab-button" :class="{ active: activeTab === 'expiring' }" @click="activeTab = 'expiring'">
         Sắp hết hạn
       </button>
     </div>
@@ -101,15 +79,10 @@
       <div class="filters-section">
         <div class="filters-row">
           <div class="search-box">
-            <input 
-              v-model="searchQuery"
-              type="text" 
-              placeholder="Tìm kiếm phiếu bảo hành..."
-              class="search-input"
-            >
+            <input v-model="searchQuery" type="text" placeholder="Tìm kiếm phiếu bảo hành..." class="search-input" />
             <span class="search-icon">🔍</span>
           </div>
-          
+
           <select v-model="statusFilter" class="filter-select">
             <option value="">Tất cả trạng thái</option>
             <option value="active">Đang hiệu lực</option>
@@ -117,9 +90,7 @@
             <option value="used">Đã sử dụng</option>
           </select>
 
-          <Button variant="outline" @click="clearFilters">
-            Xóa bộ lọc
-          </Button>
+          <Button variant="outline" @click="clearFilters"> Xóa bộ lọc </Button>
         </div>
       </div>
 
@@ -142,11 +113,15 @@
             <tbody>
               <tr v-for="warranty in filteredWarranties" :key="warranty.id" class="warranty-row">
                 <td>
-                  <div class="warranty-code">{{ warranty.ma_bao_hanh }}</div>
+                  <div class="warranty-code">
+                    {{ warranty.ma_bao_hanh }}
+                  </div>
                 </td>
                 <td>
                   <div class="product-info">
-                    <div class="product-name">{{ getProductName(warranty.id_chi_tiet_san_pham) }}</div>
+                    <div class="product-name">
+                      {{ getProductName(warranty.id_chi_tiet_san_pham) }}
+                    </div>
                   </div>
                 </td>
                 <td>
@@ -156,18 +131,12 @@
                   <span class="date">{{ formatDate(warranty.ngày_hết_han) }}</span>
                 </td>
                 <td>
-                  <span 
-                    class="time-remaining"
-                    :class="getTimeRemainingClass(warranty.ngày_hết_han)"
-                  >
+                  <span class="time-remaining" :class="getTimeRemainingClass(warranty.ngày_hết_han)">
                     {{ getTimeRemaining(warranty.ngày_hết_han) }}
                   </span>
                 </td>
                 <td>
-                  <span 
-                    class="status-badge"
-                    :class="getWarrantyStatus(warranty)"
-                  >
+                  <span class="status-badge" :class="getWarrantyStatus(warranty)">
                     {{ getWarrantyStatusText(warranty) }}
                   </span>
                 </td>
@@ -178,28 +147,16 @@
                 </td>
                 <td>
                   <div class="actions">
-                    <Button 
-                      variant="outline" 
+                    <Button variant="outline" size="sm" @click="viewWarrantyDetails(warranty)"> Chi tiết </Button>
+                    <Button
+                      variant="success"
                       size="sm"
-                      @click="viewWarrantyDetails(warranty)"
-                    >
-                      Chi tiết
-                    </Button>
-                    <Button 
-                      variant="success" 
-                      size="sm"
-                      @click="createRepair(warranty)"
                       :disabled="isWarrantyExpired(warranty)"
+                      @click="createRepair(warranty)"
                     >
                       Sửa chữa
                     </Button>
-                    <Button 
-                      variant="danger" 
-                      size="sm"
-                      @click="deleteWarranty(warranty.id)"
-                    >
-                      Xóa
-                    </Button>
+                    <Button variant="danger" size="sm" @click="deleteWarranty(warranty.id)"> Xóa </Button>
                   </div>
                 </td>
               </tr>
@@ -212,9 +169,7 @@
           <div class="empty-icon">🛡️</div>
           <h3>Không có phiếu bảo hành nào</h3>
           <p>Chưa có phiếu bảo hành nào được tạo</p>
-          <Button variant="primary" @click="openCreateWarrantyModal">
-            Tạo phiếu bảo hành đầu tiên
-          </Button>
+          <Button variant="primary" @click="openCreateWarrantyModal"> Tạo phiếu bảo hành đầu tiên </Button>
         </div>
       </div>
     </div>
@@ -239,13 +194,17 @@
             <tbody>
               <tr v-for="repair in filteredRepairs" :key="repair.id" class="repair-row">
                 <td>
-                  <div class="warranty-code">{{ getWarrantyCode(repair.id_phieu_bao_hanh) }}</div>
+                  <div class="warranty-code">
+                    {{ getWarrantyCode(repair.id_phieu_bao_hanh) }}
+                  </div>
                 </td>
                 <td>
                   <span class="date">{{ formatDate(repair.ngày_bảo_hành) }}</span>
                 </td>
                 <td>
-                  <div class="repair-details">{{ repair.chi_zin }}</div>
+                  <div class="repair-details">
+                    {{ repair.chi_zin }}
+                  </div>
                 </td>
                 <td>
                   <span class="repair-method">{{ repair.phương_thục_sửa_chữa }}</span>
@@ -254,29 +213,14 @@
                   <span class="repair-cost">{{ formatCurrency(repair.chi_phi) }}</span>
                 </td>
                 <td>
-                  <span 
-                    class="status-badge"
-                    :class="repair.trang_thai"
-                  >
+                  <span class="status-badge" :class="repair.trang_thai">
                     {{ getRepairStatusText(repair.trang_thai) }}
                   </span>
                 </td>
                 <td>
                   <div class="actions">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      @click="editRepair(repair)"
-                    >
-                      Sửa
-                    </Button>
-                    <Button 
-                      variant="danger" 
-                      size="sm"
-                      @click="deleteRepair(repair.id)"
-                    >
-                      Xóa
-                    </Button>
+                    <Button variant="outline" size="sm" @click="editRepair(repair)"> Sửa </Button>
+                    <Button variant="danger" size="sm" @click="deleteRepair(repair.id)"> Xóa </Button>
                   </div>
                 </td>
               </tr>
@@ -312,48 +256,34 @@
             <tbody>
               <tr v-for="warranty in expiringWarranties" :key="warranty.id" class="expiring-row">
                 <td>
-                  <div class="warranty-code urgent">{{ warranty.ma_bao_hanh }}</div>
+                  <div class="warranty-code urgent">
+                    {{ warranty.ma_bao_hanh }}
+                  </div>
                 </td>
                 <td>
                   <div class="product-info">
-                    <div class="product-name">{{ getProductName(warranty.id_chi_tiet_san_pham) }}</div>
+                    <div class="product-name">
+                      {{ getProductName(warranty.id_chi_tiet_san_pham) }}
+                    </div>
                   </div>
                 </td>
                 <td>
                   <span class="date urgent">{{ formatDate(warranty.ngày_hết_han) }}</span>
                 </td>
                 <td>
-                  <span 
-                    class="days-remaining"
-                    :class="getDaysRemainingClass(warranty.ngày_hết_han)"
-                  >
+                  <span class="days-remaining" :class="getDaysRemainingClass(warranty.ngày_hết_han)">
                     {{ getDaysRemaining(warranty.ngày_hết_han) }}
                   </span>
                 </td>
                 <td>
-                  <span 
-                    class="priority-badge"
-                    :class="getPriorityClass(warranty.ngày_hết_han)"
-                  >
+                  <span class="priority-badge" :class="getPriorityClass(warranty.ngày_hết_han)">
                     {{ getPriorityText(warranty.ngày_hết_han) }}
                   </span>
                 </td>
                 <td>
                   <div class="actions">
-                    <Button 
-                      variant="primary" 
-                      size="sm"
-                      @click="extendWarranty(warranty)"
-                    >
-                      Gia hạn
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      @click="notifyCustomer(warranty)"
-                    >
-                      Thông báo
-                    </Button>
+                    <Button variant="primary" size="sm" @click="extendWarranty(warranty)"> Gia hạn </Button>
+                    <Button variant="outline" size="sm" @click="notifyCustomer(warranty)"> Thông báo </Button>
                   </div>
                 </td>
               </tr>
@@ -389,11 +319,11 @@ const warrantyStats = computed(() => warrantyStore.warrantyStats)
 // Filtered data
 const filteredWarranties = computed(() => {
   let filtered = warrantyStore.searchWarranties(searchQuery.value)
-  
+
   if (statusFilter.value) {
     filtered = warrantyStore.filterWarrantiesByStatus(statusFilter.value)
   }
-  
+
   return filtered
 })
 
@@ -402,101 +332,101 @@ const filteredRepairs = computed(() => warrantyStore.getAllWarrantyRepairs)
 const expiringWarranties = computed(() => warrantyStore.getExpiringWarranties)
 
 // Helper functions
-const formatDate = (dateString) => {
+const formatDate = dateString => {
   return new Intl.DateTimeFormat('vi-VN').format(new Date(dateString))
 }
 
-const formatCurrency = (amount) => {
+const formatCurrency = amount => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
     currency: 'VND'
   }).format(amount || 0)
 }
 
-const getProductName = (variantId) => {
+const getProductName = variantId => {
   const variant = variantStore.getVariantWithDetails(variantId)
   return variant?.ten_san_pham || 'N/A'
 }
 
-const getWarrantyCode = (warrantyId) => {
+const getWarrantyCode = warrantyId => {
   const warranty = warrantyStore.getWarrantyById(warrantyId)
   return warranty?.ma_bao_hanh || 'N/A'
 }
 
-const getRepairCount = (warrantyId) => {
+const getRepairCount = warrantyId => {
   return warrantyStore.getRepairsByWarrantyId(warrantyId).length
 }
 
-const getTimeRemaining = (expireDate) => {
+const getTimeRemaining = expireDate => {
   const now = new Date()
   const expire = new Date(expireDate)
   const diffTime = expire - now
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-  
+
   if (diffDays < 0) return 'Đã hết hạn'
   if (diffDays === 0) return 'Hết hạn hôm nay'
   if (diffDays === 1) return '1 ngày'
   return `${diffDays} ngày`
 }
 
-const getTimeRemainingClass = (expireDate) => {
+const getTimeRemainingClass = expireDate => {
   const now = new Date()
   const expire = new Date(expireDate)
   const diffDays = Math.ceil((expire - now) / (1000 * 60 * 60 * 24))
-  
+
   if (diffDays < 0) return 'expired'
   if (diffDays <= 7) return 'urgent'
   if (diffDays <= 30) return 'warning'
   return 'normal'
 }
 
-const getDaysRemaining = (expireDate) => {
+const getDaysRemaining = expireDate => {
   const now = new Date()
   const expire = new Date(expireDate)
   const diffDays = Math.ceil((expire - now) / (1000 * 60 * 60 * 24))
   return `${diffDays} ngày`
 }
 
-const getDaysRemainingClass = (expireDate) => {
+const getDaysRemainingClass = expireDate => {
   const now = new Date()
   const expire = new Date(expireDate)
   const diffDays = Math.ceil((expire - now) / (1000 * 60 * 60 * 24))
-  
+
   if (diffDays <= 7) return 'urgent'
   if (diffDays <= 14) return 'warning'
   return 'normal'
 }
 
-const getPriorityClass = (expireDate) => {
+const getPriorityClass = expireDate => {
   const now = new Date()
   const expire = new Date(expireDate)
   const diffDays = Math.ceil((expire - now) / (1000 * 60 * 60 * 24))
-  
+
   if (diffDays <= 7) return 'high'
   if (diffDays <= 14) return 'medium'
   return 'low'
 }
 
-const getPriorityText = (expireDate) => {
+const getPriorityText = expireDate => {
   const now = new Date()
   const expire = new Date(expireDate)
   const diffDays = Math.ceil((expire - now) / (1000 * 60 * 60 * 24))
-  
+
   if (diffDays <= 7) return 'Cao'
   if (diffDays <= 14) return 'Trung bình'
   return 'Thấp'
 }
 
-const getWarrantyStatus = (warranty) => {
+const getWarrantyStatus = warranty => {
   const now = new Date()
   const expire = new Date(warranty.ngày_hết_han)
-  
+
   if (expire < now) return 'expired'
   if (warranty.trang_thai === 'used') return 'used'
   return 'active'
 }
 
-const getWarrantyStatusText = (warranty) => {
+const getWarrantyStatusText = warranty => {
   const status = getWarrantyStatus(warranty)
   const statusMap = {
     active: 'Đang hiệu lực',
@@ -506,7 +436,7 @@ const getWarrantyStatusText = (warranty) => {
   return statusMap[status] || status
 }
 
-const getRepairStatusText = (status) => {
+const getRepairStatusText = status => {
   const statusMap = {
     pending: 'Đang xử lý',
     in_progress: 'Đang sửa chữa',
@@ -516,7 +446,7 @@ const getRepairStatusText = (status) => {
   return statusMap[status] || status
 }
 
-const isWarrantyExpired = (warranty) => {
+const isWarrantyExpired = warranty => {
   const now = new Date()
   const expire = new Date(warranty.ngày_hết_han)
   return expire < now
@@ -524,10 +454,7 @@ const isWarrantyExpired = (warranty) => {
 
 // Actions
 const refreshData = async () => {
-  await Promise.all([
-    warrantyStore.fetchAll(),
-    variantStore.fetchVariants()
-  ])
+  await Promise.all([warrantyStore.fetchAll(), variantStore.fetchVariants()])
 }
 
 const clearFilters = () => {
@@ -545,17 +472,17 @@ const exportWarrantyReport = () => {
   console.log('Export warranty report')
 }
 
-const viewWarrantyDetails = (warranty) => {
+const viewWarrantyDetails = warranty => {
   // TODO: Implement warranty details modal
   console.log('View warranty details:', warranty)
 }
 
-const createRepair = (warranty) => {
+const createRepair = warranty => {
   // TODO: Implement create repair modal
   console.log('Create repair for warranty:', warranty)
 }
 
-const deleteWarranty = async (warrantyId) => {
+const deleteWarranty = async warrantyId => {
   if (confirm('Bạn có chắc chắn muốn xóa phiếu bảo hành này?')) {
     try {
       await warrantyStore.deleteWarranty(warrantyId)
@@ -565,12 +492,12 @@ const deleteWarranty = async (warrantyId) => {
   }
 }
 
-const editRepair = (repair) => {
+const editRepair = repair => {
   // TODO: Implement edit repair modal
   console.log('Edit repair:', repair)
 }
 
-const deleteRepair = async (repairId) => {
+const deleteRepair = async repairId => {
   if (confirm('Bạn có chắc chắn muốn xóa sửa chữa này?')) {
     try {
       await warrantyStore.deleteWarrantyRepair(repairId)
@@ -580,12 +507,12 @@ const deleteRepair = async (repairId) => {
   }
 }
 
-const extendWarranty = (warranty) => {
+const extendWarranty = warranty => {
   // TODO: Implement extend warranty functionality
   console.log('Extend warranty:', warranty)
 }
 
-const notifyCustomer = (warranty) => {
+const notifyCustomer = warranty => {
   // TODO: Implement customer notification
   console.log('Notify customer about warranty:', warranty)
 }
@@ -607,7 +534,7 @@ onMounted(() => {
 
 .warranty-header {
   margin-bottom: var(--spacing-3xl);
-  background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);
+  background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
   border-radius: var(--radius-xl);
   padding: var(--spacing-xl) var(--spacing-3xl);
   color: var(--white);
@@ -990,20 +917,20 @@ onMounted(() => {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .search-box {
     min-width: auto;
   }
-  
+
   .header-content {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .tab-navigation {
     flex-direction: column;
   }
-  
+
   .expiring-warning {
     flex-direction: column;
     text-align: center;

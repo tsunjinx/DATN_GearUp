@@ -29,15 +29,10 @@
           <div class="search-group">
             <div class="search-input-wrapper">
               <i class="search-icon">🔍</i>
-              <input 
-                v-model="searchTerm" 
-                type="text" 
-                placeholder="Tìm kiếm theo mã, mô tả..." 
-                class="search-input"
-              />
+              <input v-model="searchTerm" type="text" placeholder="Tìm kiếm theo mã, mô tả..." class="search-input" />
             </div>
           </div>
-          
+
           <div class="filter-controls">
             <select v-model="selectedStatus" class="filter-select">
               <option value="">Tất cả trạng thái</option>
@@ -46,30 +41,28 @@
               <option value="expired">Đã hết hạn</option>
               <option value="disabled">Đã vô hiệu hóa</option>
             </select>
-            
+
             <select v-model="selectedType" class="filter-select">
               <option value="">Tất cả loại</option>
               <option value="percentage">Giảm phần trăm</option>
               <option value="fixed">Giảm tiền cố định</option>
             </select>
-            
-            <button v-if="hasActiveFilters" @click="clearFilters" class="clear-filters-btn">
+
+            <button v-if="hasActiveFilters" class="clear-filters-btn" @click="clearFilters">
               <i class="btn-icon">✕</i>
               Xóa bộ lọc
             </button>
           </div>
         </div>
-        
-        <div class="results-summary">
-          Hiển thị {{ filteredCoupons.length }} / {{ sampleCoupons.length }} kết quả
-        </div>
+
+        <div class="results-summary">Hiển thị {{ filteredCoupons.length }} / {{ sampleCoupons.length }} kết quả</div>
       </div>
     </section>
 
     <!-- Table Section -->
     <main class="table-section">
       <div v-if="isLoading" class="loading-state">
-        <div class="loading-spinner"></div>
+        <div class="loading-spinner" />
         <p>Đang tải dữ liệu...</p>
       </div>
 
@@ -86,7 +79,13 @@
       <div v-else-if="filteredCoupons.length === 0" class="empty-state">
         <div class="empty-icon">🎫</div>
         <h3>Không tìm thấy kết quả</h3>
-        <p>{{ searchTerm || selectedStatus || selectedType ? 'Thử thay đổi bộ lọc để xem kết quả khác' : 'Tạo phiếu giảm giá đầu tiên của bạn' }}</p>
+        <p>
+          {{
+            searchTerm || selectedStatus || selectedType
+              ? 'Thử thay đổi bộ lọc để xem kết quả khác'
+              : 'Tạo phiếu giảm giá đầu tiên của bạn'
+          }}
+        </p>
         <button v-if="!searchTerm && !selectedStatus && !selectedType" class="btn btn-primary" @click="openAddModal">
           <i class="btn-icon">➕</i>
           Tạo phiếu giảm giá đầu tiên
@@ -109,20 +108,33 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(coupon, index) in filteredCoupons" :key="coupon.id" class="coupon-row" :data-coupon-id="coupon.id">
-              <td class="col-stt">{{ index + 1 }}</td>
-              
-              <td class="col-code">
-                <div class="coupon-code">{{ coupon.code }}</div>
+            <tr
+              v-for="(coupon, index) in filteredCoupons"
+              :key="coupon.id"
+              class="coupon-row"
+              :data-coupon-id="coupon.id"
+            >
+              <td class="col-stt">
+                {{ index + 1 }}
               </td>
-              
-              <td class="col-name">
-                <div class="coupon-name-info">
-                  <div class="coupon-name">{{ coupon.ten_phieu_giam_gia || coupon.description }}</div>
-                  <div class="coupon-description">{{ coupon.description }}</div>
+
+              <td class="col-code">
+                <div class="coupon-code">
+                  {{ coupon.code }}
                 </div>
               </td>
-              
+
+              <td class="col-name">
+                <div class="coupon-name-info">
+                  <div class="coupon-name">
+                    {{ coupon.ten_phieu_giam_gia || coupon.description }}
+                  </div>
+                  <div class="coupon-description">
+                    {{ coupon.description }}
+                  </div>
+                </div>
+              </td>
+
               <td class="col-value">
                 <div class="coupon-value">
                   <span class="value-number">{{ coupon.chi_phieu_giam_gia || coupon.value }}</span>
@@ -132,61 +144,67 @@
                   Tối đa: {{ formatCurrency(coupon.maxDiscountAmount) }}
                 </div>
               </td>
-              
+
               <td class="col-quantity">
                 <div class="quantity-info">
-                  <div class="quantity-text">{{ coupon.usedCount || 0 }}/{{ coupon.so_luong || coupon.maxUses || '∞' }}</div>
+                  <div class="quantity-text">
+                    {{ coupon.usedCount || 0 }}/{{ coupon.so_luong || coupon.maxUses || '∞' }}
+                  </div>
                   <div class="quantity-progress">
-                    <div class="progress-bar" :style="{ width: getUsagePercentage(coupon) + '%' }"></div>
+                    <div class="progress-bar" :style="{ width: getUsagePercentage(coupon) + '%' }" />
                   </div>
                 </div>
               </td>
-              
+
               <td class="col-start">
                 <div class="date-info">
-                  <div class="date-main">{{ formatDate(coupon.ngay_bat_dau || coupon.startDate) }}</div>
+                  <div class="date-main">
+                    {{ formatDate(coupon.ngay_bat_dau || coupon.startDate) }}
+                  </div>
                   <div class="date-status" :class="getCouponStartDateStatusClass(coupon)">
                     {{ getCouponStartDateStatusText(coupon) }}
                   </div>
                 </div>
               </td>
-              
+
               <td class="col-end">
                 <div class="date-info">
-                  <div class="date-main">{{ formatDate(coupon.ngay_ket_thuc || coupon.expiryDate) }}</div>
+                  <div class="date-main">
+                    {{ formatDate(coupon.ngay_ket_thuc || coupon.expiryDate) }}
+                  </div>
                   <div class="date-status" :class="getCouponEndDateStatusClass(coupon)">
                     {{ getCouponEndDateStatusText(coupon) }}
                   </div>
                 </div>
               </td>
-              
+
               <td class="col-status">
                 <StatusBadge :status="getCouponStatus(coupon)" />
               </td>
-              
+
               <td class="col-actions">
                 <div class="action-buttons">
-                  <button class="action-btn copy-btn" @click="copyCouponCode(coupon.code)" title="Sao chép mã">
+                  <button class="action-btn copy-btn" title="Sao chép mã" @click="copyCouponCode(coupon.code)">
                     <i class="btn-icon">📋</i>
                   </button>
-                  <button class="action-btn edit-btn" @click="editCoupon(coupon)" title="Chỉnh sửa">
+                  <button class="action-btn edit-btn" title="Chỉnh sửa" @click="editCoupon(coupon)">
                     <i class="btn-icon">✏️</i>
                   </button>
-                  <button 
-                    class="action-btn toggle-btn" 
+                  <button
+                    class="action-btn toggle-btn"
                     :class="[
                       coupon.isActive ? 'pause-btn' : 'play-btn',
-                      { 'loading': uiState.toggleLoadingIds.has(coupon.id) }
+                      { loading: uiState.toggleLoadingIds.has(coupon.id) }
                     ]"
-                    @click="toggleCouponStatus(coupon)"
                     :title="coupon.isActive ? 'Vô hiệu hóa' : 'Kích hoạt'"
                     :disabled="uiState.toggleLoadingIds.has(coupon.id)"
+                    @click="toggleCouponStatus(coupon)"
                   >
-                    <i class="btn-icon" v-if="!uiState.toggleLoadingIds.has(coupon.id)">
+                    <i v-if="!uiState.toggleLoadingIds.has(coupon.id)" class="btn-icon">
                       {{ coupon.isActive ? '🚫' : '✅' }}
                     </i>
                   </button>
-                  <button class="action-btn delete-btn" @click="deleteCoupon(coupon.id)" title="Xóa">
+                  <button class="action-btn delete-btn" title="Xóa" @click="deleteCoupon(coupon.id)">
                     <i class="btn-icon">🗑️</i>
                   </button>
                 </div>
@@ -212,7 +230,7 @@
           </div>
 
           <div class="modal-body">
-            <form @submit.prevent="saveCoupon" class="coupon-form">
+            <form class="coupon-form" @submit.prevent="saveCoupon">
               <div class="form-grid">
                 <!-- Left Column -->
                 <div class="form-column">
@@ -222,13 +240,13 @@
                       Mã phiếu giảm giá *
                     </label>
                     <div class="input-group">
-                      <input 
-                        id="code" 
-                        v-model="couponForm.code" 
-                        type="text" 
-                        required 
+                      <input
+                        id="code"
+                        v-model="couponForm.code"
+                        type="text"
+                        required
                         placeholder="Ví dụ: SUMMER2024"
-                        class="form-control" 
+                        class="form-control"
                       />
                       <button type="button" class="btn btn-outline btn-sm" @click="generateCode">
                         <i class="btn-icon">🎲</i>
@@ -242,14 +260,14 @@
                       <i class="label-icon">📝</i>
                       Mô tả *
                     </label>
-                    <textarea 
-                      id="description" 
-                      v-model="couponForm.description" 
-                      required 
+                    <textarea
+                      id="description"
+                      v-model="couponForm.description"
+                      required
                       rows="3"
                       placeholder="Mô tả chi tiết về phiếu giảm giá..."
                       class="form-control"
-                    ></textarea>
+                    />
                   </div>
 
                   <div class="form-row">
@@ -271,15 +289,15 @@
                         Giá trị giảm *
                       </label>
                       <div class="input-with-unit">
-                        <input 
-                          id="value" 
-                          v-model.number="couponForm.value" 
-                          type="number" 
-                          required 
+                        <input
+                          id="value"
+                          v-model.number="couponForm.value"
+                          type="number"
+                          required
                           :min="1"
                           :max="couponForm.type === 'percentage' ? 100 : undefined"
                           placeholder="0"
-                          class="form-control" 
+                          class="form-control"
                         />
                         <span class="input-unit">
                           {{ couponForm.type === 'percentage' ? '%' : 'VNĐ' }}
@@ -296,12 +314,12 @@
                       <i class="label-icon">📅</i>
                       Ngày hết hạn *
                     </label>
-                    <input 
-                      id="expiryDate" 
-                      v-model="couponForm.expiryDate" 
-                      type="datetime-local" 
+                    <input
+                      id="expiryDate"
+                      v-model="couponForm.expiryDate"
+                      type="datetime-local"
                       required
-                      class="form-control" 
+                      class="form-control"
                     />
                   </div>
 
@@ -310,13 +328,13 @@
                       <i class="label-icon">📊</i>
                       Số lượt sử dụng tối đa
                     </label>
-                    <input 
-                      id="maxUses" 
-                      v-model.number="couponForm.maxUses" 
-                      type="number" 
+                    <input
+                      id="maxUses"
+                      v-model.number="couponForm.maxUses"
+                      type="number"
                       min="1"
-                      placeholder="Không giới hạn" 
-                      class="form-control" 
+                      placeholder="Không giới hạn"
+                      class="form-control"
                     />
                     <div class="form-hint">Để trống nếu không giới hạn số lượt sử dụng</div>
                   </div>
@@ -326,13 +344,13 @@
                       <i class="label-icon">🛒</i>
                       Giá trị đơn hàng tối thiểu
                     </label>
-                    <input 
-                      id="minOrderValue" 
-                      v-model.number="couponForm.minOrderValue" 
-                      type="number" 
+                    <input
+                      id="minOrderValue"
+                      v-model.number="couponForm.minOrderValue"
+                      type="number"
                       min="0"
-                      placeholder="0" 
-                      class="form-control" 
+                      placeholder="0"
+                      class="form-control"
                     />
                     <div class="form-hint">Đơn hàng phải có giá trị tối thiểu để áp dụng</div>
                   </div>
@@ -342,13 +360,13 @@
                       <i class="label-icon">🎯</i>
                       Số tiền giảm tối đa
                     </label>
-                    <input 
-                      id="maxDiscountAmount" 
-                      v-model.number="couponForm.maxDiscountAmount" 
-                      type="number" 
+                    <input
+                      id="maxDiscountAmount"
+                      v-model.number="couponForm.maxDiscountAmount"
+                      type="number"
                       min="0"
-                      placeholder="Không giới hạn" 
-                      class="form-control" 
+                      placeholder="Không giới hạn"
+                      class="form-control"
                     />
                     <div class="form-hint">Giới hạn số tiền giảm tối đa cho phiếu giảm theo %</div>
                   </div>
@@ -358,7 +376,7 @@
               <div class="form-status">
                 <label class="checkbox-wrapper">
                   <input v-model="couponForm.isActive" type="checkbox" class="form-checkbox" />
-                  <span class="checkbox-mark"></span>
+                  <span class="checkbox-mark" />
                   <span class="checkbox-label">
                     <i class="checkbox-icon">✅</i>
                     Kích hoạt phiếu giảm giá ngay sau khi tạo
@@ -510,9 +528,8 @@ const filteredCoupons = computed(() => {
 
   if (searchTerm.value) {
     const search = searchTerm.value.toLowerCase()
-    coupons = coupons.filter(coupon =>
-      coupon.code.toLowerCase().includes(search) ||
-      coupon.description.toLowerCase().includes(search)
+    coupons = coupons.filter(
+      coupon => coupon.code.toLowerCase().includes(search) || coupon.description.toLowerCase().includes(search)
     )
   }
 
@@ -541,14 +558,14 @@ const hasError = computed(() => uiState.value.hasError)
 const errorMessage = computed(() => uiState.value.errorMessage)
 
 // Helper functions
-const formatCurrency = (amount) => {
+const formatCurrency = amount => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
     currency: 'VND'
   }).format(amount)
 }
 
-const formatDate = (date) => {
+const formatDate = date => {
   return new Intl.DateTimeFormat('vi-VN', {
     year: 'numeric',
     month: '2-digit',
@@ -558,91 +575,91 @@ const formatDate = (date) => {
   }).format(new Date(date))
 }
 
-const isExpired = (expiryDate) => {
+const isExpired = expiryDate => {
   return new Date(expiryDate) < new Date()
 }
 
-const getCouponStatus = (coupon) => {
+const getCouponStatus = coupon => {
   // Check expired first - this takes priority over isActive
   if (isExpired(coupon.expiryDate)) return 'expired'
-  
+
   // Check if manually disabled via toggle
   if (!coupon.isActive) return 'disabled'
-  
+
   // Check usage limit reached
   if (coupon.maxUses && coupon.usedCount >= coupon.maxUses) return 'used'
-  
+
   // Active and available
   return 'active'
 }
 
-const getCouponTypeText = (type) => {
+const getCouponTypeText = type => {
   return type === 'percentage' ? 'Giảm %' : 'Giảm tiền'
 }
 
-const getUsagePercentage = (coupon) => {
+const getUsagePercentage = coupon => {
   const maxUses = coupon.so_luong || coupon.maxUses
   if (!maxUses) return 0
   return Math.round((coupon.usedCount / maxUses) * 100)
 }
 
-const getExpiryStatusClass = (coupon) => {
+const getExpiryStatusClass = coupon => {
   if (isExpired(coupon.expiryDate)) return 'expired'
-  
+
   const now = new Date()
   const expiry = new Date(coupon.expiryDate)
   const diffDays = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24))
-  
+
   if (diffDays <= 7) return 'expiring-soon'
   return 'valid'
 }
 
-const getExpiryStatusText = (coupon) => {
+const getExpiryStatusText = coupon => {
   if (isExpired(coupon.expiryDate)) return 'Đã hết hạn'
-  
+
   const now = new Date()
   const expiry = new Date(coupon.expiryDate)
   const diffDays = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24))
-  
+
   if (diffDays <= 1) return 'Hết hạn hôm nay'
   if (diffDays <= 7) return `Còn ${diffDays} ngày`
   return 'Còn hiệu lực'
 }
 
-const getCouponStartDateStatusClass = (coupon) => {
+const getCouponStartDateStatusClass = coupon => {
   const start = new Date(coupon.ngay_bat_dau || coupon.startDate)
   const now = new Date()
-  
+
   if (now < start) return 'date-future'
   if (now.toDateString() === start.toDateString()) return 'date-today'
   return 'date-past'
 }
 
-const getCouponStartDateStatusText = (coupon) => {
+const getCouponStartDateStatusText = coupon => {
   const start = new Date(coupon.ngay_bat_dau || coupon.startDate)
   const now = new Date()
-  
+
   if (now < start) return 'Sắp có hiệu lực'
   if (now.toDateString() === start.toDateString()) return 'Có hiệu lực hôm nay'
   return 'Đã có hiệu lực'
 }
 
-const getCouponEndDateStatusClass = (coupon) => {
+const getCouponEndDateStatusClass = coupon => {
   const end = new Date(coupon.ngay_ket_thuc || coupon.expiryDate)
   const now = new Date()
-  
+
   if (now > end) return 'date-expired'
   if (now.toDateString() === end.toDateString()) return 'date-today'
   return 'date-active'
 }
 
-const getCouponEndDateStatusText = (coupon) => {
+const getCouponEndDateStatusText = coupon => {
   const end = new Date(coupon.ngay_ket_thuc || coupon.expiryDate)
   const now = new Date()
-  
+
   if (now > end) return 'Đã hết hạn'
   if (now.toDateString() === end.toDateString()) return 'Hết hạn hôm nay'
-  
+
   const daysLeft = Math.ceil((end - now) / (1000 * 60 * 60 * 24))
   if (daysLeft <= 7) return `Còn ${daysLeft} ngày`
   return 'Còn hiệu lực'
@@ -674,29 +691,28 @@ const exportToExcel = () => {
     const helpers = {
       getCouponStatusText
     }
-    
+
     const result = exportCouponsToExcel(filteredCoupons.value, helpers)
-    
+
     if (result.success) {
       console.log(`✅ ${result.message}`)
       // You could also show a toast notification here
     } else {
       throw new Error(result.message)
     }
-    
   } catch (error) {
     console.error('Lỗi khi xuất Excel:', error)
     alert('Có lỗi xảy ra khi xuất file Excel. Vui lòng thử lại!')
   }
 }
 
-const getCouponStatusText = (coupon) => {
+const getCouponStatusText = coupon => {
   const status = getCouponStatus(coupon)
   const statusMap = {
-    'active': 'Có thể sử dụng',
-    'used': 'Đã hết lượt',
-    'expired': 'Đã hết hạn',
-    'disabled': 'Đã vô hiệu hóa'
+    active: 'Có thể sử dụng',
+    used: 'Đã hết lượt',
+    expired: 'Đã hết hạn',
+    disabled: 'Đã vô hiệu hóa'
   }
   return statusMap[status] || status
 }
@@ -706,7 +722,7 @@ const openAddModal = () => {
   uiState.value.showAddModal = true
 }
 
-const editCoupon = (coupon) => {
+const editCoupon = coupon => {
   editingCoupon.value = coupon
   couponForm.value = {
     ...coupon,
@@ -715,7 +731,7 @@ const editCoupon = (coupon) => {
   uiState.value.showEditModal = true
 }
 
-const toggleCouponStatus = async (coupon) => {
+const toggleCouponStatus = async coupon => {
   // Prevent multiple simultaneous toggles for the same coupon
   if (uiState.value.toggleLoadingIds.has(coupon.id)) {
     return
@@ -737,7 +753,7 @@ const toggleCouponStatus = async (coupon) => {
   if (coupon.isActive) {
     const confirmDeactivate = confirm(
       `Bạn có chắc chắn muốn vô hiệu hóa phiếu giảm giá "${coupon.code}"?\n\n` +
-      'Khách hàng sẽ không thể sử dụng mã này nữa cho đến khi được kích hoạt lại.'
+        'Khách hàng sẽ không thể sử dụng mã này nữa cho đến khi được kích hoạt lại.'
     )
     if (!confirmDeactivate) {
       return
@@ -747,7 +763,7 @@ const toggleCouponStatus = async (coupon) => {
   try {
     // Add loading state
     uiState.value.toggleLoadingIds.add(coupon.id)
-    
+
     // Simulate API call with loading state
     const previousState = coupon.isActive
     coupon.isActive = !coupon.isActive
@@ -755,7 +771,7 @@ const toggleCouponStatus = async (coupon) => {
     // Show success notification (you could replace this with a proper toast notification)
     const statusText = coupon.isActive ? 'kích hoạt' : 'vô hiệu hóa'
     console.log(`✅ Đã ${statusText} phiếu giảm giá "${coupon.code}" thành công!`)
-    
+
     // Optional: Add visual feedback by temporarily highlighting the row
     const rowElement = document.querySelector(`[data-coupon-id="${coupon.id}"]`)
     if (rowElement) {
@@ -767,7 +783,6 @@ const toggleCouponStatus = async (coupon) => {
 
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 800))
-
   } catch (error) {
     // Revert state on error
     coupon.isActive = !coupon.isActive
@@ -779,13 +794,13 @@ const toggleCouponStatus = async (coupon) => {
   }
 }
 
-const deleteCoupon = (id) => {
+const deleteCoupon = id => {
   if (confirm('Bạn có chắc chắn muốn xóa phiếu giảm giá này?')) {
     sampleCoupons.value = sampleCoupons.value.filter(c => c.id !== id)
   }
 }
 
-const copyCouponCode = async (code) => {
+const copyCouponCode = async code => {
   try {
     await navigator.clipboard.writeText(code)
     // You could show a toast notification here
@@ -1339,8 +1354,12 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .toggle-btn.play-btn {
@@ -1390,8 +1409,12 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .error-icon,
@@ -1665,7 +1688,7 @@ onMounted(() => {
   .coupons-table {
     font-size: 13px;
   }
-  
+
   .coupons-table th,
   .coupons-table td {
     padding: 12px 16px;
@@ -1705,12 +1728,12 @@ onMounted(() => {
   .table-container {
     font-size: 12px;
   }
-  
+
   .action-buttons {
     flex-direction: column;
     gap: 4px;
   }
-  
+
   .action-btn {
     width: 28px;
     height: 28px;
