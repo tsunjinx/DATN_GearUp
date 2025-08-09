@@ -1,10 +1,14 @@
+<!-- Layout quản trị (AdminLayout): chứa sidebar, header, breadcrumb, vùng nội dung và hệ thống thông báo.
+     - Điều hướng: sidebar thu gọn/mở rộng theo kích thước màn hình, lưu sở thích vào localStorage.
+     - Thông báo: hiển thị số chưa đọc, dropdown, modal tất cả; sử dụng useNotifications để polling & lưu trữ.
+     - Tối ưu hiệu năng: lazy-load logo, theo dõi kích thước cửa sổ, giảm log ở production. -->
 <template>
   <div class="admin-layout">
     <!-- Sidebar -->
     <aside :class="sidebarClass">
       <div class="sidebar-header">
         <div class="logo-container">
-          <div class="logo-wrapper" :class="{ 'logo-hidden': !showLogo }">
+          <div class="logo-wrapper" :class="{ 'logo-hidden': !showLogo }" @click="navigateToDashboard">
             <GearUpLogo variant="small" />
           </div>
         </div>
@@ -20,45 +24,75 @@
       <nav class="sidebar-nav">
         <ul class="nav-menu">
           <li>
-            <router-link to="/" class="nav-link" exact @click="closeMobileMenu">
+            <router-link to="/admin/dashboard" class="nav-link" exact @click="closeMobileMenu">
               <img class="nav-icon" src="@/assets/dashboard.svg" alt="Dashboard" />
               <span v-if="showNavText" class="nav-text">Thống kê & Báo cáo</span>
             </router-link>
           </li>
           <li>
-            <router-link to="/products" class="nav-link" exact @click="closeMobileMenu">
+            <router-link to="/admin/products" class="nav-link" exact @click="closeMobileMenu">
               <img class="nav-icon" src="@/assets/products.svg" alt="Products" />
               <span v-if="showNavText" class="nav-text">Quản lý Sản phẩm</span>
             </router-link>
           </li>
           <li>
-            <router-link to="/orders" class="nav-link" exact @click="closeMobileMenu">
+            <router-link to="/admin/product-variants" class="nav-link" exact @click="closeMobileMenu">
+              <span class="nav-icon">🏷️</span>
+              <span v-if="showNavText" class="nav-text">Biến thể Sản phẩm</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/admin/attributes" class="nav-link" exact @click="closeMobileMenu">
+              <span class="nav-icon">🔧</span>
+              <span v-if="showNavText" class="nav-text">Thuộc tính Giày</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/admin/warranties" class="nav-link" exact @click="closeMobileMenu">
+              <span class="nav-icon">🛡️</span>
+              <span v-if="showNavText" class="nav-text">Quản lý Bảo hành</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/admin/orders" class="nav-link" exact @click="closeMobileMenu">
               <img class="nav-icon" src="@/assets/orders.png" alt="Orders" />
               <span v-if="showNavText" class="nav-text">Quản lý Hóa đơn</span>
             </router-link>
           </li>
           <li>
-            <router-link to="/customers" class="nav-link" exact @click="closeMobileMenu">
+            <router-link to="/admin/customers" class="nav-link" exact @click="closeMobileMenu">
               <img class="nav-icon" src="@/assets/customers.png" alt="Customers" />
               <span v-if="showNavText" class="nav-text">Quản lý Khách hàng</span>
             </router-link>
           </li>
           <li>
-            <router-link to="/employees" class="nav-link" exact @click="closeMobileMenu">
+            <router-link to="/admin/employees" class="nav-link" exact @click="closeMobileMenu">
               <img class="nav-icon" src="@/assets/employees.png" alt="Employees" />
               <span v-if="showNavText" class="nav-text">Quản lý Nhân viên</span>
             </router-link>
           </li>
           <li>
-            <router-link to="/discounts" class="nav-link" exact @click="closeMobileMenu">
+            <router-link to="/admin/discounts" class="nav-link" exact @click="closeMobileMenu">
               <img class="nav-icon" src="@/assets/discounts.png" alt="Discounts" />
               <span v-if="showNavText" class="nav-text">Đợt giảm giá</span>
             </router-link>
           </li>
           <li>
-            <router-link to="/coupons" class="nav-link" exact @click="closeMobileMenu">
+            <router-link to="/admin/coupons" class="nav-link" exact @click="closeMobileMenu">
               <img class="nav-icon" src="@/assets/coupons.png" alt="Coupons" />
               <span v-if="showNavText" class="nav-text">Phiếu giảm giá</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/admin/inventory" class="nav-link" exact @click="closeMobileMenu">
+              <span class="nav-icon">📦</span>
+              <span v-if="showNavText" class="nav-text">Quản lý Tồn kho</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/admin/analytics" class="nav-link" exact @click="closeMobileMenu">
+              <span class="nav-icon">📈</span>
+              <span v-if="showNavText" class="nav-text">Phân tích & Báo cáo</span>
             </router-link>
           </li>
         </ul>
@@ -81,8 +115,8 @@
               <span class="line"></span>
             </div>
           </button>
-          <div class="breadcrumb">
-            <router-link to="/" class="breadcrumb-link">Trang chủ</router-link>
+  <div class="breadcrumb">
+    <router-link to="/admin/dashboard" class="breadcrumb-link">Trang chủ</router-link>
             <span class="breadcrumb-separator">/</span>
             <span class="breadcrumb-current">{{ pageTitle }}</span>
           </div>
@@ -260,6 +294,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch, nextTick, defineAsyncComponent, shallowRef, markRaw } from 'vue'
+import { useNotifications } from '@/composables/useNotifications'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 
@@ -275,7 +310,7 @@ const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 
-const sidebarCollapsed = ref(true) // Default to closed/collapsed
+const sidebarCollapsed = ref(false) // Default to expanded as requested by team
 const userToggledSidebar = ref(false) // Track if user manually toggled sidebar
 const mobileMenuOpen = ref(false)
 const isMobile = ref(false)
@@ -293,9 +328,13 @@ const loadSidebarPreference = () => {
       sidebarCollapsed.value = JSON.parse(savedCollapsed)
       userToggledSidebar.value = JSON.parse(savedUserToggled)
     }
-    // Otherwise, keep the new default (closed)
+    // Otherwise, keep the new default (expanded) - always open on first load
+    else {
+      sidebarCollapsed.value = false // Always start expanded on first load
+    }
   } catch (error) {
     console.warn('Failed to load sidebar preferences:', error)
+    sidebarCollapsed.value = false // Fallback to expanded
   }
 }
 
@@ -314,9 +353,9 @@ const resetSidebarToDefault = () => {
   try {
     localStorage.removeItem('gearup-sidebar-collapsed')
     localStorage.removeItem('gearup-sidebar-user-toggled')
-    sidebarCollapsed.value = true // New default
+    sidebarCollapsed.value = false // New default - expanded
     userToggledSidebar.value = false
-    console.log('Sidebar reset to default (closed)')
+    console.log('Sidebar reset to default (expanded)')
   } catch (error) {
     console.warn('Failed to reset sidebar preferences:', error)
   }
@@ -327,7 +366,8 @@ if (import.meta.env.DEV) {
   window.resetSidebar = resetSidebarToDefault
 }
 
-// Notifications state
+// Notifications
+const { notifications, unreadCount, startPolling, markAsRead: markAsReadComposable, markAllAsRead: markAllAsReadComposable } = useNotifications()
 const showNotifications = ref(false)
 const showAllNotificationsModal = ref(false)
 const isModalClosing = ref(false)
@@ -335,7 +375,7 @@ const selectedFilter = ref('all')
 const isCountUpdating = ref(false)
 const previousUnreadCount = ref(0)
 
-// Optimized notification filters - use markRaw for static data
+// Filters
 const notificationFilters = markRaw([
   { key: 'all', label: 'Tất cả', icon: '📋' },
   { key: 'unread', label: 'Chưa đọc', icon: '🔴' },
@@ -344,55 +384,6 @@ const notificationFilters = markRaw([
   { key: 'review', label: 'Đánh giá', icon: '⭐' },
   { key: 'customer', label: 'Khách hàng', icon: '👤' },
   { key: 'report', label: 'Báo cáo', icon: '📊' }
-])
-
-// Use shallowRef for large arrays that don't need deep reactivity
-const notifications = shallowRef([
-  {
-    id: 1,
-    title: 'Đơn hàng mới',
-    message: 'Đơn hàng #1234 vừa được đặt bởi Nguyễn Văn A',
-    icon: '🛒',
-    timestamp: new Date(Date.now() - 5 * 60 * 1000), // 5 minutes ago
-    isRead: false,
-    type: 'order'
-  },
-  {
-    id: 2,
-    title: 'Sản phẩm hết hàng',
-    message: 'Nike Air Force 1 White đã hết hàng',
-    icon: '⚠️',
-    timestamp: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
-    isRead: false,
-    type: 'inventory'
-  },
-  {
-    id: 3,
-    title: 'Đánh giá mới',
-    message: 'Sản phẩm Adidas Ultraboost có đánh giá 5 sao mới',
-    icon: '⭐',
-    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-    isRead: false,
-    type: 'review'
-  },
-  {
-    id: 4,
-    title: 'Khách hàng mới',
-    message: 'Trần Thị B vừa đăng ký tài khoản',
-    icon: '👤',
-    timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 hours ago
-    isRead: true,
-    type: 'customer'
-  },
-  {
-    id: 5,
-    title: 'Báo cáo doanh thu',
-    message: 'Báo cáo doanh thu tuần này đã sẵn sàng',
-    icon: '📊',
-    timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
-    isRead: true,
-    type: 'report'
-  }
 ])
 
 const displayName = computed(() => authStore.displayName)
@@ -451,11 +442,7 @@ const showLogo = computed(() => {
   return !sidebarCollapsed.value
 })
 
-// Memoized computed properties for better performance
-const unreadNotifications = computed(() => {
-  const count = notifications.value.filter(n => !n.isRead).length
-  return count
-})
+const unreadNotifications = computed(() => unreadCount.value)
 
 // Optimized with early return and reduced iterations
 const filteredNotificationsModal = computed(() => {
@@ -583,7 +570,8 @@ onMounted(() => {
   window.addEventListener('resize', debouncedCheckResponsive, { passive: true })
   document.addEventListener('click', handleClickOutside, { passive: true })
   
-  // Initialize previous count
+  // Notifications polling
+  startPolling()
   previousUnreadCount.value = unreadNotifications.value
 })
 
@@ -679,7 +667,11 @@ const closeMenu = () => {
 
 const logout = () => {
   authStore.logout()
-  router.push('/login')
+  router.push('/admin/login')
+}
+
+const navigateToDashboard = () => {
+  router.push('/admin/dashboard')
 }
 
 // Notification functions
@@ -689,34 +681,9 @@ const toggleNotifications = () => {
   console.log('New state:', showNotifications.value)
 }
 
-const markAsRead = async (notificationId) => {
-  // Performance: Update specific notification without creating new array
-  const notificationIndex = notifications.value.findIndex(n => n.id === notificationId)
-  if (notificationIndex !== -1) {
-    notifications.value[notificationIndex] = {
-      ...notifications.value[notificationIndex],
-      isRead: true
-    }
-    // Trigger reactivity for shallowRef
-    notifications.value = [...notifications.value]
-  }
-  
-  if (import.meta.env.DEV) {
-    console.log(`Notification ${notificationId} marked as read`)
-  }
-}
+const markAsRead = async (notificationId) => { markAsReadComposable(notificationId) }
 
-const markAllAsRead = async () => {
-  // Performance: Batch update all notifications
-  notifications.value = notifications.value.map(notification => ({
-    ...notification,
-    isRead: true
-  }))
-  
-  if (import.meta.env.DEV) {
-    console.log('All notifications marked as read')
-  }
-}
+const markAllAsRead = async () => { markAllAsReadComposable() }
 
 const viewAllNotifications = () => {
   showNotifications.value = false
@@ -976,6 +943,14 @@ const handleClickOutside = (event) => {
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-xs);
+}
+
+.logo-wrapper:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.05);
 }
 
 .logo-wrapper.logo-hidden {

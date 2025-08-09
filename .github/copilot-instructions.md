@@ -6,13 +6,13 @@ GearUp is a sports shoe e-commerce admin dashboard built with Vue.js 3 + Composi
 ## ⚠️ CRITICAL: Code Efficiency Principles
 
 ### MANDATORY RULES - ZERO TOLERANCE FOR VIOLATIONS:
-1. **NO DEAD CODE** - Every line must have a purpose
-2. **NO DUPLICATE LOGIC** - Use composables for repeated patterns
-3. **NO UNNECESSARY FUNCTIONS** - If used once, inline it
-4. **NO OVER-ENGINEERING** - Solve today's problem, not tomorrow's
-5. **NO COMMENTED CODE** - Delete it or use version control
-6. **NO CONSOLE LOGS IN PRODUCTION** - Use proper debugging tools
-7. **NO MAGIC NUMBERS** - Use named constants
+1. NO DEAD CODE — Remove unused imports, variables, functions immediately
+2. NO DUPLICATE LOGIC — Extract into composables/utilities after first repetition
+3. NO UNNECESSARY FUNCTIONS — Inline when single-use and simple
+4. NO OVER-ENGINEERING — YAGNI: build only what’s required now
+5. NO COMMENTED-OUT CODE — Use version control for history
+6. NO CONSOLE LOGS IN PRODUCTION — Guard logs behind env checks or remove
+7. NO MAGIC NUMBERS — Use named constants or enums
 
 ## 📋 Core Development Principles
 
@@ -23,7 +23,7 @@ GearUp is a sports shoe e-commerce admin dashboard built with Vue.js 3 + Composi
 - **Group related reactive data** in a single ref object instead of multiple separate refs
 - **Use computed properties** for derived state instead of watchers
 - **Name functions by business logic** (createProduct, updateOrderStatus, loadCustomers)
-- **Limit to maximum 5-7 functions** per component
+- **Limit to maximum 5–7 functions and ≤200 lines** per component
 - **Extract reusable logic** into composables
 
 ```vue
@@ -266,8 +266,8 @@ const update = () => {}               // Missing context
 ```
 
 #### Function Length Guidelines:
-- **Maximum 30 lines** per function
-- **Single responsibility** - one function, one purpose
+- **Maximum 25–30 lines** per function (prefer 25)
+- **Single responsibility** — one function, one purpose
 - **Extract complex logic** into helper functions or composables
 
 ### 4. State Management Architecture
@@ -1102,7 +1102,11 @@ export const productService = {
 - **Comprehensive testing** for confidence in changes
 - **Good documentation** and examples
 
-## 🎨 TailwindCSS Implementation Guidelines (Future Use)
+## 🎨 Styling Guidelines
+
+Prefer Vue SFC scoped CSS + shared tokens. Tailwind is optional, utilities-only for spacing/layout if added later. Keep design language consistent across admin and customer. Avoid full utility-only rewrites.
+
+## TailwindCSS Implementation Guidelines (Optional, Future Use)
 
 ### Installation & Configuration
 ```bash
@@ -1211,7 +1215,9 @@ export default {
 </template>
 ```
 
-#### 2. Component Utility Classes (NO CUSTOM CSS)
+#### 2. Component Utility Classes (If Tailwind is used)
+
+Prefer scoped CSS with tokens for component styling. Tailwind utilities may be used for layout/spacing/responsiveness. Avoid mixing inline styles and utilities.
 ```vue
 <!-- ❌ NEVER write custom CSS when Tailwind has the utility -->
 <style scoped>

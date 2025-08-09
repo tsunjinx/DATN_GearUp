@@ -114,7 +114,7 @@ const handleLogin = async () => {
 
     // Add a delay to show the success animation before redirecting
     setTimeout(() => {
-      router.push('/')
+      router.push('/admin/dashboard')
     }, 1500)
   }
 }

@@ -13,11 +13,14 @@
     "format:check": "prettier --check \"src/**/*.{js,vue,ts,css,md}\"",
     "type-check": "vue-tsc --noEmit",
     "pre-commit": "npm run lint:check && npm run format:check",
+    "test": "vitest run",
+    "test:ui": "vitest",
     "prepare": "git config core.hooksPath .githooks || true"
   },
   "dependencies": {
     "animejs": "^4.1.2",
     "axios": "^1.11.0",
+    "@vueuse/head": "^2.0.0",
     "pinia": "^3.0.3",
     "vue": "^3.5.17",
     "vue-router": "^4.5.1"
@@ -25,11 +28,14 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.0",
     "@vue/eslint-config-prettier": "^8.0.0",
+    "@vue/test-utils": "^2.4.6",
     "eslint": "^8.0.0",
     "eslint-plugin-vue": "^9.0.0",
+    "happy-dom": "^14.10.1",
     "prettier": "^3.0.0",
     "terser": "^5.43.1",
     "vite": "^7.0.4",
+    "vitest": "^1.6.0",
     "vue-tsc": "^1.0.0"
   }
 }

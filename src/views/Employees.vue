@@ -16,17 +16,138 @@
       </div>
     </div>
 
-    <div class="filters fade-in" style="animation-delay: 0.3s">
-      <div class="search-box">
-        <input v-model="searchTerm" type="text" placeholder="Tìm kiếm nhân viên..." class="search-input" />
+    <!-- Enhanced Filters Section - As requested by team -->
+    <div class="filters-section card fade-in" style="animation-delay: 0.3s">
+      <div class="card-body">
+        <div class="filters-header">
+          <h3 class="filters-title">
+            <i class="filter-icon">🔍</i>
+            Bộ Lọc & Tìm Kiếm Nhân viên
+          </h3>
+        </div>
+
+        <div class="filters-content">
+          <div class="search-section">
+            <div class="search-box">
+              <i class="search-icon">🔍</i>
+              <input v-model="searchTerm" type="text" placeholder="Tìm kiếm theo tên, email, mã nhân viên..."
+                class="search-input" />
+            </div>
+          </div>
+
+          <div class="filter-controls">
+            <div class="filter-group">
+              <label>Chức vụ</label>
+              <select v-model="selectedRole" class="form-control">
+                <option value="">Tất cả chức vụ</option>
+                <option value="admin">Quản trị viên</option>
+                <option value="manager">Quản lý</option>
+                <option value="staff">Nhân viên</option>
+                <option value="intern">Thực tập sinh</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label>Trạng thái</label>
+              <select v-model="selectedStatus" class="form-control">
+                <option value="">Tất cả trạng thái</option>
+                <option value="active">Hoạt động</option>
+                <option value="inactive">Tạm nghỉ</option>
+                <option value="terminated">Đã nghỉ việc</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label>Phòng ban</label>
+              <select v-model="selectedDepartment" class="form-control">
+                <option value="">Tất cả phòng ban</option>
+                <option value="sales">Kinh doanh</option>
+                <option value="marketing">Marketing</option>
+                <option value="warehouse">Kho bãi</option>
+                <option value="finance">Kế toán</option>
+                <option value="hr">Nhân sự</option>
+                <option value="it">Công nghệ thông tin</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label>Mức lương</label>
+              <div class="salary-range">
+                <input v-model.number="salaryRange.min" type="number" placeholder="Từ" 
+                  class="form-control salary-input" step="1000000" />
+                <span class="salary-separator">-</span>
+                <input v-model.number="salaryRange.max" type="number" placeholder="Đến" 
+                  class="form-control salary-input" step="1000000" />
+              </div>
+            </div>
+
+            <div class="filter-group">
+              <label>Ngày vào làm</label>
+              <div class="date-range">
+                <input v-model="joinDateRange.from" type="date" class="form-control date-input" placeholder="Từ ngày" />
+                <span class="date-separator">-</span>
+                <input v-model="joinDateRange.to" type="date" class="form-control date-input" placeholder="Đến ngày" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="filters-summary">
+          <div class="summary-stats">
+            <span class="summary-item">
+              Tổng nhân viên: <strong>{{ filteredEmployees.length }}</strong>
+            </span>
+            <span class="summary-item">
+              Đang hoạt động: <strong>{{ activeEmployeesCount }}</strong>
+            </span>
+            <span class="summary-item">
+              Tổng lương tháng: <strong>{{ formatCurrency(totalMonthlySalary) }}</strong>
+            </span>
+          </div>
+        </div>
       </div>
-      <div class="filter-controls">
-        <select v-model="selectedRole" class="filter-select">
-          <option value="">Tất cả chức vụ</option>
-          <option value="admin">Quản trị viên</option>
-          <option value="manager">Quản lý</option>
-          <option value="staff">Nhân viên</option>
-        </select>
+    </div>
+
+    <!-- Action Buttons Section - Below Filters -->
+    <div class="actions-section card fade-in" style="animation-delay: 0.35s">
+      <div class="card-body">
+        <div class="action-buttons">
+          <div class="action-group">
+            <label class="action-label">📊 Quản lý dữ liệu</label>
+            <div class="action-buttons-row">
+              <button class="btn btn-outline" @click="exportEmployeesToCSV">
+                <i class="btn-icon">📤</i>
+                Xuất danh sách
+              </button>
+              <button class="btn btn-outline" @click="importEmployeesCSV">
+                <i class="btn-icon">📥</i>
+                Nhập từ CSV
+              </button>
+              <button class="btn btn-outline" @click="resetFilters">
+                <i class="btn-icon">🔄</i>
+                Đặt lại bộ lọc
+              </button>
+            </div>
+          </div>
+          
+          <div class="action-group">
+            <label class="action-label">💼 Quản lý nhân sự</label>
+            <div class="action-buttons-row">
+              <button class="btn btn-outline" @click="generatePayroll">
+                <i class="btn-icon">💰</i>
+                Tính lương
+              </button>
+              <button class="btn btn-outline" @click="generateAttendanceReport">
+                <i class="btn-icon">📅</i>
+                Báo cáo chấm công
+              </button>
+              <button class="btn btn-outline" @click="generateEmployeeReport">
+                <i class="btn-icon">📊</i>
+                Báo cáo nhân viên
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -146,6 +267,12 @@ import StatusBadge from '@/components/ui/StatusBadge.vue'
 
 const searchTerm = ref('')
 const selectedRole = ref('')
+// Enhanced filter variables - as requested by team
+const selectedStatus = ref('')
+const selectedDepartment = ref('')
+const salaryRange = ref({ min: null, max: null })
+const joinDateRange = ref({ from: '', to: '' })
+
 const showAddModal = ref(false)
 const showEditModal = ref(false)
 const editingEmployee = ref(null)
@@ -198,6 +325,7 @@ const sampleEmployees = ref([
     email: 'manager@gearup.com',
     phone: '0911234567',
     role: 'manager',
+    department: 'sales',
     salary: 25000000,
     startDate: new Date('2023-01-15'),
     status: 'active'
@@ -208,6 +336,7 @@ const sampleEmployees = ref([
     email: 'staff1@gearup.com',
     phone: '0912345678',
     role: 'staff',
+    department: 'warehouse',
     salary: 12000000,
     startDate: new Date('2023-03-20'),
     status: 'active'
@@ -218,24 +347,114 @@ const sampleEmployees = ref([
     email: 'admin@gearup.com',
     phone: '0913456789',
     role: 'admin',
+    department: 'it',
     salary: 35000000,
     startDate: new Date('2022-06-10'),
     status: 'active'
+  },
+  {
+    id: 4,
+    fullName: 'Lê Thị Marketing',
+    email: 'marketing@gearup.com',
+    phone: '0914567890',
+    role: 'staff',
+    department: 'marketing',
+    salary: 15000000,
+    startDate: new Date('2024-02-01'),
+    status: 'active'
+  },
+  {
+    id: 5,
+    fullName: 'Hoàng Văn Finance',
+    email: 'finance@gearup.com',
+    phone: '0915678901',
+    role: 'manager',
+    department: 'finance',
+    salary: 22000000,
+    startDate: new Date('2023-08-15'),
+    status: 'inactive'
+  },
+  {
+    id: 6,
+    fullName: 'Ngô Thị HR',
+    email: 'hr@gearup.com',
+    phone: '0916789012',
+    role: 'staff',
+    department: 'hr',
+    salary: 18000000,
+    startDate: new Date('2023-11-20'),
+    status: 'active'
+  },
+  {
+    id: 7,
+    fullName: 'Đặng Văn Intern',
+    email: 'intern@gearup.com',
+    phone: '0917890123',
+    role: 'intern',
+    department: 'marketing',
+    salary: 5000000,
+    startDate: new Date('2024-10-01'),
+    status: 'active'
+  },
+  {
+    id: 8,
+    fullName: 'Võ Thị Former',
+    email: 'former@gearup.com',
+    phone: '0918901234',
+    role: 'staff',
+    department: 'sales',
+    salary: 13000000,
+    startDate: new Date('2022-03-10'),
+    status: 'terminated'
   }
 ])
 
 const filteredEmployees = computed(() => {
   let employees = sampleEmployees.value
 
+  // Text search filter
   if (searchTerm.value) {
+    const search = searchTerm.value.toLowerCase()
     employees = employees.filter(employee =>
-      employee.fullName.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
-      employee.email.toLowerCase().includes(searchTerm.value.toLowerCase())
+      employee.fullName.toLowerCase().includes(search) ||
+      employee.email.toLowerCase().includes(search) ||
+      employee.phone.includes(search) ||
+      employee.id.toString().includes(search)
     )
   }
 
+  // Role filter
   if (selectedRole.value) {
     employees = employees.filter(employee => employee.role === selectedRole.value)
+  }
+
+  // Status filter
+  if (selectedStatus.value) {
+    employees = employees.filter(employee => employee.status === selectedStatus.value)
+  }
+
+  // Department filter
+  if (selectedDepartment.value) {
+    employees = employees.filter(employee => employee.department === selectedDepartment.value)
+  }
+
+  // Salary range filter
+  if (salaryRange.value.min !== null && salaryRange.value.min !== '') {
+    employees = employees.filter(employee => employee.salary >= salaryRange.value.min)
+  }
+  if (salaryRange.value.max !== null && salaryRange.value.max !== '') {
+    employees = employees.filter(employee => employee.salary <= salaryRange.value.max)
+  }
+
+  // Join date range filter
+  if (joinDateRange.value.from) {
+    const fromDate = new Date(joinDateRange.value.from)
+    employees = employees.filter(employee => new Date(employee.startDate) >= fromDate)
+  }
+  if (joinDateRange.value.to) {
+    const toDate = new Date(joinDateRange.value.to)
+    toDate.setHours(23, 59, 59, 999) // End of day
+    employees = employees.filter(employee => new Date(employee.startDate) <= toDate)
   }
 
   return employees
@@ -256,7 +475,8 @@ const getRoleText = (role) => {
   const roleMap = {
     admin: 'Quản trị viên',
     manager: 'Quản lý',
-    staff: 'Nhân viên'
+    staff: 'Nhân viên',
+    intern: 'Thực tập sinh'
   }
   return roleMap[role] || role
 }
@@ -264,10 +484,80 @@ const getRoleText = (role) => {
 const getStatusText = (status) => {
   const statusMap = {
     active: 'Hoạt động',
-    inactive: 'Nghỉ việc',
+    inactive: 'Tạm nghỉ',
+    terminated: 'Đã nghỉ việc',
     suspended: 'Đình chỉ'
   }
   return statusMap[status] || status
+}
+
+// Enhanced statistics - as requested by team
+const activeEmployeesCount = computed(() => 
+  sampleEmployees.value.filter(employee => employee.status === 'active').length
+)
+
+const totalMonthlySalary = computed(() => {
+  return filteredEmployees.value
+    .filter(employee => employee.status === 'active')
+    .reduce((total, employee) => total + employee.salary, 0)
+})
+
+// Reset filters function
+const resetFilters = () => {
+  searchTerm.value = ''
+  selectedRole.value = ''
+  selectedStatus.value = ''
+  selectedDepartment.value = ''
+  salaryRange.value = { min: null, max: null }
+  joinDateRange.value = { from: '', to: '' }
+}
+
+// Enhanced action functions - as requested by team
+const exportEmployeesToCSV = async () => {
+  try {
+    console.log('Exporting employees to CSV...')
+    alert('Đang xuất danh sách nhân viên ra file CSV. Chức năng sẽ được hoàn thiện.')
+  } catch (error) {
+    console.error('Export error:', error)
+  }
+}
+
+const importEmployeesCSV = async () => {
+  try {
+    console.log('Importing employees from CSV...')
+    alert('Chức năng nhập nhân viên từ CSV sẽ được tích hợp.')
+  } catch (error) {
+    console.error('Import error:', error)
+  }
+}
+
+const generatePayroll = async () => {
+  try {
+    console.log('Generating payroll...')
+    const activeEmployees = filteredEmployees.value.filter(e => e.status === 'active')
+    const totalPayroll = activeEmployees.reduce((total, emp) => total + emp.salary, 0)
+    alert(`Tính lương cho ${activeEmployees.length} nhân viên.\nTổng lương tháng: ${formatCurrency(totalPayroll)}`)
+  } catch (error) {
+    console.error('Payroll error:', error)
+  }
+}
+
+const generateAttendanceReport = async () => {
+  try {
+    console.log('Generating attendance report...')
+    alert('Đang tạo báo cáo chấm công cho tháng hiện tại. Chức năng sẽ được hoàn thiện.')
+  } catch (error) {
+    console.error('Attendance report error:', error)
+  }
+}
+
+const generateEmployeeReport = async () => {
+  try {
+    console.log('Generating employee report...')
+    alert('Đang tạo báo cáo tổng hợp nhân viên. Chức năng sẽ được hoàn thiện.')
+  } catch (error) {
+    console.error('Employee report error:', error)
+  }
 }
 
 const editEmployee = (employee) => {
@@ -1055,6 +1345,199 @@ const closeModal = () => {
   }
   100% {
     box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+/* Enhanced Filters Section Styling - As requested by team */
+.filters-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.filters-title {
+  margin: 0;
+  color: var(--gray-900);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.filter-icon {
+  font-size: var(--font-size-lg);
+}
+
+.filters-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.search-section {
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: var(--spacing-md);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gray-500);
+  font-size: var(--font-size-sm);
+}
+
+.filter-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.filter-group label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--gray-700);
+}
+
+.salary-range,
+.date-range {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.salary-input,
+.date-input {
+  flex: 1;
+  min-width: 0; /* Allow flex items to shrink below content size */
+  max-width: 120px; /* Prevent individual inputs from getting too wide */
+}
+
+.salary-separator,
+.date-separator {
+  color: var(--gray-500);
+  font-weight: var(--font-weight-semibold);
+}
+
+.filters-summary {
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--border-light);
+}
+
+.summary-stats {
+  display: flex;
+  gap: var(--spacing-xl);
+  flex-wrap: wrap;
+}
+
+.summary-item {
+  font-size: var(--font-size-sm);
+  color: var(--gray-600);
+}
+
+.summary-item strong {
+  color: var(--primary-600);
+  font-weight: var(--font-weight-bold);
+}
+
+/* Actions Section Styling - Below Filters as requested */
+.actions-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.action-buttons {
+  display: flex;
+  gap: var(--spacing-xl);
+  flex-wrap: wrap;
+}
+
+.action-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  min-width: 280px;
+}
+
+.action-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--gray-700);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.action-buttons-row {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.action-buttons-row .btn {
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.action-buttons-row .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Responsive design for enhanced filters */
+@media (max-width: 768px) {
+  .filter-controls {
+    grid-template-columns: 1fr;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+  
+  .action-group {
+    min-width: auto;
+  }
+  
+  .action-buttons-row {
+    justify-content: center;
+  }
+  
+  .action-buttons-row .btn {
+    flex: 1;
+    min-width: 120px;
+  }
+  
+  .summary-stats {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .salary-range,
+  .date-range {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+  
+  .salary-input,
+  .date-input {
+    max-width: 100%;
   }
 }
 </style>

@@ -93,6 +93,11 @@ const statusConfig = {
     icon: '⏰',
     color: 'danger'
   },
+  terminated: {
+    text: 'Đã nghỉ việc',
+    icon: '🚫',
+    color: 'danger'
+  },
   'low-stock': {
     text: 'Sắp hết hàng',
     icon: '⚠️',
@@ -181,7 +186,8 @@ const statusIcon = computed(() => {
 .status-badge[data-status="blocked"],
 .status-badge[data-status="suspended"],
 .status-badge[data-status="cancelled"],
-.status-badge[data-status="expired"] {
+.status-badge[data-status="expired"],
+.status-badge[data-status="terminated"] {
   background: #fecaca;
   color: #991b1b;
   border: 1px solid #fca5a5;
@@ -234,7 +240,8 @@ const statusIcon = computed(() => {
 .status-badge.outline[data-status="blocked"],
 .status-badge.outline[data-status="suspended"],
 .status-badge.outline[data-status="cancelled"],
-.status-badge.outline[data-status="expired"] {
+.status-badge.outline[data-status="expired"],
+.status-badge.outline[data-status="terminated"] {
   border-color: #ef4444;
   color: #ef4444;
 }

@@ -1,0 +1,499 @@
+{
+  "database_schema": {
+    "entities": {
+      "xuất_xu": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "ten_xuat_xu": "string",
+          "deleted": "boolean"
+        }
+      },
+      "nhà_sản_xuất": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "ma_nha_san_xuat": "string",
+          "ten_nha_san_xuat": "string",
+          "deleted": "boolean"
+        }
+      },
+      "sản_phẩm": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "đường_dẫn_ảnh": "string",
+          "tên_sản": "string",
+          "mô_tả": "text",
+          "deleted": "boolean"
+        }
+      },
+      "màu_sắc": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "ma_mau_sac": "string",
+          "ten_mau_sac": "string",
+          "deleted": "boolean"
+        }
+      },
+      "kich_thuoc": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "ma_kich_thuoc": "string",
+          "ten_kich_thuoc": "string",
+          "deleted": "boolean"
+        }
+      },
+      "dạ_giày": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "ma_de_giay": "string",
+          "ten_de_giay": "string",
+          "deleted": "boolean"
+        }
+      },
+      "chât_liệu": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "ma_chat_lieu": "string",
+          "ten_chat_lieu": "string",
+          "deleted": "boolean"
+        }
+      },
+      "dém_giày": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "ten_dem_giay": "string",
+          "ten_de_giay": "string",
+          "deleted": "boolean"
+        }
+      },
+      "trung_luong": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "ma_trong_luong": "string",
+          "ten_trong_luong": "string",
+          "deleted": "boolean"
+        }
+      },
+      "mùa_thể_thao": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "ma_mon_the_thao": "string",
+          "ten_mon_the_thao": "string",
+          "deleted": "boolean"
+        }
+      },
+      "loại_mũa": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "ma_loai_mua": "string",
+          "ten_loai_mua": "string",
+          "deleted": "boolean"
+        }
+      },
+      "đỗ_bền": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "ma_do_ben": "string",
+          "ten_do_ben": "string",
+          "deleted": "boolean"
+        }
+      },
+      "chống_nước": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "ma_chong_nuoc": "string",
+          "ten_chong_nuoc": "string",
+          "deleted": "boolean"
+        }
+      },
+      "sản_phẩm_chi_tiết": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "id_sản_phẩm": "int",
+          "id_gia_pham": "int",
+          "ma_san_pham": "string",
+          "ten_san_pham": "string",
+          "deleted": "boolean"
+        }
+      },
+      "đơn_giám_giá": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "ma_dot_giam_gia": "string",
+          "ten_dot_giam_gia": "string",
+          "so_len_giam_toi_da": "decimal",
+          "ngày_bắt_đầu": "date",
+          "ngày_kết_thúc": "date",
+          "tạng_thái": "string",
+          "deleted": "boolean"
+        }
+      },
+      "hóa_đơn": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "id_khach_hang": "int",
+          "id_khuyến": "int",
+          "ma_hoa_don": "string",
+          "so_luong": "int",
+          "gia_ban": "decimal",
+          "thanh_tien": "decimal",
+          "tong_ten": "decimal",
+          "tong_ten_sau_giam": "decimal",
+          "so_luong": "int",
+          "gia_chu": "decimal",
+          "deleted": "boolean"
+        }
+      },
+      "kháčh_hàng": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "ten_khach_hang": "string",
+          "ten_tk_khoan": "string",
+          "email": "string",
+          "so_dien_thoai": "string",
+          "gioi_tinh": "string",
+          "ngày_sinh": "date",
+          "deleted": "boolean"
+        }
+      },
+      "địa_chỉ_khách_hàng": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "id_khach_hang": "int",
+          "ma_dia_chi": "string",
+          "dia_chi_cu_the": "string",
+          "thanh_pho": "string",
+          "quan": "string",
+          "deleted": "boolean"
+        }
+      },
+      "phiếu_giảm_giá_cá_nhân": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "id_khach_hang": "int",
+          "id_phieu_giam_gia": "int",
+          "ten_phieu_giam_gia_ca_nhan": "string",
+          "ngày_sinh": "date",
+          "ngày_het_han": "date",
+          "trang_thai": "string",
+          "deleted": "boolean"
+        }
+      },
+      "quyền_hạn": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "ma_quyen_han": "string",
+          "ten_quyen_han": "string",
+          "deleted": "boolean"
+        }
+      },
+      "nhân_viên": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "id_quyen_han": "int",
+          "ma_nhan_vien": "string",
+          "ten_nhan_vien": "string",
+          "ten_khoan": "string",
+          "mat_khau": "string",
+          "email": "string",
+          "so_dien_thoai": "string",
+          "anh_nhan_vien": "string",
+          "ngày_sinh": "date",
+          "create_at": "timestamp",
+          "create_by": "string",
+          "update_at": "timestamp",
+          "update_by": "string",
+          "deleted": "boolean"
+        }
+      },
+      "thống_kê_dơn_hàng": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "id_hoa_don": "int",
+          "id_thang_thai_don_hang": "int",
+          "ma_thong_thai_don_hang": "string",
+          "ten_trang_thai_don_hang": "string",
+          "thoi_gian": "timestamp",
+          "ghi_chu": "string",
+          "deleted": "boolean"
+        }
+      },
+      "trạng_thái_dơn_hàng": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "ma_trang_thai_don_hang": "string",
+          "ten_trang_thai_don_hang": "string",
+          "deleted": "boolean"
+        }
+      },
+      "hình_thức_thanh_toán": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "id_hoa_don": "int",
+          "id_phuong_thuc_thanh_toan": "int",
+          "ma_phuong_thuc_thanh_toan": "string",
+          "ten_phuong_thuc_thanh_toan": "string",
+          "tien_mat": "decimal",
+          "deleted": "boolean"
+        }
+      },
+      "phiếu_giảm_giá": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "ten_phieu_giam_gia": "string",
+          "chi_phieu_giam_gia": "decimal",
+          "so_luong": "int",
+          "ngày_bat_đau": "date",
+          "ngày_ket_thuc": "date",
+          "trang_thai": "string",
+          "deleted": "boolean"
+        }
+      },
+      "chi_tiết_giá_hàng": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "id_ska_hang": "int",
+          "ma_chi_tiet_gio_hang": "string",
+          "ngày_lưu": "timestamp",
+          "so_luong": "int",
+          "tong_tien": "decimal",
+          "deleted": "boolean"
+        }
+      },
+      "phiếu_bảo_hành": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "id_chi_tiet_san_pham": "int",
+          "ma_bao_hanh": "string",
+          "ngày_bat_đau": "date",
+          "ngày_hết_han": "date",
+          "trang_thai": "string",
+          "deleted": "boolean"
+        }
+      },
+      "kích_thų_bảo_hành": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "id_phieu_bao_hanh": "int",
+          "ngày_bảo_hành": "date",
+          "chi_zin": "string",
+          "phương_thục_sửa_chữa": "string",
+          "chi_phi": "decimal",
+          "trang_thai": "string",
+          "deleted": "boolean"
+        }
+      },
+      "giá_hàng": {
+        "primary_key": "id",
+        "attributes": {
+          "id": "int",
+          "id_khach_hang": "int",
+          "ma_gio_hang": "string",
+          "deleted": "boolean"
+        }
+      }
+    },
+    "relationships": [
+      {
+        "type": "one_to_many",
+        "from": "nhà_sản_xuất",
+        "to": "sản_phẩm",
+        "foreign_key": "id_nha_san_xuat"
+      },
+      {
+        "type": "one_to_many",
+        "from": "xuất_xu",
+        "to": "sản_phẩm",
+        "foreign_key": "id_xuat_xu"
+      },
+      {
+        "type": "one_to_many",
+        "from": "sản_phẩm",
+        "to": "sản_phẩm_chi_tiết",
+        "foreign_key": "id_san_pham"
+      },
+      {
+        "type": "one_to_many",
+        "from": "màu_sắc",
+        "to": "sản_phẩm_chi_tiết",
+        "foreign_key": "id_mau_sac"
+      },
+      {
+        "type": "one_to_many",
+        "from": "kich_thuoc",
+        "to": "sản_phẩm_chi_tiết",
+        "foreign_key": "id_kich_thuoc"
+      },
+      {
+        "type": "one_to_many",
+        "from": "dạ_giày",
+        "to": "sản_phẩm_chi_tiết",
+        "foreign_key": "id_de_giay"
+      },
+      {
+        "type": "one_to_many",
+        "from": "chât_liệu",
+        "to": "sản_phẩm_chi_tiết",
+        "foreign_key": "id_chat_lieu"
+      },
+      {
+        "type": "one_to_many",
+        "from": "dém_giày",
+        "to": "sản_phẩm_chi_tiết",
+        "foreign_key": "id_dem_giay"
+      },
+      {
+        "type": "one_to_many",
+        "from": "trung_luong",
+        "to": "sản_phẩm_chi_tiết",
+        "foreign_key": "id_trong_luong"
+      },
+      {
+        "type": "one_to_many",
+        "from": "mùa_thể_thao",
+        "to": "sản_phẩm_chi_tiết",
+        "foreign_key": "id_mon_the_thao"
+      },
+      {
+        "type": "one_to_many",
+        "from": "loại_mũa",
+        "to": "sản_phẩm_chi_tiết",
+        "foreign_key": "id_loai_mua"
+      },
+      {
+        "type": "one_to_many",
+        "from": "đỗ_bền",
+        "to": "sản_phẩm_chi_tiết",
+        "foreign_key": "id_do_ben"
+      },
+      {
+        "type": "one_to_many",
+        "from": "chống_nước",
+        "to": "sản_phẩm_chi_tiết",
+        "foreign_key": "id_chong_nuoc"
+      },
+      {
+        "type": "one_to_many",
+        "from": "đơn_giám_giá",
+        "to": "sản_phẩm_chi_tiết",
+        "foreign_key": "id_dot_giam_gia"
+      },
+      {
+        "type": "one_to_many",
+        "from": "kháčh_hàng",
+        "to": "hóa_đơn",
+        "foreign_key": "id_khach_hang"
+      },
+      {
+        "type": "one_to_many",
+        "from": "phiếu_giảm_giá",
+        "to": "hóa_đơn",
+        "foreign_key": "id_phieu_giam_gia"
+      },
+      {
+        "type": "one_to_many",
+        "from": "kháčh_hàng",
+        "to": "địa_chỉ_khách_hàng",
+        "foreign_key": "id_khach_hang"
+      },
+      {
+        "type": "one_to_many",
+        "from": "kháčh_hàng",
+        "to": "phiếu_giảm_giá_cá_nhân",
+        "foreign_key": "id_khach_hang"
+      },
+      {
+        "type": "one_to_many",
+        "from": "phiếu_giảm_giá",
+        "to": "phiếu_giảm_giá_cá_nhân",
+        "foreign_key": "id_phieu_giam_gia"
+      },
+      {
+        "type": "one_to_many",
+        "from": "quyền_hạn",
+        "to": "nhân_viên",
+        "foreign_key": "id_quyen_han"
+      },
+      {
+        "type": "one_to_many",
+        "from": "hóa_đơn",
+        "to": "thống_kê_dơn_hàng",
+        "foreign_key": "id_hoa_don"
+      },
+      {
+        "type": "one_to_many",
+        "from": "trạng_thái_dơn_hàng",
+        "to": "thống_kê_dơn_hàng",
+        "foreign_key": "id_trang_thai_don_hang"
+      },
+      {
+        "type": "one_to_many",
+        "from": "hóa_đơn",
+        "to": "hình_thức_thanh_toán",
+        "foreign_key": "id_hoa_don"
+      },
+      {
+        "type": "one_to_many",
+        "from": "kháčh_hàng",
+        "to": "giá_hàng",
+        "foreign_key": "id_khach_hang"
+      },
+      {
+        "type": "one_to_many",
+        "from": "giá_hàng",
+        "to": "chi_tiết_giá_hàng",
+        "foreign_key": "id_gio_hang"
+      },
+      {
+        "type": "one_to_many",
+        "from": "sản_phẩm_chi_tiết",
+        "to": "phiếu_bảo_hành",
+        "foreign_key": "id_chi_tiet_san_pham"
+      },
+      {
+        "type": "one_to_many",
+        "from": "phiếu_bảo_hành",
+        "to": "kích_thử_bảo_hành",
+        "foreign_key": "id_phieu_bao_hanh"
+      }
+    ],
+    "metadata": {
+      "description": "Database schema for DATN_GearUp - A shoe/footwear e-commerce application",
+      "version": "1.0",
+      "created_date": "2025-01-08",
+      "notes": [
+        "This schema represents a comprehensive e-commerce system for footwear",
+        "Includes product management, customer management, orders, inventory, and warranty tracking",
+        "All entities include a 'deleted' field for soft deletion",
+        "Vietnamese field names are preserved as they appear in the original ERD"
+      ]
+    }
+  }
+}

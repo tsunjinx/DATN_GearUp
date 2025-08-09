@@ -1,3 +1,4 @@
+// Dịch vụ khách hàng/nhân viên (Customer/Employee): nhóm API CRUD cho người dùng trong hệ thống.
 import api from './api.js'
 
 export const customerService = {

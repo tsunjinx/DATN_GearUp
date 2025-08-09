@@ -1,3 +1,5 @@
+<!-- Trang Quản lý Hóa đơn (Admin): lọc theo trạng thái/ngày/giá, tải dữ liệu (loading/error/empty),
+     tác vụ hàng loạt (bulk update), in hóa đơn, và xem chi tiết. -->
 <template>
   <div class="orders-page">
     <!-- Orders Header with Action Buttons -->
@@ -101,10 +103,31 @@
       </div>
     </div>
 
-    <div class="table-container fade-in" style="animation-delay: 0.5s">
+    <!-- States: loading / error / empty -->
+    <div v-if="loading" class="table-container fade-in" style="animation-delay: 0.45s">
+      <div class="table"><div class="text-center" style="padding:16px"><span class="loading-spinner"></span> Đang tải hóa đơn...</div></div>
+    </div>
+    <div v-else-if="error" class="table-container fade-in" style="animation-delay: 0.45s">
+      <div class="table"><div class="text-center text-error" style="padding:16px">{{ error }}</div></div>
+    </div>
+    <div v-else-if="filteredOrders.length === 0" class="table-container fade-in" style="animation-delay: 0.45s">
+      <div class="table"><div class="text-center text-gray" style="padding:16px">Không có hóa đơn phù hợp</div></div>
+    </div>
+    
+    <!-- Bulk actions -->
+    <div v-else class="table-container fade-in" style="animation-delay: 0.5s">
+      <div class="page-header" style="padding: 12px 12px 0;">
+        <div class="header-actions">
+          <button class="btn btn-sm btn-outline" :disabled="selectedIds.length===0" @click="bulkUpdateStatus('confirmed')">Xác nhận</button>
+          <button class="btn btn-sm btn-outline" :disabled="selectedIds.length===0" @click="bulkUpdateStatus('shipping')">Giao hàng</button>
+          <button class="btn btn-sm btn-outline" :disabled="selectedIds.length===0" @click="bulkUpdateStatus('completed')">Hoàn thành</button>
+          <button class="btn btn-sm btn-outline" :disabled="selectedIds.length===0" @click="bulkUpdateStatus('cancelled')">Hủy</button>
+        </div>
+      </div>
       <table class="table">
         <thead>
           <tr>
+            <th><input type="checkbox" class="checkbox" :checked="allSelected" @change="toggleAll($event)"/></th>
             <th>Mã đơn hàng</th>
             <th>Khách hàng</th>
             <th>Sản phẩm</th>
@@ -116,6 +139,7 @@
         </thead>
         <tbody>
           <tr v-for="order in filteredOrders" :key="order.id">
+            <td><input type="checkbox" class="checkbox" :value="order.id" v-model="selectedIds"/></td>
             <td>#{{ order.id }}</td>
             <td>
               <div class="customer-info">
@@ -139,6 +163,9 @@
               <div class="action-buttons">
                 <button class="btn btn-sm btn-outline" @click="viewOrder(order)">
                   Xem
+                </button>
+                <button class="btn btn-sm btn-outline" @click="printInvoice(order)">
+                  In
                 </button>
                 <select v-if="order.status !== 'completed' && order.status !== 'cancelled'"
                   @change="updateStatus(order.id, $event.target.value)" class="status-select">
@@ -217,8 +244,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useButtonAnimations } from '@/composables/useButtonAnimations.js'
+import { useApi } from '@/composables/useApi'
+import { orderService } from '@/services/orderService'
+import { debounce } from '@/utils/debounce'
 
 // Button animations composable
 const { staggeredFadeIn, withLoadingAnimation } = useButtonAnimations()
@@ -239,10 +269,41 @@ const priceRange = ref({
   max: 10000000
 })
 
+// Selection
+const selectedIds = ref([])
+const allSelected = computed(() => filteredOrders.value.length > 0 && filteredOrders.value.every(o => selectedIds.value.includes(o.id)))
+const toggleAll = (e) => {
+  if (e.target.checked) {
+    selectedIds.value = filteredOrders.value.map(o => o.id)
+  } else {
+    selectedIds.value = []
+  }
+}
+
 // Check if device is mobile
 const checkMobile = () => {
   isMobile.value = window.innerWidth <= 768
 }
+
+// Remote fetch
+const { loading, error, execute } = useApi()
+const fetchOrders = async () => {
+  const params = {
+    q: searchTerm.value || undefined,
+    status: selectedStatus.value || undefined,
+    dateFrom: dateFrom.value || undefined,
+    dateTo: dateTo.value || undefined,
+    totalMin: priceRange.value.min,
+    totalMax: priceRange.value.max
+  }
+  const res = await execute(({ cancelToken }) => orderService.getOrders(params, { cancelToken }))
+  if (res?.data) {
+    sampleOrders.value = res.data
+  }
+}
+const debouncedFetch = debounce(fetchOrders, 400)
+
+watch([searchTerm, selectedStatus, dateFrom, dateTo, () => priceRange.value.min, () => priceRange.value.max], () => debouncedFetch())
 
 onMounted(() => {
   checkMobile()
@@ -250,6 +311,8 @@ onMounted(() => {
 
   // Add staggered animations to header buttons
   staggeredFadeIn('.header-actions', 100)
+  // Initial load
+  fetchOrders().catch(() => {})
 })
 
 onUnmounted(() => {
@@ -392,6 +455,97 @@ const updateStatus = (orderId, newStatus) => {
   if (orderIndex !== -1) {
     sampleOrders.value[orderIndex].status = newStatus
   }
+}
+
+const bulkUpdateStatus = async (newStatus) => {
+  if (!newStatus || selectedIds.value.length === 0) return
+  // Optimistic update
+  sampleOrders.value = sampleOrders.value.map(o => selectedIds.value.includes(o.id) ? { ...o, status: newStatus } : o)
+  try {
+    await Promise.all(selectedIds.value.map(id => orderService.updateOrderStatus(id, newStatus)))
+  } catch (e) {
+    console.error('Bulk update failed', e)
+    // Refetch to sync
+    fetchOrders().catch(() => {})
+  } finally {
+    selectedIds.value = []
+  }
+}
+
+const printInvoice = (order) => {
+  const win = window.open('', '_blank')
+  if (!win) return
+  const itemsRows = order.items.map(i => `<tr>
+      <td>${i.productName}</td>
+      <td style="text-align:center">${i.quantity}</td>
+      <td style="text-align:right">${formatCurrency(i.price)}</td>
+      <td style="text-align:right">${formatCurrency(i.quantity * i.price)}</td>
+    </tr>`).join('')
+  const html = `<!doctype html>
+  <html lang="vi">
+  <head>
+    <meta charset="utf-8">
+    <title>Hóa đơn #${order.id} - GearUp</title>
+    <style>
+      :root { --brand:#16a34a; --text:#1f2937; }
+      *{ box-sizing:border-box }
+      body{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; padding:24px; color:var(--text) }
+      .header{ display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid var(--brand); padding-bottom:8px; margin-bottom:16px }
+      .brand{ font-size:20px; font-weight:800; color:var(--brand) }
+      .invoice-meta{ text-align:right; font-size:12px }
+      .section{ margin-top:12px }
+      .section h2{ font-size:14px; margin:0 0 6px 0 }
+      .box{ border:1px solid #e5e7eb; border-radius:6px; padding:10px; font-size:12px }
+      table{ width:100%; border-collapse:collapse; margin-top:12px }
+      th,td{ border:1px solid #e5e7eb; padding:8px; font-size:12px }
+      th{ background:#f8fafc; text-align:left }
+      tfoot td{ font-weight:700 }
+      .totals{ margin-top:10px; display:flex; justify-content:flex-end }
+      .muted{ color:#6b7280 }
+      @media print { body{ padding:0 } .no-print{ display:none } }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <div class="brand">GearUp</div>
+      <div class="invoice-meta">
+        <div><strong>Hóa đơn:</strong> #${order.id}</div>
+        <div><strong>Ngày:</strong> ${formatDate(order.createdAt)}</div>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Thông tin khách hàng</h2>
+      <div class="box">
+        <div><strong>Tên:</strong> ${order.customerName}</div>
+        <div><strong>SĐT:</strong> ${order.customerPhone}</div>
+        <div><strong>Địa chỉ:</strong> ${order.customerAddress || ''}</div>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Chi tiết sản phẩm</h2>
+      <table aria-label="Bảng chi tiết sản phẩm">
+        <thead>
+          <tr>
+            <th>Sản phẩm</th>
+            <th style="text-align:center">Số lượng</th>
+            <th style="text-align:right">Đơn giá</th>
+            <th style="text-align:right">Thành tiền</th>
+          </tr>
+        </thead>
+        <tbody>${itemsRows}</tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3" style="text-align:right">Tổng cộng</td>
+            <td style="text-align:right">${formatCurrency(order.total)}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <div class="section muted">Cảm ơn Quý khách đã mua sắm tại GearUp!</div>
+    <script>window.print();setTimeout(()=>window.close(),300);<\/script>
+  </body></html>`
+  win.document.write(html)
+  win.document.close()
 }
 
 const updatePriceRange = () => {

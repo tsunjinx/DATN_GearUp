@@ -1,25 +1,12 @@
 <script setup>
 import { RouterView, useRoute } from 'vue-router'
-import { watch, onMounted } from 'vue'
+import { computed } from 'vue'
+import { useHead } from '@vueuse/head'
 
+// Đặt tiêu đề trang dựa trên meta của route, dùng computed để luôn nằm trong ngữ cảnh component
 const route = useRoute()
-
-// Watch for route changes and update title
-watch(
-  () => route.meta.title,
-  (newTitle) => {
-    if (newTitle) {
-      document.title = newTitle
-    }
-  },
-  { immediate: true }
-)
-
-// Set initial title on app mount
-onMounted(() => {
-  const title = route.meta?.title || 'GearUp - Quản lý cửa hàng giày'
-  document.title = title
-})
+const pageTitle = computed(() => route.meta?.title || 'GearUp - Quản lý cửa hàng giày')
+useHead(() => ({ title: pageTitle.value }))
 </script>
 
 <template>
@@ -50,44 +37,7 @@ body {
   min-height: 100vh;
 }
 
-/* CSS Variables for consistent theming */
-:root {
-  /* Primary Colors (Green from logo) */
-  --primary-50: #f0fdf4;
-  --primary-100: #dcfce7;
-  --primary-200: #bbf7d0;
-  --primary-300: #86efac;
-  --primary-400: #4ade80;
-  --primary-500: #22c55e;
-  --primary-600: #16a34a;
-  --primary-700: #15803d;
-  --primary-800: #166534;
-  --primary-900: #14532d;
-  
-  /* Gray Scale */
-  --gray-50: #f8fafc;
-  --gray-100: #f1f5f9;
-  --gray-200: #e2e8f0;
-  --gray-300: #cbd5e1;
-  --gray-400: #94a3b8;
-  --gray-500: #64748b;
-  --gray-600: #475569;
-  --gray-700: #334155;
-  --gray-800: #1e293b;
-  --gray-900: #0f172a;
-  
-  /* Semantic Colors */
-  --success: #10b981;
-  --warning: #f59e0b;
-  --error: #ef4444;
-  --info: #3b82f6;
-  
-  /* Component Colors */
-  --background: #ffffff;
-  --surface: #ffffff;
-  --border: #e2e8f0;
-  --border-light: #f1f5f9;
-}
+/* Design tokens moved to src/styles/tokens.css */
 
 /* Global Button Styles */
 .btn {

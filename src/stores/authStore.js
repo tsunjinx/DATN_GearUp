@@ -4,6 +4,7 @@ export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
     token: localStorage.getItem('token'),
+    refreshToken: localStorage.getItem('refreshToken'),
     loading: false,
     error: null
   }),
@@ -29,8 +30,11 @@ export const useAuthStore = defineStore('auth', {
         if (credentials.username === 'admin' && credentials.password === 'admin') {
           // Lưu token vào localStorage
           const authToken = 'demo-token-' + Math.random().toString(36).substring(2)
+          const refreshToken = 'demo-refresh-' + Math.random().toString(36).substring(2)
           localStorage.setItem('token', authToken)
+          localStorage.setItem('refreshToken', refreshToken)
           this.token = authToken
+          this.refreshToken = refreshToken
           
           this.user = {
             id: 1,
@@ -57,8 +61,10 @@ export const useAuthStore = defineStore('auth', {
     
     logout() {
       localStorage.removeItem('token')
+      localStorage.removeItem('refreshToken')
       localStorage.removeItem('remember')
       this.token = null
+      this.refreshToken = null
       this.user = null
     },
     

@@ -1,9 +1,11 @@
 // Critical CSS imports first for faster rendering
 import './assets/critical.css'
 import './assets/variables.css'
+import './styles/tokens.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import { createHead } from '@vueuse/head'
 import App from './App.vue'
 import router from './router'
 
@@ -14,6 +16,7 @@ const app = createApp(App)
 try {
   app.use(createPinia())
   app.use(router)
+  app.use(createHead())
 } catch (error) {
   console.error('Plugin initialization error:', error)
 }

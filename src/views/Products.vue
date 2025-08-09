@@ -1,3 +1,4 @@
+<!-- Trang Quản lý Sản phẩm (Admin): tìm kiếm/lọc (debounce), bảng/lưới hiển thị, modal thêm/sửa, và trạng thái loading/error/empty. -->
 <template>
   <div class="products-page">
     <!-- Products Header with Action Buttons -->
@@ -12,10 +13,6 @@
             <i class="btn-icon">➕</i>
             Thêm Sản Phẩm
           </button>
-          <button class="btn btn-outline btn-white" @click="exportToExcel">
-            <i class="btn-icon">📤</i>
-            Xuất Excel
-          </button>
         </div>
       </div>
     </div>
@@ -28,10 +25,6 @@
             <i class="filter-icon">🔍</i>
             Bộ Lọc & Tìm Kiếm
           </h3>
-          <button class="btn btn-sm btn-outline" @click="resetFilters">
-            <i class="btn-icon">🔄</i>
-            Đặt lại
-          </button>
         </div>
 
         <div class="filters-content">
@@ -102,8 +95,70 @@
       </div>
     </div>
 
+    <!-- Action Buttons Section - Below Filters as requested -->
+    <div class="actions-section card fade-in" style="animation-delay: 0.35s">
+      <div class="card-body">
+        <div class="action-buttons">
+          <div class="action-group">
+            <label class="action-label">📊 Quản lý dữ liệu</label>
+            <div class="action-buttons-row">
+              <button class="btn btn-outline" @click="exportToCSV">
+                <i class="btn-icon">📤</i>
+                Xuất Excel
+              </button>
+              <input ref="csvInput" type="file" accept=".csv" class="hidden" @change="importCSV" />
+              <button class="btn btn-outline" @click="triggerImport">
+                <i class="btn-icon">📥</i>
+                Nhập CSV
+              </button>
+              <button class="btn btn-outline" @click="resetFilters">
+                <i class="btn-icon">🔄</i>
+                Đặt lại bộ lọc
+              </button>
+            </div>
+          </div>
+          
+          <div class="action-group">
+            <label class="action-label">📱 Tiện ích</label>
+            <div class="action-buttons-row">
+              <button class="btn btn-outline" @click="scanQRCode">
+                <i class="btn-icon">📷</i>
+                Quét mã QR
+              </button>
+              <button class="btn btn-outline" @click="generateQRCodes">
+                <i class="btn-icon">🏷️</i>
+                Tạo mã QR
+              </button>
+              <button class="btn btn-outline" @click="printProductLabels">
+                <i class="btn-icon">🖨️</i>
+                In nhãn
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- States: loading / error / empty -->
+    <div v-if="loading" class="card fade-in" style="animation-delay: 0.45s">
+      <div class="card-body text-center">
+        <span class="loading-spinner"></span>
+        <span class="ml-2">Đang tải dữ liệu sản phẩm...</span>
+      </div>
+    </div>
+
+    <div v-else-if="error" class="card fade-in" style="animation-delay: 0.45s">
+      <div class="card-body text-center text-error">
+        {{ error }}
+      </div>
+    </div>
+
+    <div v-else-if="filteredProducts.length === 0" class="card fade-in" style="animation-delay: 0.45s">
+      <div class="card-body text-center text-gray">Không có sản phẩm phù hợp</div>
+    </div>
+
     <!-- Products Table -->
-    <div class="products-table-section card fade-in" style="animation-delay: 0.5s">
+    <div v-else class="products-table-section card fade-in" style="animation-delay: 0.5s">
       <div class="card-header">
         <h3 class="card-title">
           <i class="table-icon">📋</i>
@@ -371,6 +426,125 @@
               </div>
             </div>
 
+            <!-- Enhanced ERD Fields -->
+            <div class="form-section-header">
+              <h4>🏷️ Thông tin chi tiết sản phẩm</h4>
+              <p class="form-section-description">Các thuộc tính chuyên biệt cho giày dép</p>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Nhà sản xuất</label>
+                <select v-model="productForm.manufacturer" class="form-control">
+                  <option value="">Chọn nhà sản xuất</option>
+                  <option value="1">Nike</option>
+                  <option value="2">Adidas</option>
+                  <option value="3">Puma</option>
+                  <option value="4">Converse</option>
+                  <option value="5">Vans</option>
+                  <option value="6">New Balance</option>
+                  <option value="7">Asics</option>
+                  <option value="8">Under Armour</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label>Xuất xứ</label>
+                <select v-model="productForm.origin" class="form-control">
+                  <option value="">Chọn xuất xứ</option>
+                  <option value="1">Việt Nam</option>
+                  <option value="2">Trung Quốc</option>
+                  <option value="3">Indonesia</option>
+                  <option value="4">Thái Lan</option>
+                  <option value="5">Hàn Quốc</option>
+                  <option value="6">Nhật Bản</option>
+                  <option value="7">Mỹ</option>
+                  <option value="8">Đức</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Chất liệu chính</label>
+                <select v-model="productForm.mainMaterial" class="form-control">
+                  <option value="">Chọn chất liệu</option>
+                  <option value="1">Da thật</option>
+                  <option value="2">Da tổng hợp</option>
+                  <option value="3">Vải canvas</option>
+                  <option value="4">Vải mesh</option>
+                  <option value="5">Vải knit</option>
+                  <option value="6">Cao su</option>
+                  <option value="7">EVA</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label>Loại đế giày</label>
+                <select v-model="productForm.soleType" class="form-control">
+                  <option value="">Chọn loại đế</option>
+                  <option value="1">Đế cao su</option>
+                  <option value="2">Đế EVA</option>
+                  <option value="3">Đế PU</option>
+                  <option value="4">Đế Air</option>
+                  <option value="5">Đế Boost</option>
+                  <option value="6">Đế React</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Khả năng chống nước</label>
+                <select v-model="productForm.waterproof" class="form-control">
+                  <option value="">Chọn mức độ</option>
+                  <option value="1">Không chống nước</option>
+                  <option value="2">Chống nước nhẹ</option>
+                  <option value="3">Chống nước tốt</option>
+                  <option value="4">Hoàn toàn chống nước</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label>Độ bền</label>
+                <select v-model="productForm.durability" class="form-control">
+                  <option value="">Chọn độ bền</option>
+                  <option value="1">Cơ bản (3-6 tháng)</option>
+                  <option value="2">Tốt (6-12 tháng)</option>
+                  <option value="3">Rất tốt (1-2 năm)</option>
+                  <option value="4">Xuất sắc (2+ năm)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Món thể thao phù hợp</label>
+                <select v-model="productForm.sportType" class="form-control">
+                  <option value="">Chọn môn thể thao</option>
+                  <option value="1">Chạy bộ</option>
+                  <option value="2">Bóng đá</option>
+                  <option value="3">Bóng rổ</option>
+                  <option value="4">Tennis</option>
+                  <option value="5">Tập gym</option>
+                  <option value="6">Đi bộ</option>
+                  <option value="7">Đa năng</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label>Loại mùa</label>
+                <select v-model="productForm.seasonType" class="form-control">
+                  <option value="">Chọn mùa phù hợp</option>
+                  <option value="1">Tất cả mùa</option>
+                  <option value="2">Mùa khô</option>
+                  <option value="3">Mùa mưa</option>
+                  <option value="4">Mùa hè</option>
+                  <option value="5">Mùa đông</option>
+                </select>
+              </div>
+            </div>
+
             <div class="form-group">
               <label>Mô tả sản phẩm</label>
               <textarea v-model="productForm.description" class="form-control" rows="4"
@@ -403,8 +577,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useButtonAnimations } from '@/composables/useButtonAnimations.js'
+import { useApi } from '@/composables/useApi'
+import { productService } from '@/services/productService'
+import { debounce } from '@/utils/debounce'
 
 // Button animations composable
 const { staggeredFadeIn, withLoadingAnimation } = useButtonAnimations()
@@ -432,10 +609,19 @@ const productForm = ref({
   stock: 0,
   status: 'active',
   description: '',
-  image: ''
+  image: '',
+  // Enhanced ERD fields
+  manufacturer: '',
+  origin: '',
+  mainMaterial: '',
+  soleType: '',
+  waterproof: '',
+  durability: '',
+  sportType: '',
+  seasonType: ''
 })
 
-// Sample data with Vietnamese product names
+// Data
 const sampleProducts = ref([
   {
     id: 1,
@@ -499,6 +685,27 @@ const sampleProducts = ref([
     createdAt: new Date('2024-02-10')
   }
 ])
+
+// Remote fetch with loading/error/empty states
+const { loading, error, data, execute } = useApi()
+
+const fetchProducts = async () => {
+  const params = {
+    q: searchTerm.value || undefined,
+    category: selectedCategory.value || undefined,
+    brand: selectedBrand.value || undefined,
+    status: selectedStatus.value || undefined,
+    priceMin: priceRange.value.min ?? undefined,
+    priceMax: priceRange.value.max ?? undefined
+  }
+  await execute(({ cancelToken }) => productService.getProducts(params, { cancelToken }))
+}
+
+const debouncedFetch = debounce(fetchProducts, 400)
+
+watch([searchTerm, selectedCategory, selectedBrand, selectedStatus, () => priceRange.value.min, () => priceRange.value.max], () => {
+  debouncedFetch()
+})
 
 const filteredProducts = computed(() => {
   let products = sampleProducts.value
@@ -694,16 +901,89 @@ const openAddModal = async (event) => {
   })
 }
 
-const exportToExcel = async (event) => {
-  await withLoadingAnimation(event, async () => {
-    // Simulate Excel export process
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    console.log('Exporting products to Excel...')
-    return 'Excel export completed successfully!'
-  }, {
-    onSuccess: (result) => console.log(result),
-    onError: (error) => console.error('Export failed:', error)
+// Xuất CSV danh sách sản phẩm (đơn giản) để phục vụ import/export nhanh
+const exportToCSV = async () => {
+  const rows = [
+    ['id','name','code','brand','category','price','originalPrice','stock','status','description'],
+    ...sampleProducts.value.map(p => [p.id,p.name,p.code,p.brand,p.category,p.price,p.originalPrice ?? '',p.stock,p.status,p.description?.replaceAll('\n',' ') ?? ''])
+  ]
+  const csv = rows.map(r => r.map(x => `"${String(x).replaceAll('"','""')}"`).join(',')).join('\n')
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'products.csv'
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+// Nhập CSV để thêm/cập nhật nhanh sản phẩm (tối giản)
+const csvInput = ref(null)
+const triggerImport = () => csvInput.value?.click()
+const importCSV = async (e) => {
+  const file = e.target.files?.[0]
+  if (!file) return
+  const text = await file.text()
+  const lines = text.split(/\r?\n/).filter(Boolean)
+  const header = lines.shift()?.split(',').map(h => h.replaceAll('"','').trim()) || []
+  const getVal = (val) => val?.replace(/^\"|\"$/g,'').replaceAll('""','"')
+  const toObj = (arr) => Object.fromEntries(arr.map((v,i)=>[header[i], getVal(v)]))
+  const parsed = lines.map(l => toObj(l.match(/\"(?:[^\"]|\"\")*\"|[^,]+/g) || []))
+  // Hợp nhất đơn giản theo code
+  parsed.forEach(p => {
+    if (!p.code) return
+    const idx = sampleProducts.value.findIndex(x => x.code === p.code)
+    const normalized = {
+      id: idx === -1 ? Date.now() + Math.floor(Math.random()*1000) : sampleProducts.value[idx].id,
+      name: p.name || 'Sản phẩm',
+      code: p.code,
+      brand: p.brand || 'nike',
+      category: p.category || 'sneakers',
+      price: Number(p.price) || 0,
+      originalPrice: Number(p.originalPrice) || undefined,
+      stock: Number(p.stock) || 0,
+      status: p.status || 'active',
+      description: p.description || ''
+    }
+    if (idx === -1) sampleProducts.value.push(normalized)
+    else sampleProducts.value[idx] = normalized
   })
+  e.target.value = ''
+}
+
+// QR Code and Print Functions - As requested by team
+const scanQRCode = async () => {
+  try {
+    // Placeholder for QR scanning functionality
+    // In real implementation, this would integrate with camera API
+    console.log('Opening QR scanner...')
+    alert('Chức năng quét mã QR sẽ được tích hợp với camera. Hiện tại đang trong quá trình phát triển.')
+  } catch (error) {
+    console.error('QR scan error:', error)
+  }
+}
+
+const generateQRCodes = async () => {
+  try {
+    console.log('Generating QR codes for products...')
+    // Placeholder for QR code generation
+    // In real implementation, this would generate QR codes for selected products
+    alert('Đang tạo mã QR cho các sản phẩm đã chọn. Chức năng sẽ được hoàn thiện trong phiên bản tiếp theo.')
+  } catch (error) {
+    console.error('QR generation error:', error)
+  }
+}
+
+const printProductLabels = async () => {
+  try {
+    console.log('Printing product labels...')
+    // Placeholder for printing functionality
+    // In real implementation, this would format and print product labels
+    const selectedProducts = filteredProducts.value.slice(0, 5) // Example: first 5 products
+    alert(`Chuẩn bị in nhãn cho ${selectedProducts.length} sản phẩm. Chức năng in sẽ được tích hợp với máy in nhiệt.`)
+  } catch (error) {
+    console.error('Print error:', error)
+  }
 }
 
 const viewProduct = (product) => {
@@ -759,11 +1039,10 @@ const closeModal = () => {
   }
 }
 
-onMounted(() => {
-  console.log('Products page loaded')
-
-  // Add staggered animations to header buttons
+onMounted(async () => {
   staggeredFadeIn('.header-actions', 100)
+  // Initial fetch
+  try { await fetchProducts() } catch (e) { /* handled in useApi */ }
 })
 </script>
 
@@ -1633,6 +1912,97 @@ onMounted(() => {
   }
   100% {
     box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+/* Enhanced ERD Form Styling */
+.form-section-header {
+  margin: 24px 0 16px 0;
+  padding: 16px 0;
+  border-top: 2px solid var(--primary-100);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.form-section-header h4 {
+  margin: 0 0 4px 0;
+  color: var(--primary-600);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-section-description {
+  margin: 0;
+  color: var(--gray-600);
+  font-size: var(--font-size-sm);
+  font-style: italic;
+}
+
+/* Actions Section Styling - Below Filters as requested */
+.actions-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.action-buttons {
+  display: flex;
+  gap: var(--spacing-xl);
+  flex-wrap: wrap;
+}
+
+.action-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  min-width: 300px;
+}
+
+.action-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--gray-700);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.action-buttons-row {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.action-buttons-row .btn {
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.action-buttons-row .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Responsive design for actions */
+@media (max-width: 768px) {
+  .action-buttons {
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+  
+  .action-group {
+    min-width: auto;
+  }
+  
+  .action-buttons-row {
+    justify-content: center;
+  }
+  
+  .action-buttons-row .btn {
+    flex: 1;
+    min-width: 120px;
   }
 }
 </style>

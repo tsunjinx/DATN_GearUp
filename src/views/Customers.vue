@@ -16,9 +16,124 @@
       </div>
     </div>
 
-    <div class="filters fade-in" style="animation-delay: 0.3s">
-      <div class="search-box">
-        <input v-model="searchTerm" type="text" placeholder="Tìm kiếm khách hàng..." class="search-input" />
+    <!-- Enhanced Filters Section - As requested by team -->
+    <div class="filters-section card fade-in" style="animation-delay: 0.3s">
+      <div class="card-body">
+        <div class="filters-header">
+          <h3 class="filters-title">
+            <i class="filter-icon">🔍</i>
+            Bộ Lọc & Tìm Kiếm Khách Hàng
+          </h3>
+        </div>
+
+        <div class="filters-content">
+          <div class="search-section">
+            <div class="search-box">
+              <i class="search-icon">🔍</i>
+              <input v-model="searchTerm" type="text" placeholder="Tìm kiếm theo tên, email, số điện thoại..."
+                class="search-input" />
+            </div>
+          </div>
+
+          <div class="filter-controls">
+            <div class="filter-group">
+              <label>Trạng thái</label>
+              <select v-model="selectedStatus" class="form-control">
+                <option value="">Tất cả trạng thái</option>
+                <option value="active">Hoạt động</option>
+                <option value="inactive">Không hoạt động</option>
+                <option value="blocked">Bị khóa</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label>Giới tính</label>
+              <select v-model="selectedGender" class="form-control">
+                <option value="">Tất cả giới tính</option>
+                <option value="male">Nam</option>
+                <option value="female">Nữ</option>
+                <option value="other">Khác</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label>Khu vực</label>
+              <select v-model="selectedRegion" class="form-control">
+                <option value="">Tất cả khu vực</option>
+                <option value="hanoi">Hà Nội</option>
+                <option value="hcm">TP. Hồ Chí Minh</option>
+                <option value="danang">Đà Nẵng</option>
+                <option value="other">Tỉnh khác</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label>Ngày đăng ký</label>
+              <div class="date-range">
+                <input v-model="dateRange.from" type="date" class="form-control date-input" placeholder="Từ ngày" />
+                <span class="date-separator">-</span>
+                <input v-model="dateRange.to" type="date" class="form-control date-input" placeholder="Đến ngày" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="filters-summary">
+          <div class="summary-stats">
+            <span class="summary-item">
+              Tổng khách hàng: <strong>{{ filteredCustomers.length }}</strong>
+            </span>
+            <span class="summary-item">
+              Hoạt động: <strong>{{ activeCustomersCount }}</strong>
+            </span>
+            <span class="summary-item">
+              Mới trong tháng: <strong>{{ newCustomersThisMonth }}</strong>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons Section - Below Filters -->
+    <div class="actions-section card fade-in" style="animation-delay: 0.35s">
+      <div class="card-body">
+        <div class="action-buttons">
+          <div class="action-group">
+            <label class="action-label">📊 Quản lý dữ liệu</label>
+            <div class="action-buttons-row">
+              <button class="btn btn-outline" @click="exportCustomersToCSV">
+                <i class="btn-icon">📤</i>
+                Xuất danh sách
+              </button>
+              <button class="btn btn-outline" @click="importCustomersCSV">
+                <i class="btn-icon">📥</i>
+                Nhập từ CSV
+              </button>
+              <button class="btn btn-outline" @click="resetFilters">
+                <i class="btn-icon">🔄</i>
+                Đặt lại bộ lọc
+              </button>
+            </div>
+          </div>
+          
+          <div class="action-group">
+            <label class="action-label">📧 Giao tiếp</label>
+            <div class="action-buttons-row">
+              <button class="btn btn-outline" @click="sendBulkEmail">
+                <i class="btn-icon">📧</i>
+                Gửi email hàng loạt
+              </button>
+              <button class="btn btn-outline" @click="sendBulkSMS">
+                <i class="btn-icon">📱</i>
+                Gửi SMS
+              </button>
+              <button class="btn btn-outline" @click="generateCustomerReport">
+                <i class="btn-icon">📊</i>
+                Báo cáo khách hàng
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -119,6 +234,12 @@ const { staggeredFadeIn, withLoadingAnimation } = useButtonAnimations()
 import StatusBadge from '@/components/ui/StatusBadge.vue'
 
 const searchTerm = ref('')
+// Enhanced filter variables - as requested by team
+const selectedStatus = ref('')
+const selectedGender = ref('')
+const selectedRegion = ref('')
+const dateRange = ref({ from: '', to: '' })
+
 const showAddModal = ref(false)
 const showEditModal = ref(false)
 const editingCustomer = ref(null)
@@ -169,6 +290,8 @@ const sampleCustomers = ref([
     email: 'nguyen.van.a@email.com',
     phone: '0901234567',
     address: 'Hà Nội',
+    gender: 'male',
+    region: 'hanoi',
     status: 'active',
     createdAt: new Date('2024-01-15')
   },
@@ -178,6 +301,8 @@ const sampleCustomers = ref([
     email: 'tran.thi.b@email.com',
     phone: '0902345678',
     address: 'TP.HCM',
+    gender: 'female',
+    region: 'hcm',
     status: 'active',
     createdAt: new Date('2024-02-20')
   },
@@ -187,23 +312,150 @@ const sampleCustomers = ref([
     email: 'le.van.c@email.com',
     phone: '0903456789',
     address: 'Đà Nẵng',
+    gender: 'male',
+    region: 'danang',
     status: 'inactive',
     createdAt: new Date('2024-03-10')
+  },
+  {
+    id: 4,
+    fullName: 'Phạm Thị D',
+    email: 'pham.thi.d@email.com',
+    phone: '0904567890',
+    address: 'Cần Thơ',
+    gender: 'female',
+    region: 'other',
+    status: 'active',
+    createdAt: new Date('2024-11-01')
+  },
+  {
+    id: 5,
+    fullName: 'Hoàng Văn E',
+    email: 'hoang.van.e@email.com',
+    phone: '0905678901',
+    address: 'Hải Phòng',
+    gender: 'male',
+    region: 'other',
+    status: 'blocked',
+    createdAt: new Date('2024-12-15')
   }
 ])
 
 const filteredCustomers = computed(() => {
-  if (!searchTerm.value) return sampleCustomers.value
+  let filtered = sampleCustomers.value
 
-  return sampleCustomers.value.filter(customer =>
-    customer.fullName.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
-    customer.email.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
-    customer.phone.includes(searchTerm.value)
-  )
+  // Text search filter
+  if (searchTerm.value) {
+    const search = searchTerm.value.toLowerCase()
+    filtered = filtered.filter(customer =>
+      customer.fullName.toLowerCase().includes(search) ||
+      customer.email.toLowerCase().includes(search) ||
+      customer.phone.includes(search) ||
+      customer.address.toLowerCase().includes(search)
+    )
+  }
+
+  // Status filter
+  if (selectedStatus.value) {
+    filtered = filtered.filter(customer => customer.status === selectedStatus.value)
+  }
+
+  // Gender filter
+  if (selectedGender.value) {
+    filtered = filtered.filter(customer => customer.gender === selectedGender.value)
+  }
+
+  // Region filter
+  if (selectedRegion.value) {
+    filtered = filtered.filter(customer => customer.region === selectedRegion.value)
+  }
+
+  // Date range filter
+  if (dateRange.value.from) {
+    const fromDate = new Date(dateRange.value.from)
+    filtered = filtered.filter(customer => new Date(customer.createdAt) >= fromDate)
+  }
+  if (dateRange.value.to) {
+    const toDate = new Date(dateRange.value.to)
+    toDate.setHours(23, 59, 59, 999) // End of day
+    filtered = filtered.filter(customer => new Date(customer.createdAt) <= toDate)
+  }
+
+  return filtered
 })
 
 const formatDate = (date) => {
   return new Intl.DateTimeFormat('vi-VN').format(new Date(date))
+}
+
+// Enhanced statistics - as requested by team
+const activeCustomersCount = computed(() => 
+  sampleCustomers.value.filter(customer => customer.status === 'active').length
+)
+
+const newCustomersThisMonth = computed(() => {
+  const thisMonth = new Date()
+  const startOfMonth = new Date(thisMonth.getFullYear(), thisMonth.getMonth(), 1)
+  return sampleCustomers.value.filter(customer => 
+    new Date(customer.createdAt) >= startOfMonth
+  ).length
+})
+
+// Reset filters function
+const resetFilters = () => {
+  searchTerm.value = ''
+  selectedStatus.value = ''
+  selectedGender.value = ''
+  selectedRegion.value = ''
+  dateRange.value = { from: '', to: '' }
+}
+
+// Enhanced action functions - as requested by team
+const exportCustomersToCSV = async () => {
+  try {
+    console.log('Exporting customers to CSV...')
+    alert('Đang xuất danh sách khách hàng ra file CSV. Chức năng sẽ được hoàn thiện.')
+  } catch (error) {
+    console.error('Export error:', error)
+  }
+}
+
+const importCustomersCSV = async () => {
+  try {
+    console.log('Importing customers from CSV...')
+    alert('Chức năng nhập khách hàng từ CSV sẽ được tích hợp.')
+  } catch (error) {
+    console.error('Import error:', error)
+  }
+}
+
+const sendBulkEmail = async () => {
+  try {
+    console.log('Sending bulk email...')
+    const selectedCustomers = filteredCustomers.value.filter(c => c.status === 'active')
+    alert(`Chuẩn bị gửi email đến ${selectedCustomers.length} khách hàng hoạt động.`)
+  } catch (error) {
+    console.error('Email error:', error)
+  }
+}
+
+const sendBulkSMS = async () => {
+  try {
+    console.log('Sending bulk SMS...')
+    const selectedCustomers = filteredCustomers.value.filter(c => c.status === 'active')
+    alert(`Chuẩn bị gửi SMS đến ${selectedCustomers.length} khách hàng hoạt động.`)
+  } catch (error) {
+    console.error('SMS error:', error)
+  }
+}
+
+const generateCustomerReport = async () => {
+  try {
+    console.log('Generating customer report...')
+    alert('Đang tạo báo cáo khách hàng chi tiết. Chức năng sẽ được hoàn thiện.')
+  } catch (error) {
+    console.error('Report error:', error)
+  }
 }
 
 const getStatusText = (status) => {
@@ -950,6 +1202,185 @@ const closeModal = () => {
   }
   100% {
     box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+/* Enhanced Filters Section Styling - As requested by team */
+.filters-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.filters-title {
+  margin: 0;
+  color: var(--gray-900);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.filter-icon {
+  font-size: var(--font-size-lg);
+}
+
+.filters-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.search-section {
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: var(--spacing-md);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gray-500);
+  font-size: var(--font-size-sm);
+}
+
+.filter-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.filter-group label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--gray-700);
+}
+
+.date-range {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.date-input {
+  flex: 1;
+}
+
+.date-separator {
+  color: var(--gray-500);
+  font-weight: var(--font-weight-semibold);
+}
+
+.filters-summary {
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--border-light);
+}
+
+.summary-stats {
+  display: flex;
+  gap: var(--spacing-xl);
+  flex-wrap: wrap;
+}
+
+.summary-item {
+  font-size: var(--font-size-sm);
+  color: var(--gray-600);
+}
+
+.summary-item strong {
+  color: var(--primary-600);
+  font-weight: var(--font-weight-bold);
+}
+
+/* Actions Section Styling - Below Filters as requested */
+.actions-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.action-buttons {
+  display: flex;
+  gap: var(--spacing-xl);
+  flex-wrap: wrap;
+}
+
+.action-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  min-width: 280px;
+}
+
+.action-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--gray-700);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.action-buttons-row {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.action-buttons-row .btn {
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.action-buttons-row .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Responsive design for enhanced filters */
+@media (max-width: 768px) {
+  .filter-controls {
+    grid-template-columns: 1fr;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+  
+  .action-group {
+    min-width: auto;
+  }
+  
+  .action-buttons-row {
+    justify-content: center;
+  }
+  
+  .action-buttons-row .btn {
+    flex: 1;
+    min-width: 120px;
+  }
+  
+  .summary-stats {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .date-range {
+    flex-direction: column;
   }
 }
 </style>

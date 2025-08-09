@@ -1,3 +1,4 @@
+// Composable API tổng quát: quản lý loading/error/data, hủy request khi unmount và chạy song song.
 import { ref, onUnmounted } from 'vue'
 import { createCancelToken, isCancel } from '@/services/api'
 import { getUserFriendlyMessage } from '@/utils/apiErrors'

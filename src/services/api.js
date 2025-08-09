@@ -1,3 +1,4 @@
+// API client cấu hình sẵn dựa trên axios: thêm header xác thực, chuyển đổi dữ liệu, retry và tự làm mới token.
 import axios from 'axios'
 import { transformRequest, transformResponse } from '@/utils/apiTransformers'
 import { parseApiError, logError } from '@/utils/apiErrors'
@@ -14,6 +15,9 @@ const api = axios.create({
     'X-Requested-With': 'XMLHttpRequest' // CSRF protection
   }
 })
+
+// A lightweight axios instance to perform refresh without interceptors
+const rawAxios = axios.create({ baseURL: API_BASE_URL })
 
 // Request retry configuration
 let retryCount = 0
@@ -47,6 +51,26 @@ const retryRequest = async (error) => {
   return Promise.reject(error)
 }
 
+// Token refresh state
+let isRefreshing = false
+let refreshSubscribers = []
+
+const onRefreshed = (newToken) => {
+  refreshSubscribers.forEach((callback) => callback(newToken))
+  refreshSubscribers = []
+}
+
+const addRefreshSubscriber = (callback) => {
+  refreshSubscribers.push(callback)
+}
+
+const getAccessToken = () => localStorage.getItem('token')
+const getRefreshToken = () => localStorage.getItem('refreshToken')
+
+const setAccessToken = (token) => {
+  if (token) localStorage.setItem('token', token)
+}
+
 // Request interceptor
 api.interceptors.request.use(
   (config) => {
@@ -54,7 +78,7 @@ api.interceptors.request.use(
     retryCount = 0
     
     // Add auth token
-    const token = localStorage.getItem('token')
+    const token = getAccessToken()
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
@@ -92,19 +116,65 @@ api.interceptors.response.use(
     return response
   },
   async (error) => {
-    // Handle 401 Unauthorized
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
-      
-      // Only redirect if not already on login page
-      if (!window.location.pathname.includes('/login')) {
-        window.location.href = '/login'
+    // Handle 401 Unauthorized with refresh token flow
+    const originalRequest = error.config
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      const refreshToken = getRefreshToken()
+      if (!refreshToken) {
+        // No refresh token, proceed to logout
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        if (!window.location.pathname.includes('/admin/login')) {
+          window.location.href = '/admin/login'
+        }
+        const apiError = parseApiError(error)
+        logError(apiError, 'Unauthorized (no refresh token)')
+        return Promise.reject(apiError)
       }
-      
-      const apiError = parseApiError(error)
-      logError(apiError, 'Unauthorized')
-      return Promise.reject(apiError)
+
+      if (isRefreshing) {
+        // Queue the request until refresh completes
+        return new Promise((resolve, reject) => {
+          addRefreshSubscriber((newToken) => {
+            if (!newToken) {
+              reject(parseApiError(error))
+              return
+            }
+            originalRequest.headers.Authorization = `Bearer ${newToken}`
+            originalRequest._retry = true
+            resolve(api.request(originalRequest))
+          })
+        })
+      }
+
+      isRefreshing = true
+      originalRequest._retry = true
+      try {
+        const { data } = await rawAxios.post('/auth/refresh', { refreshToken })
+        const newAccessToken = data?.accessToken || data?.token || data?.access_token
+        if (!newAccessToken) {
+          throw new Error('Missing accessToken in refresh response')
+        }
+        setAccessToken(newAccessToken)
+        onRefreshed(newAccessToken)
+        // Update default header for subsequent requests
+        api.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`
+        return api.request(originalRequest)
+      } catch (refreshError) {
+        // Hard logout on refresh failure
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        localStorage.removeItem('refreshToken')
+        onRefreshed(null)
+        if (!window.location.pathname.includes('/admin/login')) {
+          window.location.href = '/admin/login'
+        }
+        const apiError = parseApiError(refreshError)
+        logError(apiError, 'Refresh Token Failed')
+        return Promise.reject(apiError)
+      } finally {
+        isRefreshing = false
+      }
     }
     
     // Try retry logic for network/server errors

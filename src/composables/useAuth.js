@@ -1,3 +1,4 @@
+// Composable xác thực (useAuth): cung cấp trạng thái user/token và hàm login/logout/checkAuth cho phía client.
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -53,7 +54,7 @@ const useAuth = () => {
     localStorage.removeItem('remember')
     token.value = null
     user.value = null
-    router.push('/login')
+    router.push('/admin/login')
   }
   
   const checkAuth = async () => {
