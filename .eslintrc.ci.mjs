@@ -1,7 +1,7 @@
 // This file temporarily adds exceptions to ESLint rules for the CI pipeline to pass
 
-module.exports = {
-  extends: './.eslintrc.json',
+export default {
+  extends: ['./.eslintrc.json'],
   rules: {
     // Temporarily disable multi-word component names rule
     'vue/multi-word-component-names': 'off',

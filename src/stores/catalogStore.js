@@ -76,3 +76,4 @@ export const useCatalogStore = defineStore('catalog', {
     }
   }
 })
+
