@@ -1,7 +1,0 @@
-<template>
-  <router-view />
-</template>
-
-<script setup>
-// No imports needed - router-view is global
-</script>

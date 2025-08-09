@@ -720,10 +720,12 @@ const closeModal = () => {
 .form-group input,
 .form-group select {
   width: 100%;
+  max-width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
   font-size: 14px;
+  box-sizing: border-box; /* Include padding in width calculation */
 }
 
 .form-actions {
@@ -1210,6 +1212,22 @@ const closeModal = () => {
   margin-bottom: var(--spacing-lg);
 }
 
+.filters-section .card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  overflow: hidden; /* Prevent content overflow */
+}
+
+.filters-section .card-body {
+  padding: 24px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden; /* Prevent overflow */
+}
+
 .filters-header {
   display: flex;
   justify-content: space-between;
@@ -1254,12 +1272,17 @@ const closeModal = () => {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: var(--spacing-md);
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden; /* Prevent overflow */
 }
 
 .filter-group {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
+  min-width: 0; /* Allow shrinking */
+  max-width: 100%; /* Ensure no overflow */
 }
 
 .filter-group label {
@@ -1272,10 +1295,14 @@ const closeModal = () => {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
+  width: 100%;
+  max-width: 100%;
 }
 
 .date-input {
   flex: 1;
+  min-width: 0; /* Allow shrinking */
+  max-width: calc(50% - 10px); /* Ensure they don't overflow */
 }
 
 .date-separator {
@@ -1303,6 +1330,48 @@ const closeModal = () => {
 .summary-item strong {
   color: var(--primary-600);
   font-weight: var(--font-weight-bold);
+}
+
+/* Form Control Styling in Filters */
+.filter-group .form-control {
+  width: 100%;
+  max-width: 100%;
+  padding: 10px 12px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.filter-group .form-control:focus {
+  outline: none;
+  border-color: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+
+.search-box {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 100%;
+  padding: 12px 16px 12px 40px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
 }
 
 /* Actions Section Styling - Below Filters as requested */
@@ -1356,6 +1425,20 @@ const closeModal = () => {
     grid-template-columns: 1fr;
   }
   
+  .date-range {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .date-input {
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  .date-separator {
+    display: none; /* Hide separator on mobile since dates are stacked */
+  }
+  
   .action-buttons {
     flex-direction: column;
     gap: var(--spacing-lg);
@@ -1379,8 +1462,26 @@ const closeModal = () => {
     gap: var(--spacing-sm);
   }
   
+  .search-box {
+    max-width: 100%;
+  }
+  
+  .filters-section .card-body {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
   .date-range {
-    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+  
+  .filter-group {
+    gap: var(--spacing-xs);
+  }
+  
+  .filters-section .card-body {
+    padding: 12px;
   }
 }
 </style>

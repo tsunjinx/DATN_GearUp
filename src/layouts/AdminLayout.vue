@@ -1,5 +1,6 @@
 <!-- Layout quản trị (AdminLayout): chứa sidebar, header, breadcrumb, vùng nội dung và hệ thống thông báo.
-     - Điều hướng: sidebar thu gọn/mở rộng theo kích thước màn hình, lưu sở thích vào localStorage.
+     - Điều hướng: sidebar LUÔN MỞ khi truy cập admin site, có thể thu gọn/mở rộng theo tương tác người dùng.
+     - Responsive: tự động đóng trên mobile, luôn mở trên desktop/tablet cho admin.
      - Thông báo: hiển thị số chưa đọc, dropdown, modal tất cả; sử dụng useNotifications để polling & lưu trữ.
      - Tối ưu hiệu năng: lazy-load logo, theo dõi kích thước cửa sổ, giảm log ở production. -->
 <template>
@@ -310,28 +311,39 @@ const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 
-const sidebarCollapsed = ref(false) // Default to expanded as requested by team
+const sidebarCollapsed = ref(false) // Always start expanded for admin site
 const userToggledSidebar = ref(false) // Track if user manually toggled sidebar
 const mobileMenuOpen = ref(false)
 const isMobile = ref(false)
 const isTablet = ref(false)
 const windowWidth = ref(0)
 
-// Load user's sidebar preference from localStorage
+// Load user's sidebar preference from localStorage - but always start expanded
 const loadSidebarPreference = () => {
   try {
-    const savedCollapsed = localStorage.getItem('gearup-sidebar-collapsed')
-    const savedUserToggled = localStorage.getItem('gearup-sidebar-user-toggled')
+    // Always start with sidebar expanded on admin site access
+    sidebarCollapsed.value = false
     
-    // Only load preferences if user has actually toggled the sidebar before
-    if (savedUserToggled === 'true' && savedCollapsed !== null) {
-      sidebarCollapsed.value = JSON.parse(savedCollapsed)
+    // Load user toggle preference for maintaining state during session
+    const savedUserToggled = localStorage.getItem('gearup-sidebar-user-toggled')
+    if (savedUserToggled !== null) {
       userToggledSidebar.value = JSON.parse(savedUserToggled)
+      
+      // Only apply saved collapsed state if user has manually toggled before
+      // and we're on desktop (not mobile/tablet)
+      if (userToggledSidebar.value && window.innerWidth > 1024) {
+        const savedCollapsed = localStorage.getItem('gearup-sidebar-collapsed')
+        if (savedCollapsed !== null) {
+          sidebarCollapsed.value = JSON.parse(savedCollapsed)
+        }
+      }
     }
-    // Otherwise, keep the new default (expanded) - always open on first load
-    else {
-      sidebarCollapsed.value = false // Always start expanded on first load
-    }
+    
+    console.log('📋 Sidebar initialized:', {
+      collapsed: sidebarCollapsed.value,
+      userToggled: userToggledSidebar.value,
+      screenWidth: window.innerWidth
+    })
   } catch (error) {
     console.warn('Failed to load sidebar preferences:', error)
     sidebarCollapsed.value = false // Fallback to expanded
@@ -348,14 +360,14 @@ const saveSidebarPreference = () => {
   }
 }
 
-// Reset sidebar to default state (for testing)
+// Reset sidebar to default state (always open for admin site)
 const resetSidebarToDefault = () => {
   try {
     localStorage.removeItem('gearup-sidebar-collapsed')
     localStorage.removeItem('gearup-sidebar-user-toggled')
-    sidebarCollapsed.value = false // New default - expanded
+    sidebarCollapsed.value = false // Admin default - always expanded
     userToggledSidebar.value = false
-    console.log('Sidebar reset to default (expanded)')
+    console.log('✅ Sidebar reset to admin default (always open)')
   } catch (error) {
     console.warn('Failed to reset sidebar preferences:', error)
   }
@@ -364,6 +376,15 @@ const resetSidebarToDefault = () => {
 // Make reset function available globally for testing
 if (import.meta.env.DEV) {
   window.resetSidebar = resetSidebarToDefault
+}
+
+// Force sidebar open for admin site access
+const forceAdminSidebarOpen = () => {
+  if (!isMobile.value && sidebarCollapsed.value) {
+    console.log('🔓 Forcing sidebar open for admin site access')
+    sidebarCollapsed.value = false
+    // Don't save this as user preference since it's automatic
+  }
 }
 
 // Notifications
@@ -494,24 +515,26 @@ const checkResponsive = () => {
     })
   }
 
-  // On initial load, set reasonable defaults without forcing changes
+  // On initial load, set reasonable defaults - always start with sidebar open on desktop
   if (isInitialLoad.value) {
-    // Set initial state based on screen size but don't force changes
     if (currentWidth <= 768) {
       // Mobile: sidebar should be closed (mobile overlay pattern)
       sidebarCollapsed.value = true // Mobile uses overlay, keep collapsed
       mobileMenuOpen.value = false
     } else if (currentWidth <= 1024) {
-      // Tablet: default to collapsed
-      if (!userToggledSidebar.value) {
-        sidebarCollapsed.value = true
-      }
+      // Tablet: start expanded but can be collapsed
+      sidebarCollapsed.value = false // Start expanded on tablet
     } else {
-      // Desktop: default to collapsed (changed from expanded)
-      if (!userToggledSidebar.value) {
-        sidebarCollapsed.value = true
-      }
+      // Desktop: always start expanded for admin site
+      sidebarCollapsed.value = false // Always start expanded on desktop
     }
+    
+    console.log('🚀 Initial admin sidebar state:', {
+      width: currentWidth,
+      collapsed: sidebarCollapsed.value,
+      isMobile: isMobile.value,
+      isTablet: isTablet.value
+    })
     
     isInitialLoad.value = false
     previousWidth.value = currentWidth
@@ -560,8 +583,11 @@ const checkResponsive = () => {
 }
 
 onMounted(() => {
-  // Load user preferences first
+  // Load user preferences first (but always start expanded for admin site)
   loadSidebarPreference()
+  
+  // Force sidebar open for admin site access
+  forceAdminSidebarOpen()
   
   // Then check responsive layout
   checkResponsive()
@@ -573,6 +599,20 @@ onMounted(() => {
   // Notifications polling
   startPolling()
   previousUnreadCount.value = unreadNotifications.value
+  
+  console.log('🎯 AdminLayout mounted - sidebar always starts open for admin site')
+  
+  // Development utilities
+  if (import.meta.env.DEV) {
+    // Expose functions for debugging
+    window.toggleSidebar = toggleSidebar
+    window.checkResponsive = checkResponsive
+    window.resetSidebar = () => {
+      localStorage.removeItem('sidebar-collapsed')
+      forceAdminSidebarOpen()
+      console.log('🔄 Sidebar reset to always open for admin site')
+    }
+  }
 })
 
 onUnmounted(() => {
@@ -609,6 +649,17 @@ if (import.meta.env.DEV) {
     console.log('Filter changed to:', newFilter)
   })
 }
+
+// Watch for route changes to ensure sidebar is always open for admin routes
+watch(route, (newRoute) => {
+  // If navigating to any admin route, ensure sidebar is open (except mobile)
+  if (newRoute.path.startsWith('/admin') && !isMobile.value) {
+    if (sidebarCollapsed.value) {
+      console.log('🔄 Auto-opening sidebar for admin route:', newRoute.path)
+      sidebarCollapsed.value = false
+    }
+  }
+}, { immediate: true })
 
 const pageTitle = computed(() => {
   // First try to get title from route meta, remove "GearUp - " prefix for display
